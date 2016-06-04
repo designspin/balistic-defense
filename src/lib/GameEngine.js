@@ -1,6 +1,6 @@
 import Timer from './GameTimer';
 
-default export class {
+export default class {
 	constructor() {
 		this.entities = [];
 		this.ctx = null;
@@ -20,29 +20,31 @@ default export class {
 	}
 
 	start() {
-	 let gameLoop = (() => {
+	 let gameLoop = () => {
 	 	this.loop();
 	 	requestAnimationFrame(gameLoop, this.ctx.canvas);
-	 })();
+	 };
+	 gameLoop();
 	}
 
 	setSurface() {
 		let reflowStage = () => {
-			const scaleX = window.innerWidth / ctx.canvas.width;
-			const scaleY = window.innerHeight / ctx.canvas.height;
+			console.log("reflow");
+			console.log(this.ctx.canvas.parentNode);
+			const scaleX = window.innerWidth / this.ctx.canvas.width;
+			const scaleY = window.innerHeight / this.ctx.canvas.height;
 			let scale = Math.min(scaleX, scaleY);
 			this.scale = scale;
-			ctx.canvas.parentNode.webkitTransform = "scale(" + scale + ")";
-			ctx.canvas.parentNode.transform = "scale(" + scale + ")";
+
+			this.ctx.canvas.parentNode.style.webkitTransform = "scale(" + scale + ")";
+			this.ctx.canvas.parentNode.style.transform = "scale(" + scale + ")";
 		}
 
-		window.addEventListener('resize', () => {
-			reflowStage();
-		});
+		window.addEventListener('resize', reflowStage);
 
-		window.addEventListener('orientationchage', () => {
-			reflowStage();
-		})
+		window.addEventListener('orientationchage', reflowStage)
+
+		reflowStage();
 	}
 
 	startInput() {
@@ -87,7 +89,7 @@ default export class {
 		this.ctx.translate(0, this.ctx.canvas.height);
 		this.ctx.scale(1, -1);
 
-		for(let i = 0; i < this.entites.length; i++) {
+		for(let i = 0; i < this.entities.length; i++) {
 			this.entities[i].draw(this.ctx);
 		}
 
