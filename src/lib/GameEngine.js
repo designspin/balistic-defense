@@ -9,6 +9,7 @@ export default class {
 		this.surfaceWidth = null;
 		this.surfaceHeight = null;
 		this.scale = null;
+		this.clockTick = null;
 	}
 
 	init(ctx) {
@@ -24,13 +25,13 @@ export default class {
 	 	this.loop();
 	 	requestAnimationFrame(gameLoop, this.ctx.canvas);
 	 };
+	 console.log("Calling Game Loop for first time")
 	 gameLoop();
 	}
 
 	setSurface() {
 		let reflowStage = () => {
-			console.log("reflow");
-			console.log(this.ctx.canvas.parentNode);
+
 			const scaleX = window.innerWidth / this.ctx.canvas.width;
 			const scaleY = window.innerHeight / this.ctx.canvas.height;
 			let scale = Math.min(scaleX, scaleY);
@@ -80,6 +81,7 @@ export default class {
 	}
 
 	addEntity(entity) {
+		console.log("Adding entity: ", entity);
 		this.entities.push(entity);
 	}
 
@@ -88,14 +90,16 @@ export default class {
 		this.ctx.save();
 		this.ctx.translate(0, this.ctx.canvas.height);
 		this.ctx.scale(1, -1);
+		
+		if(drawCallback) {
+			drawCallback(this);
+		}
 
 		for(let i = 0; i < this.entities.length; i++) {
 			this.entities[i].draw(this.ctx);
 		}
 
-		if(drawCallback) {
-			drawCallback(this);
-		}
+		
 
 		this.ctx.restore();
 	}

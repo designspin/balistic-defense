@@ -1,7 +1,7 @@
 export default class {
 	constructor() {
 		this.gameTime = 0;
-		this.max = 0.05;
+		this.maxStep = 0.05;
 		this.wallLastTimestamp = 0;
 		this.fps = 0;
 	}
