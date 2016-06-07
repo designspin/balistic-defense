@@ -1054,6 +1054,12 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _City = require('../entities/City');
+
+var _City2 = _interopRequireDefault(_City);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var _class = function () {
@@ -1061,7 +1067,9 @@ var _class = function () {
 		_classCallCheck(this, _class);
 
 		this.game = game;
+
 		this.timer = 0;
+		this.updateInterval = 1;
 
 		this.bonusHandler = ['cities', 'missiles'];
 		this.currentHandler = 0;
@@ -1078,10 +1086,12 @@ var _class = function () {
 		key: 'setupCitiesSurvived',
 		value: function setupCitiesSurvived() {
 			var cities = this.game.cities.info;
+			var xPos = 132;
 
 			for (var city = 0; city < cities.length; city++) {
 				if (cities[city].isAlive) {
-					this.citiesSurvived.push({ x: 0, y: 0 });
+					this.citiesSurvived.push({ x: this.game.ctx.canvas.width / 2 + xPos, y: this.game.ctx.canvas.height / 2, original: cities[city].instance });
+					xPos += 42;
 				}
 			}
 		}
@@ -1089,6 +1099,22 @@ var _class = function () {
 		key: 'update',
 		value: function update() {
 			this.timer += this.game.clockTick;
+
+			if (this.timer >= this.updateInterval) {
+				this.timer = 0;
+
+				switch (this.bonusHandler[this.currentHandler]) {
+					case 'cities':
+						if (this.citiesSurvived.length) {
+							this.citiesSurvived[this.citiesSurvived.length - 1].original.removeFromWorld = true;
+							this.game.addEntity(new _City2.default(this.game, this.citiesSurvived[this.citiesSurvived.length - 1].x, this.citiesSurvived[this.citiesSurvived.length - 1].y));
+							this.citiesSurvived.pop();
+							this.cityBonusScore += 100;
+						} else {
+							this.currentHandler += 1;
+						}
+				}
+			}
 		}
 	}, {
 		key: 'draw',
@@ -1108,8 +1134,8 @@ var _class = function () {
 			ctx.fillText('Bonus', ctx.canvas.width / 2, ctx.canvas.height / 2 - 50);
 			ctx.fillStyle = '#ffff00';
 			ctx.textAlign = 'left';
-			ctx.fillText('' + this.cityBonusScore, ctx.canvas.width / 2 - 100, ctx.canvas.height / 2);
-			ctx.fillText('' + this.missileBonusScore, ctx.canvas.width / 2 - 100, ctx.canvas.height / 2 + 40);
+			ctx.fillText('' + this.cityBonusScore, ctx.canvas.width / 2 - 150, ctx.canvas.height / 2);
+			ctx.fillText('' + this.missileBonusScore, ctx.canvas.width / 2 - 150, ctx.canvas.height / 2 + 40);
 			ctx.save();
 			ctx.translate(0, ctx.canvas.height);
 			ctx.scale(1, -1);
@@ -1133,7 +1159,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],11:[function(require,module,exports){
+},{"../entities/City":3}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
