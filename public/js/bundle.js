@@ -435,7 +435,7 @@ var _class = function (_Entity) {
 		value: function draw(ctx) {
 			_get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
 			ctx.save();
-			ctx.translate(-this.sprite.width / 2, -this.sprite.height / 2 - 4);
+			ctx.translate(-this.sprite.width / 2, -this.sprite.height / 2);
 			ctx.drawImage(this.sprite, this.x, this.y);
 			ctx.restore();
 		}
@@ -993,6 +993,7 @@ var _class = function () {
       for (var m = 0; m < this.missiles; m++) {
 
         ctx.strokeStyle = "#ff0000";
+        ctx.lineWidth = 2;
         ctx.beginPath();
 
         if (m === 0) {
@@ -1069,9 +1070,9 @@ var _class = function () {
 		this.game = game;
 
 		this.timer = 0;
-		this.updateInterval = 1;
+		this.updateInterval = 0.5;
 
-		this.bonusHandler = ['cities', 'missiles'];
+		this.bonusHandler = ['cities', 'missiles', 'finished'];
 		this.currentHandler = 0;
 
 		this.cityBonusScore = 0;
@@ -1086,12 +1087,12 @@ var _class = function () {
 		key: 'setupCitiesSurvived',
 		value: function setupCitiesSurvived() {
 			var cities = this.game.cities.info;
-			var xPos = 132;
+			var xPos = -85;
 
 			for (var city = 0; city < cities.length; city++) {
 				if (cities[city].isAlive) {
 					this.citiesSurvived.push({ x: this.game.ctx.canvas.width / 2 + xPos, y: this.game.ctx.canvas.height / 2, original: cities[city].instance });
-					xPos += 42;
+					xPos += 47;
 				}
 			}
 		}
@@ -1106,13 +1107,32 @@ var _class = function () {
 				switch (this.bonusHandler[this.currentHandler]) {
 					case 'cities':
 						if (this.citiesSurvived.length) {
-							this.citiesSurvived[this.citiesSurvived.length - 1].original.removeFromWorld = true;
-							this.game.addEntity(new _City2.default(this.game, this.citiesSurvived[this.citiesSurvived.length - 1].x, this.citiesSurvived[this.citiesSurvived.length - 1].y));
-							this.citiesSurvived.pop();
+							this.citiesSurvived[0].original.removeFromWorld = true;
+							this.game.addEntity(new _City2.default(this.game, this.citiesSurvived[0].x, this.citiesSurvived[0].y));
+							this.citiesSurvived.shift();
 							this.cityBonusScore += 100;
 						} else {
 							this.currentHandler += 1;
+							this.updateInterval = 0.05;
 						}
+						break;
+					case 'missiles':
+						if (this.game.launchpads[0].missiles > 0) {
+							this.game.launchpads[0].missiles -= 1;
+							console.log("Pad 1: ", this.game.launchpads[0].missiles);
+							this.missileBonusScore += 5;
+						} else if (this.game.launchpads[1].missiles > 0) {
+							this.game.launchpads[1].missiles -= 1;
+							console.log("Pad 2: ", this.game.launchpads[1].missiles);
+							this.missileBonusScore += 5;
+						} else if (this.game.launchpads[2].missiles > 0) {
+							this.game.launchpads[2].missiles -= 1;
+							this.missileBonusScore += 5;
+						} else {
+							this.currentHandler += 1;
+						}
+
+						break;
 				}
 			}
 		}
@@ -1134,8 +1154,22 @@ var _class = function () {
 			ctx.fillText('Bonus', ctx.canvas.width / 2, ctx.canvas.height / 2 - 50);
 			ctx.fillStyle = '#ffff00';
 			ctx.textAlign = 'left';
-			ctx.fillText('' + this.cityBonusScore, ctx.canvas.width / 2 - 150, ctx.canvas.height / 2);
-			ctx.fillText('' + this.missileBonusScore, ctx.canvas.width / 2 - 150, ctx.canvas.height / 2 + 40);
+			ctx.fillText('' + this.cityBonusScore, ctx.canvas.width / 2 - 165, ctx.canvas.height / 2 + 3);
+			ctx.fillText('' + this.missileBonusScore, ctx.canvas.width / 2 - 165, ctx.canvas.height / 2 + 40);
+
+			if (this.missileBonusScore > 0) {
+				var xPos = -97;
+				for (var i = 0; i < this.missileBonusScore / 5; i++) {
+					ctx.strokeStyle = "#ff0000";
+					ctx.lineWidth = 5;
+					ctx.beginPath();
+					ctx.moveTo(this.game.ctx.canvas.width / 2 + xPos, this.game.ctx.canvas.height / 2 + 40 - 12);
+					ctx.lineTo(this.game.ctx.canvas.width / 2 + xPos, this.game.ctx.canvas.height / 2 + 40 + 12);
+					ctx.stroke();
+					xPos += 9;
+				}
+			}
+
 			ctx.save();
 			ctx.translate(0, ctx.canvas.height);
 			ctx.scale(1, -1);
@@ -1286,7 +1320,7 @@ var _class = function () {
 			this.timeBetweenRelease = [3, 3, 3, 3, 2.5, 2.5, 2.5, 2.5, 2, 2, 2, 2, 1.5, 1.5, 1.5, 1.5, 1, 1, 1, 1][wave - 1];
 			this.maxMissileRelease = [4, 4, 4, 4, 6, 6, 6, 6, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8][wave - 1];
 			this.missilesToRelease = [18, 18, 18, 18, 22, 22, 22, 22, 24, 24, 24, 24, 26, 26, 26, 26, 28, 28, 30, 30][wave - 1];
-			this.launchSpeed = [120, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 120][wave - 1];
+			this.launchSpeed = [20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 120][wave - 1];
 		}
 	}, {
 		key: 'update',

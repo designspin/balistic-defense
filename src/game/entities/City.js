@@ -15,7 +15,7 @@ export default class extends Entity {
 	draw(ctx) {
 		super.draw(ctx);
 		ctx.save();
-		ctx.translate(-this.sprite.width / 2, (-this.sprite.height / 2) - 4);
+		ctx.translate(-this.sprite.width / 2, -this.sprite.height / 2);
 		ctx.drawImage(this.sprite, this.x, this.y);
 		ctx.restore()
 	}

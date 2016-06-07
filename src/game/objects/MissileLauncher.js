@@ -40,6 +40,7 @@ export default class {
 		for(let m = 0; m < this.missiles; m++) {
 
 			ctx.strokeStyle = "#ff0000";
+      ctx.lineWidth = 2;
 			ctx.beginPath();
 
 			if(m === 0) {

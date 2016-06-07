@@ -5,9 +5,9 @@ export default class {
 		this.game = game;
 
 		this.timer = 0;
-		this.updateInterval = 1;
+		this.updateInterval = 0.5;
 
-		this.bonusHandler = ['cities', 'missiles'];
+		this.bonusHandler = ['cities', 'missiles', 'finished'];
 		this.currentHandler = 0;
 
 		this.cityBonusScore = 0;
@@ -20,13 +20,13 @@ export default class {
 
 	setupCitiesSurvived() {
 		let cities = this.game.cities.info;
-		let xPos = 132;
+		let xPos = -85;
 
 
 		for(let city = 0; city < cities.length; city++) {
 			if (cities[city].isAlive) {
 				this.citiesSurvived.push({x: (this.game.ctx.canvas.width / 2) + xPos , y: this.game.ctx.canvas.height / 2, original: cities[city].instance });
-				xPos += 42;
+				xPos += 47;
 			}
 		}
 	}
@@ -40,13 +40,32 @@ export default class {
 			switch (this.bonusHandler[this.currentHandler]) {
 				case 'cities':
 					if(this.citiesSurvived.length) {
-						this.citiesSurvived[this.citiesSurvived.length - 1].original.removeFromWorld = true;
-						this.game.addEntity(new City(this.game, this.citiesSurvived[this.citiesSurvived.length - 1].x, this.citiesSurvived[this.citiesSurvived.length - 1].y));
-						this.citiesSurvived.pop();
+						this.citiesSurvived[0].original.removeFromWorld = true;
+						this.game.addEntity(new City(this.game, this.citiesSurvived[0].x, this.citiesSurvived[0].y));
+						this.citiesSurvived.shift();
 						this.cityBonusScore += 100;
 					} else {
 						this.currentHandler += 1;
+						this.updateInterval = 0.05;
 					}
+					break;
+				case 'missiles':
+					if(this.game.launchpads[0].missiles > 0) {
+						this.game.launchpads[0].missiles -= 1;
+						console.log("Pad 1: ", this.game.launchpads[0].missiles);
+						this.missileBonusScore += 5;
+					} else if(this.game.launchpads[1].missiles > 0) {
+						this.game.launchpads[1].missiles -= 1;
+						console.log("Pad 2: ", this.game.launchpads[1].missiles);
+						this.missileBonusScore += 5;
+					} else if(this.game.launchpads[2].missiles > 0) {
+						this.game.launchpads[2].missiles -= 1;
+						this.missileBonusScore += 5;
+					} else {
+					  this.currentHandler += 1;
+					}
+					
+					break;
 			}
 
 		}
@@ -68,11 +87,25 @@ export default class {
 		ctx.fillText('Bonus',  ctx.canvas.width / 2, ctx.canvas.height / 2 - 50);
 		ctx.fillStyle = '#ffff00';
 		ctx.textAlign = 'left';
-		ctx.fillText(`${this.cityBonusScore}`, (ctx.canvas.width / 2) - 150, ctx.canvas.height / 2);
-		ctx.fillText(`${this.missileBonusScore}`, (ctx.canvas.width / 2) - 150, ctx.canvas.height / 2 + 40);
+		ctx.fillText(`${this.cityBonusScore}`, (ctx.canvas.width / 2) - 165, ctx.canvas.height / 2 + 3);
+		ctx.fillText(`${this.missileBonusScore}`, (ctx.canvas.width / 2) - 165, ctx.canvas.height / 2 + 40);
+
+		if(this.missileBonusScore > 0) {
+			let xPos = -97;
+			for (let i = 0; i < this.missileBonusScore / 5; i++) {
+				ctx.strokeStyle = "#ff0000";
+				ctx.lineWidth = 5;
+				ctx.beginPath();
+				ctx.moveTo((this.game.ctx.canvas.width / 2) + xPos, (this.game.ctx.canvas.height / 2 + 40) - 12);
+				ctx.lineTo((this.game.ctx.canvas.width / 2) + xPos, (this.game.ctx.canvas.height / 2 + 40) + 12);
+				ctx.stroke();
+				xPos += 9;
+			}
+		}
+
 		ctx.save();
 		ctx.translate(0, ctx.canvas.height);
-  	ctx.scale(1, -1);
+  		ctx.scale(1, -1);
 	}
 
 	drawLandscape(ctx) {

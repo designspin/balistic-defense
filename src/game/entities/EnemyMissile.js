@@ -60,6 +60,6 @@ export default class extends Entity {
 	explode(x, y) {
 		this.game.missilesInPlay -= 1;
 		let explosion = new Explosion(this.game, x, y, this);
-   	this.game.addEntity(explosion);
+   		this.game.addEntity(explosion);
 	} 
 }

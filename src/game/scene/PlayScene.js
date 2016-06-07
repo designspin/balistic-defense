@@ -45,11 +45,10 @@ export default class {
 		this.timeBetweenRelease = [3  ,3  ,3  ,3  ,2.5 ,2.5 ,2.5 ,2.5 ,2  ,2  ,2  ,2  ,1.5 ,1.5 ,1.5 ,1.5 ,1   ,1   ,1   ,1 ][wave-1];
 		this.maxMissileRelease  = [4  ,4  ,4  ,4  ,6   ,6   ,6   ,6   ,8  ,8  ,8  ,8  ,8   ,8   ,8   ,8   ,8   ,8   ,8   ,8 ][wave-1];
 		this.missilesToRelease  = [18 ,18 ,18 ,18 ,22  ,22  ,22  ,22  ,24 ,24 ,24 ,24 ,26  ,26  ,26  ,26  ,28  ,28  ,30  ,30][wave-1];
-		this.launchSpeed			  = [120 ,25 ,30 ,35 ,40  ,45  ,50  ,55  ,60 ,65 ,70 ,75 ,80  ,85  ,90  ,95  ,100 ,105 ,110 ,120][wave-1];
+		this.launchSpeed		= [20 ,25 ,30 ,35 ,40  ,45  ,50  ,55  ,60 ,65 ,70 ,75 ,80  ,85  ,90  ,95  ,100 ,105 ,110 ,120][wave-1];
 	}
 
 	update() {
-		
 		this.timer += this.game.clockTick;
 		if(this.game.click) {
 			this.launchPlayerMissile();
