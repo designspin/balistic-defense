@@ -246,21 +246,21 @@ var _javascriptStateMachine = require('javascript-state-machine');
 
 var _javascriptStateMachine2 = _interopRequireDefault(_javascriptStateMachine);
 
-var _MissileLauncher = require('./objects/MissileLauncher');
+var _TitleScene = require('./scene/TitleScene');
 
-var _MissileLauncher2 = _interopRequireDefault(_MissileLauncher);
+var _TitleScene2 = _interopRequireDefault(_TitleScene);
 
-var _City = require('./entities/City');
+var _PlayScene = require('./scene/PlayScene');
 
-var _City2 = _interopRequireDefault(_City);
+var _PlayScene2 = _interopRequireDefault(_PlayScene);
 
-var _PlayerMissile = require('./entities/PlayerMissile');
+var _LevelUpScene = require('./scene/LevelUpScene');
 
-var _PlayerMissile2 = _interopRequireDefault(_PlayerMissile);
+var _LevelUpScene2 = _interopRequireDefault(_LevelUpScene);
 
-var _EnemyMissile = require('./entities/EnemyMissile');
+var _LevelOverScene = require('./scene/LevelOverScene');
 
-var _EnemyMissile2 = _interopRequireDefault(_EnemyMissile);
+var _LevelOverScene2 = _interopRequireDefault(_LevelOverScene);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -279,7 +279,14 @@ var BalisticDefence = function (_GameEngine) {
 		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(BalisticDefence).call(this));
 
 		_this.ctx = null;
+		_this.scene = null;
+		_this.showOutlines = true;
 		_this.wave = 0;
+		_this.cities = { qty: 6, info: [] };
+		_this.missilesInPlay = 0;
+		_this.speedMultiplier = false;
+		_this.landscapeImage = null;
+		_this.launchpads = [];
 		return _this;
 	}
 
@@ -287,12 +294,6 @@ var BalisticDefence = function (_GameEngine) {
 		key: 'init',
 		value: function init(ctx) {
 			_get(Object.getPrototypeOf(BalisticDefence.prototype), 'init', this).call(this, ctx);
-			this.ctx = ctx;
-
-			this.landscapeImage = this.cachedLandscape();
-			this.launchpads = [];
-			this.cities = 6;
-
 			this.startup(); // Fire FSM startup event;
 		}
 	}, {
@@ -306,29 +307,26 @@ var BalisticDefence = function (_GameEngine) {
 		////////////////////////////
 
 	}, {
-		key: 'onentermenu',
-		value: function onentermenu() {
+		key: 'onentertitle',
+		value: function onentertitle() {
+			this.scene = new _TitleScene2.default(this);
 			this.start();
+		}
+	}, {
+		key: 'onenterlevelinfo',
+		value: function onenterlevelinfo() {
+			this.wave += 1;
+			this.scene = new _LevelUpScene2.default(this, this.wave);
 		}
 	}, {
 		key: 'onenterplaying',
 		value: function onenterplaying() {
-			this.wave += 1;
-			//Setup launchpads
-			this.launchpads[0] = new _MissileLauncher2.default(20, 30);
-			this.launchpads[1] = new _MissileLauncher2.default(this.ctx.canvas.width / 2, 30);
-			this.launchpads[2] = new _MissileLauncher2.default(this.ctx.canvas.width - 20, 30);
-
-			//Setup cities
-			for (var i = 0; i < this.cities; i++) {
-				var cityPosX = (i + 1) * 57 + 16;
-
-				if (i + 1 > 3) {
-					cityPosX = (i + 1) * 57 + 66;
-				}
-
-				this.addEntity(new _City2.default(this, cityPosX, 26));
-			}
+			this.scene = new _PlayScene2.default(this, this.wave, this.cities);
+		}
+	}, {
+		key: 'onenterlevelcomplete',
+		value: function onenterlevelcomplete() {
+			this.scene = new _LevelOverScene2.default(this);
 		}
 
 		////////////////////////////
@@ -338,44 +336,16 @@ var BalisticDefence = function (_GameEngine) {
 	}, {
 		key: 'update',
 		value: function update() {
-			switch (this.current) {
-				case 'menu':
-					this.updateMenu();
-					break;
-				case 'playing':
-					this.updatePlaying();
-					break;
-			}
+			this.updateScene();
 			_get(Object.getPrototypeOf(BalisticDefence.prototype), 'update', this).call(this);
 		}
 
 		//Update function for title screen
 
 	}, {
-		key: 'updateMenu',
-		value: function updateMenu() {
-			if (this.click) {
-				this.click = null;
-				this.startgame(); // Fire FSM startgame event;
-			}
-		}
-
-		//Update function for playing
-
-	}, {
-		key: 'updatePlaying',
-		value: function updatePlaying() {
-			if (this.click) {
-				this.launchPlayerMissile();
-			}
-
-			//Temp
-
-			var random = Math.floor(Math.random() * 70);
-			if (random < this.wave) {
-				var enemyMissile = new _EnemyMissile2.default(this, Math.floor(Math.random() * 480) + 1, 10, Math.floor(Math.random() * 480) + 1, 320);
-				this.addEntity(enemyMissile);
-			}
+		key: 'updateScene',
+		value: function updateScene() {
+			this.scene.update();
 		}
 
 		////////////////////////////
@@ -388,167 +358,16 @@ var BalisticDefence = function (_GameEngine) {
 			var _this2 = this;
 
 			_get(Object.getPrototypeOf(BalisticDefence.prototype), 'draw', this).call(this, function (game) {
-				switch (_this2.current) {
-					case 'menu':
-						game.drawMenu(_this2.ctx);
-						break;
-					case 'playing':
-						game.drawPlaying(_this2.ctx);
-						break;
-				}
+				game.drawScene(_this2.ctx);
 			});
 		}
 
 		//Draw function for title screen
 
 	}, {
-		key: 'drawMenu',
-		value: function drawMenu(ctx) {
-			ctx.restore();
-			ctx.strokeStyle = '#ffffff';
-			ctx.fillStyle = '#ffffff';
-			ctx.lineWidth = 2;
-			ctx.textBaseline = 'middle';
-			ctx.textAlign = 'center';
-			ctx.font = '40px Arial';
-			ctx.strokeText('Balistic Defence', ctx.canvas.width / 2, ctx.canvas.height / 2 - 20);
-			ctx.font = '20px Arial';
-			ctx.fillText('click or touch to start', ctx.canvas.width / 2, ctx.canvas.height / 2 + 20);
-		}
-
-		//Draw function for playing
-
-	}, {
-		key: 'drawPlaying',
-		value: function drawPlaying(ctx) {
-			this.drawLandscape(ctx);
-			this.drawMissileIndicators(ctx);
-		}
-	}, {
-		key: 'drawLandscape',
-		value: function drawLandscape(ctx) {
-			ctx.drawImage(this.landscapeImage, 0, 0);
-		}
-	}, {
-		key: 'drawMissileIndicators',
-		value: function drawMissileIndicators(ctx) {
-			for (var i = 0; i < this.launchpads.length; i++) {
-				if (this.launchpads[i].missiles > 0) {
-					for (var m = 0; m < this.launchpads[i].missiles; m++) {
-						ctx.strokeStyle = "#0000ff";
-						ctx.beginPath();
-
-						if (m === 0) {
-							ctx.moveTo(this.launchpads[i].x, this.launchpads[i].y - 2);
-							ctx.lineTo(this.launchpads[i].x, this.launchpads[i].y - 7);
-						}
-						if (m === 1) {
-							ctx.moveTo(this.launchpads[i].x - 2, this.launchpads[i].y - 9);
-							ctx.lineTo(this.launchpads[i].x - 2, this.launchpads[i].y - 14);
-						}
-						if (m === 2) {
-							ctx.moveTo(this.launchpads[i].x + 2, this.launchpads[i].y - 9);
-							ctx.lineTo(this.launchpads[i].x + 2, this.launchpads[i].y - 14);
-						}
-						if (m === 3) {
-							ctx.moveTo(this.launchpads[i].x - 4, this.launchpads[i].y - 16);
-							ctx.lineTo(this.launchpads[i].x - 4, this.launchpads[i].y - 21);
-						}
-						if (m === 4) {
-							ctx.moveTo(this.launchpads[i].x, this.launchpads[i].y - 16);
-							ctx.lineTo(this.launchpads[i].x, this.launchpads[i].y - 21);
-						}
-						if (m === 5) {
-							ctx.moveTo(this.launchpads[i].x + 4, this.launchpads[i].y - 16);
-							ctx.lineTo(this.launchpads[i].x + 4, this.launchpads[i].y - 21);
-						}
-						if (m === 6) {
-							ctx.moveTo(this.launchpads[i].x - 6, this.launchpads[i].y - 23);
-							ctx.lineTo(this.launchpads[i].x - 6, this.launchpads[i].y - 28);
-						}
-						if (m === 7) {
-							ctx.moveTo(this.launchpads[i].x - 2, this.launchpads[i].y - 23);
-							ctx.lineTo(this.launchpads[i].x - 2, this.launchpads[i].y - 28);
-						}
-						if (m === 8) {
-							ctx.moveTo(this.launchpads[i].x + 2, this.launchpads[i].y - 23);
-							ctx.lineTo(this.launchpads[i].x + 2, this.launchpads[i].y - 28);
-						}
-						if (m === 9) {
-							ctx.moveTo(this.launchpads[i].x + 6, this.launchpads[i].y - 23);
-							ctx.lineTo(this.launchpads[i].x + 6, this.launchpads[i].y - 28);
-						}
-						ctx.stroke();
-					}
-				}
-			}
-		}
-
-		//Cahed landscape image
-
-	}, {
-		key: 'cachedLandscape',
-		value: function cachedLandscape() {
-			var platformWidth = 40;
-			var platformIncline = 10;
-			var platformHeight = 30;
-			var groundLevel = 10;
-
-			var offscreencanvas = document.createElement('canvas');
-			var offscreenctx = offscreencanvas.getContext('2d');
-
-			offscreencanvas.width = this.ctx.canvas.width;
-			offscreencanvas.height = platformHeight;
-
-			var landscapeDistance = (offscreenctx.canvas.width - platformWidth * 3 - platformIncline * 4) / 2;
-
-			offscreenctx.save();
-			offscreenctx.fillStyle = "#ffff00";
-			offscreenctx.beginPath();
-			offscreenctx.moveTo(0, platformHeight);
-			offscreenctx.lineTo(platformWidth, platformHeight);
-			offscreenctx.lineTo(platformWidth + platformIncline, groundLevel);
-			offscreenctx.lineTo(platformWidth + platformIncline + landscapeDistance, groundLevel);
-			offscreenctx.lineTo(platformWidth + platformIncline * 2 + landscapeDistance, platformHeight);
-			offscreenctx.lineTo(platformWidth * 2 + platformIncline * 2 + landscapeDistance, platformHeight);
-			offscreenctx.lineTo(platformWidth * 2 + platformIncline * 3 + landscapeDistance, groundLevel);
-			offscreenctx.lineTo(platformWidth * 2 + platformIncline * 3 + landscapeDistance * 2, groundLevel);
-			offscreenctx.lineTo(platformWidth * 2 + platformIncline * 4 + landscapeDistance * 2, platformHeight);
-			offscreenctx.lineTo(platformWidth * 3 + platformIncline * 4 + landscapeDistance * 2, platformHeight);
-			offscreenctx.lineTo(platformWidth * 3 + platformIncline * 4 + landscapeDistance * 2, 0);
-			offscreenctx.lineTo(0, 0);
-			offscreenctx.fill();
-			offscreenctx.restore();
-
-			return offscreencanvas;
-		}
-
-		/////////////////////////////
-		// Actions								 //
-		/////////////////////////////
-
-	}, {
-		key: 'launchPlayerMissile',
-		value: function launchPlayerMissile() {
-			var launcherIndex = null,
-			    distance = null,
-			    missile = null;
-
-			for (var i = 0; i < this.launchpads.length; i++) {
-				var currentDistance = this.launchpads[i].getDistance(this.click.x, this.click.y, this.scale);
-
-				if ((currentDistance < distance || distance === null) && this.launchpads[i].missiles > 0) {
-					distance = currentDistance;
-					launcherIndex = i;
-				}
-			}
-
-			if (distance != null) {
-				this.launchpads[launcherIndex].missiles -= 1;
-				console.log("Adding missile");
-				missile = new _PlayerMissile2.default(this, this.click.x / this.scale, this.ctx.canvas.height - this.click.y / this.scale, this.launchpads[launcherIndex].x, this.launchpads[launcherIndex].y);
-				this.addEntity(missile);
-			}
+		key: 'drawScene',
+		value: function drawScene(ctx) {
+			this.scene.draw(ctx);
 		}
 	}]);
 
@@ -557,12 +376,12 @@ var BalisticDefence = function (_GameEngine) {
 
 _javascriptStateMachine2.default.create({
 	target: BalisticDefence.prototype,
-	events: [{ name: 'startup', from: 'none', to: 'menu' }, { name: 'startgame', from: 'menu', to: 'playing' }]
+	events: [{ name: 'startup', from: 'none', to: 'title' }, { name: 'levelup', from: 'title', to: 'levelinfo' }, { name: 'startgame', from: 'levelinfo', to: 'playing' }, { name: 'levelover', from: 'playing', to: 'levelcomplete' }]
 });
 
 exports.default = BalisticDefence;
 
-},{"../lib/GameEngine":11,"./entities/City":3,"./entities/EnemyMissile":4,"./entities/PlayerMissile":7,"./objects/MissileLauncher":9,"javascript-state-machine":1}],3:[function(require,module,exports){
+},{"../lib/GameEngine":15,"./scene/LevelOverScene":10,"./scene/LevelUpScene":11,"./scene/PlayScene":12,"./scene/TitleScene":13,"javascript-state-machine":1}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -600,13 +419,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var _class = function (_Entity) {
 	_inherits(_class, _Entity);
 
-	function _class(game, x, y) {
+	function _class(game, x, y, position) {
 		_classCallCheck(this, _class);
 
 		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
 
 		_this.sprite = _this.cachedCityImage();
 		_this.radius = 16;
+		_this.position = position;
 		return _this;
 	}
 
@@ -615,7 +435,7 @@ var _class = function (_Entity) {
 		value: function draw(ctx) {
 			_get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
 			ctx.save();
-			ctx.translate(-this.sprite.width / 2, -this.sprite.height / 2);
+			ctx.translate(-this.sprite.width / 2, -this.sprite.height / 2 - 4);
 			ctx.drawImage(this.sprite, this.x, this.y);
 			ctx.restore();
 		}
@@ -627,6 +447,8 @@ var _class = function (_Entity) {
 
 				if (entity instanceof _EnemyMissile2.default && this.isHit(entity)) {
 					this.removeFromWorld = true;
+					this.game.cities.qty -= 1;
+					this.game.cities.info[this.position].isAlive = false;
 					entity.hitTarget = true;
 					entity.targetX = entity.x;
 					entity.targetY = entity.y;
@@ -682,7 +504,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":12,"./EnemyMissile":4,"./Explosion":5,"./SmokeTrail":8}],4:[function(require,module,exports){
+},{"../../lib/GameEntity":16,"./EnemyMissile":4,"./Explosion":5,"./SmokeTrail":8}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -712,14 +534,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var _class = function (_Entity) {
 	_inherits(_class, _Entity);
 
-	function _class(game, x, y, startX, startY) {
+	function _class(game, x, y, startX, startY, speed) {
 		_classCallCheck(this, _class);
 
 		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, startX, startY));
 
 		_this.hitTarget = false;
 		_this.radius = 2;
-		_this.speed = 40;
+		_this.speed = speed;
 		_this.targetX = x;
 		_this.targetY = y;
 		_this.angle = Math.atan2(x - startX, y - startY);
@@ -732,6 +554,11 @@ var _class = function (_Entity) {
 		key: 'update',
 		value: function update() {
 			_get(Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
+
+			if (this.game.speedMultiplier) {
+				this.speed = 150;
+			}
+
 			if (this.hitTarget === false) {
 				this.x += this.speed * this.game.clockTick * Math.sin(this.angle);
 				this.y += this.speed * this.game.clockTick * Math.cos(this.angle);
@@ -771,6 +598,7 @@ var _class = function (_Entity) {
 	}, {
 		key: 'explode',
 		value: function explode(x, y) {
+			this.game.missilesInPlay -= 1;
 			var explosion = new _Explosion2.default(this.game, x, y, this);
 			this.game.addEntity(explosion);
 		}
@@ -781,7 +609,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":12,"./Explosion":5}],5:[function(require,module,exports){
+},{"../../lib/GameEntity":16,"./Explosion":5}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -833,6 +661,10 @@ var _class = function (_Entity) {
 		value: function update() {
 			_get(Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
 
+			if (this.game.speedMultiplier) {
+				this.speed = 150;
+			}
+
 			if (this.radius >= this.maxRadius) {
 				this.imploding = true;
 			}
@@ -882,7 +714,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":12,"./EnemyMissile":4,"./PlayerMissile":7}],6:[function(require,module,exports){
+},{"../../lib/GameEntity":16,"./EnemyMissile":4,"./PlayerMissile":7}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -933,7 +765,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":12}],7:[function(require,module,exports){
+},{"../../lib/GameEntity":16}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1021,7 +853,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":12,"./Explosion":5,"./MissileTarget":6,"./SmokeTrail":8}],8:[function(require,module,exports){
+},{"../../lib/GameEntity":16,"./Explosion":5,"./MissileTarget":6,"./SmokeTrail":8}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1064,6 +896,11 @@ var _class = function (_Entity) {
 		key: "update",
 		value: function update() {
 			_get(Object.getPrototypeOf(_class.prototype), "update", this).call(this);
+
+			if (this.game.speedMultiplier) {
+				this.speed = 10;
+			}
+
 			this.x += 10 * Math.random() * this.game.clockTick * Math.sin(this.angle);
 			this.y += 40 * Math.random() * this.game.clockTick * Math.cos(this.angle);
 
@@ -1099,8 +936,117 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":12}],9:[function(require,module,exports){
+},{"../../lib/GameEntity":16}],9:[function(require,module,exports){
 "use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var _class = function () {
+  function _class(x, y) {
+    _classCallCheck(this, _class);
+
+    this.x = x;
+    this.y = y;
+    this.missiles = 10;
+  }
+
+  _createClass(_class, [{
+    key: "getDistance",
+    value: function getDistance(targetX, targetY, scale) {
+      var a = targetX / scale - this.x;
+      var b = targetY / scale - this.y;
+      var length = Math.sqrt(a * a + b * b);
+
+      return length;
+    }
+  }, {
+    key: "drawMissileIndicators",
+    value: function drawMissileIndicators(ctx) {
+      if (this.missiles < 4 && this.missiles > 0) {
+        ctx.restore();
+        ctx.fillStyle = "#0000FF";
+        ctx.font = "10px Arial";
+        ctx.textAlign = 'center';
+        ctx.fillText("LOW", this.x, -this.y + ctx.canvas.height + 20);
+        ctx.save();
+        ctx.translate(0, ctx.canvas.height);
+        ctx.scale(1, -1);
+      }
+
+      if (this.missiles < 1) {
+        ctx.restore();
+        ctx.fillStyle = "#0000FF";
+        ctx.font = "10px Arial";
+        ctx.textAlign = 'center';
+        ctx.fillText("OUT", this.x, -this.y + ctx.canvas.height + 20);
+        ctx.save();
+        ctx.translate(0, ctx.canvas.height);
+        ctx.scale(1, -1);
+      }
+
+      for (var m = 0; m < this.missiles; m++) {
+
+        ctx.strokeStyle = "#ff0000";
+        ctx.beginPath();
+
+        if (m === 0) {
+          ctx.moveTo(this.x, this.y - 2);
+          ctx.lineTo(this.x, this.y - 7);
+        }
+        if (m === 1) {
+          ctx.moveTo(this.x - 2, this.y - 9);
+          ctx.lineTo(this.x - 2, this.y - 14);
+        }
+        if (m === 2) {
+          ctx.moveTo(this.x + 2, this.y - 9);
+          ctx.lineTo(this.x + 2, this.y - 14);
+        }
+        if (m === 3) {
+          ctx.moveTo(this.x - 4, this.y - 16);
+          ctx.lineTo(this.x - 4, this.y - 21);
+        }
+        if (m === 4) {
+          ctx.moveTo(this.x, this.y - 16);
+          ctx.lineTo(this.x, this.y - 21);
+        }
+        if (m === 5) {
+          ctx.moveTo(this.x + 4, this.y - 16);
+          ctx.lineTo(this.x + 4, this.y - 21);
+        }
+        if (m === 6) {
+          ctx.moveTo(this.x - 6, this.y - 23);
+          ctx.lineTo(this.x - 6, this.y - 28);
+        }
+        if (m === 7) {
+          ctx.moveTo(this.x - 2, this.y - 23);
+          ctx.lineTo(this.x - 2, this.y - 28);
+        }
+        if (m === 8) {
+          ctx.moveTo(this.x + 2, this.y - 23);
+          ctx.lineTo(this.x + 2, this.y - 28);
+        }
+        if (m === 9) {
+          ctx.moveTo(this.x + 6, this.y - 23);
+          ctx.lineTo(this.x + 6, this.y - 28);
+        }
+        ctx.stroke();
+      }
+    }
+  }]);
+
+  return _class;
+}();
+
+exports.default = _class;
+
+},{}],10:[function(require,module,exports){
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
@@ -1111,22 +1057,74 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var _class = function () {
-	function _class(x, y) {
+	function _class(game) {
 		_classCallCheck(this, _class);
 
-		this.x = x;
-		this.y = y;
-		this.missiles = 10;
+		this.game = game;
+		this.timer = 0;
+
+		this.bonusHandler = ['cities', 'missiles'];
+		this.currentHandler = 0;
+
+		this.cityBonusScore = 0;
+		this.missileBonusScore = 0;
+
+		this.citiesSurvived = [];
+
+		this.setupCitiesSurvived();
 	}
 
 	_createClass(_class, [{
-		key: "getDistance",
-		value: function getDistance(targetX, targetY, scale) {
-			var a = targetX / scale - this.x;
-			var b = targetY / scale - this.y;
-			var length = Math.sqrt(a * a + b * b);
+		key: 'setupCitiesSurvived',
+		value: function setupCitiesSurvived() {
+			var cities = this.game.cities.info;
 
-			return length;
+			for (var city = 0; city < cities.length; city++) {
+				if (cities[city].isAlive) {
+					this.citiesSurvived.push({ x: 0, y: 0 });
+				}
+			}
+		}
+	}, {
+		key: 'update',
+		value: function update() {
+			this.timer += this.game.clockTick;
+		}
+	}, {
+		key: 'draw',
+		value: function draw(ctx) {
+			this.drawLandscape(ctx);
+			this.drawMissileIndicators(ctx);
+
+			ctx.restore();
+			ctx.strokeStyle = '#ffffff';
+			ctx.fillStyle = '#ffffff';
+			ctx.lineWidth = 1;
+			ctx.textBaseline = 'middle';
+			ctx.textAlign = 'center';
+			ctx.font = '40px Arial';
+			ctx.strokeText('Wave ' + this.game.wave + ' Complete', ctx.canvas.width / 2, ctx.canvas.height / 2 - 100);
+			ctx.font = '20px Arial';
+			ctx.fillText('Bonus', ctx.canvas.width / 2, ctx.canvas.height / 2 - 50);
+			ctx.fillStyle = '#ffff00';
+			ctx.textAlign = 'left';
+			ctx.fillText('' + this.cityBonusScore, ctx.canvas.width / 2 - 100, ctx.canvas.height / 2);
+			ctx.fillText('' + this.missileBonusScore, ctx.canvas.width / 2 - 100, ctx.canvas.height / 2 + 40);
+			ctx.save();
+			ctx.translate(0, ctx.canvas.height);
+			ctx.scale(1, -1);
+		}
+	}, {
+		key: 'drawLandscape',
+		value: function drawLandscape(ctx) {
+			ctx.drawImage(this.game.landscapeImage, 0, 0);
+		}
+	}, {
+		key: 'drawMissileIndicators',
+		value: function drawMissileIndicators(ctx) {
+			for (var i = 0; i < this.game.launchpads.length; i++) {
+				this.game.launchpads[i].drawMissileIndicators(ctx);
+			}
 		}
 	}]);
 
@@ -1135,7 +1133,330 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var _class = function () {
+	function _class(game, wave) {
+		_classCallCheck(this, _class);
+
+		this.game = game;
+		this.wave = wave;
+		this.opacity = 0.1;
+		this.toggle = true;
+		this.timer = 0;
+	}
+
+	_createClass(_class, [{
+		key: 'update',
+		value: function update() {
+			this.timer += this.game.clockTick;
+			var toggle = this.toggle ? this.opacity < 1 ? this.opacity += 0.05 : this.toggle = !this.toggle : this.opacity > 0 ? this.opacity -= 0.05 : this.toggle = !this.toggle;
+
+			if (this.timer > 3) {
+				this.game.startgame();
+			}
+		}
+	}, {
+		key: 'draw',
+		value: function draw(ctx) {
+			ctx.restore();
+			ctx.strokeStyle = '#ffffff';
+			ctx.fillStyle = '#ffffff';
+			ctx.lineWidth = 1;
+			ctx.textBaseline = 'middle';
+			ctx.textAlign = 'center';
+			ctx.font = '40px Arial';
+			ctx.strokeText('Wave' + this.wave, ctx.canvas.width / 2, ctx.canvas.height / 2 - 20);
+			ctx.fillStyle = "rgba(255, 255, 255, " + this.opacity + ")";
+			ctx.font = '20px Arial';
+			ctx.fillText('Incoming', ctx.canvas.width / 2, ctx.canvas.height / 2 + 20);
+		}
+	}]);
+
+	return _class;
+}();
+
+exports.default = _class;
+
+},{}],12:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _MissileLauncher = require('../objects/MissileLauncher');
+
+var _MissileLauncher2 = _interopRequireDefault(_MissileLauncher);
+
+var _City = require('../entities/City');
+
+var _City2 = _interopRequireDefault(_City);
+
+var _PlayerMissile = require('../entities/PlayerMissile');
+
+var _PlayerMissile2 = _interopRequireDefault(_PlayerMissile);
+
+var _EnemyMissile = require('../entities/EnemyMissile');
+
+var _EnemyMissile2 = _interopRequireDefault(_EnemyMissile);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var _class = function () {
+	function _class(game, wave) {
+		_classCallCheck(this, _class);
+
+		this.game = game;
+
+		this.wave = wave;
+
+		this.maxMissilesInPlay = null;
+		this.timeBetweenRelease = null;
+		this.maxMissileRelease = null;
+		this.missilesToRelease = null;
+		this.launchSpeed = null;
+
+		this.setupLevel(this.wave);
+
+		this.game.landscapeImage = this.cachedLandscape();
+		this.game.launchpads = [];
+		this.timer = 0;
+		//Setup launchpads
+		this.game.launchpads[0] = new _MissileLauncher2.default(20, 30);
+		this.game.launchpads[1] = new _MissileLauncher2.default(this.game.ctx.canvas.width / 2, 30);
+		this.game.launchpads[2] = new _MissileLauncher2.default(this.game.ctx.canvas.width - 20, 30);
+
+		//Setup cities
+		for (var i = 0; i < this.game.cities.qty; i++) {
+			var cityPosX = (i + 1) * 57 + 16;
+
+			if (i + 1 > 3) {
+				cityPosX = (i + 1) * 57 + 66;
+			}
+
+			this.game.cities.info.push({ x: cityPosX, y: 26, isAlive: true, instance: new _City2.default(this.game, cityPosX, 26, i) });
+			this.game.addEntity(this.game.cities.info[i].instance);
+		}
+	}
+
+	_createClass(_class, [{
+		key: 'setupLevel',
+		value: function setupLevel(wave) {
+			this.maxMissilesInPlay = [8, 8, 8, 8, 10, 10, 10, 10, 12, 12, 12, 12, 14, 14, 14, 14, 16, 16, 16, 16][wave - 1];
+			this.timeBetweenRelease = [3, 3, 3, 3, 2.5, 2.5, 2.5, 2.5, 2, 2, 2, 2, 1.5, 1.5, 1.5, 1.5, 1, 1, 1, 1][wave - 1];
+			this.maxMissileRelease = [4, 4, 4, 4, 6, 6, 6, 6, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8][wave - 1];
+			this.missilesToRelease = [18, 18, 18, 18, 22, 22, 22, 22, 24, 24, 24, 24, 26, 26, 26, 26, 28, 28, 30, 30][wave - 1];
+			this.launchSpeed = [120, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 120][wave - 1];
+		}
+	}, {
+		key: 'update',
+		value: function update() {
+
+			this.timer += this.game.clockTick;
+			if (this.game.click) {
+				this.launchPlayerMissile();
+			}
+
+			//Launch some missiles
+			if (this.timer > this.timeBetweenRelease && this.missilesToRelease > 0) {
+				this.timer = 0;
+				var launchQuantity = this.maxMissilesInPlay - this.game.missilesInPlay;
+				launchQuantity = launchQuantity > this.maxMissileRelease ? this.maxMissileRelease : launchQuantity < this.missilesToRelease ? launchQuantity : this.missilesToRelease;
+
+				this.missilesToRelease -= launchQuantity;
+
+				for (var i = 0; i < launchQuantity; i++) {
+					this.game.missilesInPlay += 1;
+					var enemyMissile = new _EnemyMissile2.default(this.game, Math.floor(Math.random() * 480) + 1, 10, Math.floor(Math.random() * 480) + 1, 320, this.launchSpeed);
+					this.game.addEntity(enemyMissile);
+				}
+			}
+
+			//Run out of missiles
+			if (this.game.launchpads[0].missiles < 1 && this.game.launchpads[1].missiles < 1 && this.game.launchpads[2].missiles < 1) {
+				this.missilesToRelease = 0;
+				this.game.speedMultiplier = true;
+			}
+
+			//No entities on screen apart from cities and wave over or missiles used
+			console.log(this.missilesToRelease < 1);
+			if (this.game.speedMultiplier || this.missilesToRelease < 1) {
+				var complete = false;
+
+				if (this.game.entities.length) {
+					for (var k = 0; k < this.game.entities.length; k++) {
+						console.log("Object is City: ", this.game.entities[k] instanceof _City2.default);
+						if (this.game.entities[k] instanceof _City2.default) {
+							complete = true;
+						} else {
+							complete = false;
+						}
+					}
+				} else {
+					complete = true;
+				}
+				console.log("Complete: ", complete);
+				if (complete) {
+					console.log("Complete!");
+					this.game.levelover(this.game, this.landscapeImage, this.launchpads);
+				}
+			}
+		}
+	}, {
+		key: 'draw',
+		value: function draw(ctx) {
+			this.drawLandscape(ctx);
+			this.drawMissileIndicators(ctx);
+		}
+	}, {
+		key: 'drawLandscape',
+		value: function drawLandscape(ctx) {
+			ctx.drawImage(this.game.landscapeImage, 0, 0);
+		}
+	}, {
+		key: 'drawMissileIndicators',
+		value: function drawMissileIndicators(ctx) {
+			for (var i = 0; i < this.game.launchpads.length; i++) {
+				this.game.launchpads[i].drawMissileIndicators(ctx);
+			}
+		}
+	}, {
+		key: 'launchPlayerMissile',
+		value: function launchPlayerMissile() {
+			var launcherIndex = null,
+			    distance = null,
+			    missile = null,
+			    click = this.game.click,
+			    canvas = this.game.ctx.canvas;
+
+			for (var i = 0; i < this.game.launchpads.length; i++) {
+				var currentDistance = this.game.launchpads[i].getDistance(click.x, click.y, this.game.scale);
+
+				if ((currentDistance < distance || distance === null) && this.game.launchpads[i].missiles > 0) {
+					distance = currentDistance;
+					launcherIndex = i;
+				}
+			}
+
+			if (distance != null) {
+				this.game.launchpads[launcherIndex].missiles -= 1;
+				missile = new _PlayerMissile2.default(this.game, click.x / this.game.scale, canvas.height - click.y / this.game.scale, this.game.launchpads[launcherIndex].x, this.game.launchpads[launcherIndex].y);
+				this.game.addEntity(missile);
+			}
+		}
+
+		//Cahed landscape image
+
+	}, {
+		key: 'cachedLandscape',
+		value: function cachedLandscape() {
+			var platformWidth = 40;
+			var platformIncline = 10;
+			var platformHeight = 30;
+			var groundLevel = 10;
+
+			var offscreencanvas = document.createElement('canvas');
+			var offscreenctx = offscreencanvas.getContext('2d');
+
+			offscreencanvas.width = this.game.ctx.canvas.width;
+			offscreencanvas.height = platformHeight;
+
+			var landscapeDistance = (offscreenctx.canvas.width - platformWidth * 3 - platformIncline * 4) / 2;
+
+			offscreenctx.save();
+			offscreenctx.fillStyle = "#ffff00";
+			offscreenctx.beginPath();
+			offscreenctx.moveTo(0, platformHeight);
+			offscreenctx.lineTo(platformWidth, platformHeight);
+			offscreenctx.lineTo(platformWidth + platformIncline, groundLevel);
+			offscreenctx.lineTo(platformWidth + platformIncline + landscapeDistance, groundLevel);
+			offscreenctx.lineTo(platformWidth + platformIncline * 2 + landscapeDistance, platformHeight);
+			offscreenctx.lineTo(platformWidth * 2 + platformIncline * 2 + landscapeDistance, platformHeight);
+			offscreenctx.lineTo(platformWidth * 2 + platformIncline * 3 + landscapeDistance, groundLevel);
+			offscreenctx.lineTo(platformWidth * 2 + platformIncline * 3 + landscapeDistance * 2, groundLevel);
+			offscreenctx.lineTo(platformWidth * 2 + platformIncline * 4 + landscapeDistance * 2, platformHeight);
+			offscreenctx.lineTo(platformWidth * 3 + platformIncline * 4 + landscapeDistance * 2, platformHeight);
+			offscreenctx.lineTo(platformWidth * 3 + platformIncline * 4 + landscapeDistance * 2, 0);
+			offscreenctx.lineTo(0, 0);
+			offscreenctx.fill();
+			offscreenctx.restore();
+
+			return offscreencanvas;
+		}
+	}]);
+
+	return _class;
+}();
+
+exports.default = _class;
+
+},{"../entities/City":3,"../entities/EnemyMissile":4,"../entities/PlayerMissile":7,"../objects/MissileLauncher":9}],13:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var _class = function () {
+	function _class(game) {
+		_classCallCheck(this, _class);
+
+		this.game = game;
+		this.opacity = 0.1;
+		this.toggle = true;
+	}
+
+	_createClass(_class, [{
+		key: 'update',
+		value: function update() {
+			var toggle = this.toggle ? this.opacity < 1 ? this.opacity += 0.01 : this.toggle = !this.toggle : this.opacity > 0 ? this.opacity -= 0.01 : this.toggle = !this.toggle;
+
+			if (this.game.click) {
+				this.game.click = null;
+				this.game.levelup(); // Fire FSM startgame event;
+			}
+		}
+	}, {
+		key: 'draw',
+		value: function draw(ctx) {
+			ctx.restore();
+			ctx.strokeStyle = '#ffffff';
+			ctx.fillStyle = '#ffffff';
+			ctx.lineWidth = 1;
+			ctx.textBaseline = 'middle';
+			ctx.textAlign = 'center';
+			ctx.font = '40px Arial';
+			ctx.strokeText('Balistic Defence', ctx.canvas.width / 2, ctx.canvas.height / 2 - 20);
+			ctx.fillStyle = "rgba(255, 255, 255, " + this.opacity + ")";
+			ctx.font = '20px Arial';
+			ctx.fillText('click or touch to start', ctx.canvas.width / 2, ctx.canvas.height / 2 + 20);
+		}
+	}]);
+
+	return _class;
+}();
+
+exports.default = _class;
+
+},{}],14:[function(require,module,exports){
 'use strict';
 
 var _BalisticDefence = require('./game/BalisticDefence');
@@ -1151,7 +1472,7 @@ var game = new _BalisticDefence2.default();
 
 game.init(ctx);
 
-},{"./game/BalisticDefence":2}],11:[function(require,module,exports){
+},{"./game/BalisticDefence":2}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1311,7 +1632,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{"./GameTimer":13}],12:[function(require,module,exports){
+},{"./GameTimer":17}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1337,7 +1658,16 @@ var _class = function () {
 		value: function update() {}
 	}, {
 		key: "draw",
-		value: function draw(ctx) {}
+		value: function draw(ctx) {
+			if (this.game.showOutlines && this.radius) {
+				ctx.beginPath();
+				ctx.strokeStyle = "green";
+				ctx.lineWidth = 1;
+				ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+				ctx.stroke();
+				ctx.closePath();
+			}
+		}
 	}]);
 
 	return _class;
@@ -1345,7 +1675,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],13:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1387,4 +1717,4 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}]},{},[10]);
+},{}]},{},[14]);

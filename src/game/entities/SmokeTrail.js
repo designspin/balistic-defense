@@ -12,6 +12,11 @@ export default class extends Entity {
 
 	update() {
 		super.update();
+
+		if(this.game.speedMultiplier) {
+			this.speed = 10;
+		}
+
 		this.x += ((10*Math.random()) * this.game.clockTick) * Math.sin(this.angle);
 	  this.y += ((40*Math.random()) * this.game.clockTick) * Math.cos(this.angle);
 	  

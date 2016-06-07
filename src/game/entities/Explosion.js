@@ -15,6 +15,10 @@ export default class extends Entity {
 	update() {
 		super.update();
 
+		if(this.game.speedMultiplier) {
+			this.speed = 150;
+		}
+
 		if(this.radius >=  this.maxRadius) {
 			this.imploding = true;
 		}

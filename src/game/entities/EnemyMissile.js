@@ -2,11 +2,11 @@ import Entity from '../../lib/GameEntity';
 import Explosion from './Explosion';
 
 export default class extends Entity {
-	constructor(game, x, y, startX, startY) {
+	constructor(game, x, y, startX, startY, speed) {
 		super(game, startX, startY);
 		this.hitTarget = false;
 		this.radius = 2;
-		this.speed = 40;
+		this.speed = speed;
 		this.targetX = x;
 		this.targetY = y;
 		this.angle = Math.atan2(x - startX, y - startY);
@@ -16,6 +16,11 @@ export default class extends Entity {
 
 	update() {
 		super.update();
+
+		if(this.game.speedMultiplier) {
+			this.speed = 150;
+		}
+
 		if (this.hitTarget === false) {
 	    this.x += (this.speed * this.game.clockTick) * Math.sin(this.angle);
 	    this.y += (this.speed * this.game.clockTick) * Math.cos(this.angle);
@@ -53,6 +58,7 @@ export default class extends Entity {
 	}
 
 	explode(x, y) {
+		this.game.missilesInPlay -= 1;
 		let explosion = new Explosion(this.game, x, y, this);
    	this.game.addEntity(explosion);
 	} 

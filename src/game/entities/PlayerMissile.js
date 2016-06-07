@@ -18,7 +18,7 @@ export default class extends Entity {
 
 	update() {
 		super.update()
-
+		
 		let particle = new SmokeTrail(this.game, this.x, this.y, this.angle);
 		this.game.addEntity(particle);
 

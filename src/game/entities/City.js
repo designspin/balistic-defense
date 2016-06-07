@@ -5,16 +5,17 @@ import Explosion from './Explosion';
 import EnemyMissile from './EnemyMissile';
 
 export default class extends Entity {
-	constructor(game, x, y) {
+	constructor(game, x, y, position) {
 		super(game, x, y);
 		this.sprite = this.cachedCityImage();
 		this.radius = 16;
+		this.position = position;
 	}
 
 	draw(ctx) {
 		super.draw(ctx);
 		ctx.save();
-		ctx.translate(-this.sprite.width / 2, -this.sprite.height / 2);
+		ctx.translate(-this.sprite.width / 2, (-this.sprite.height / 2) - 4);
 		ctx.drawImage(this.sprite, this.x, this.y);
 		ctx.restore()
 	}
@@ -25,6 +26,8 @@ export default class extends Entity {
 
 			if(entity instanceof EnemyMissile && this.isHit(entity)) {
 				this.removeFromWorld = true;
+				this.game.cities.qty -= 1;
+				this.game.cities.info[this.position].isAlive = false;
 				entity.hitTarget = true;
 				entity.targetX = entity.x;
 				entity.targetY = entity.y;
