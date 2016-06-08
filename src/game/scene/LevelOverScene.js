@@ -64,6 +64,7 @@ export default class {
 						this.game.launchpads[2].missiles -= 1;
 						this.missileBonusScore += 5;
 					} else {
+					  this.updateInterval = 3;
 					  this.currentHandler += 1;
 					}
 					

@@ -24,7 +24,7 @@ export default class {
 		ctx.textBaseline = 'middle';
 		ctx.textAlign = 'center';
 		ctx.font = '40px Arial';
-		ctx.strokeText('Wave' + this.wave, ctx.canvas.width / 2, ctx.canvas.height / 2 - 20);
+		ctx.strokeText(`Wave ${this.wave}`, ctx.canvas.width / 2, ctx.canvas.height / 2 - 20);
 		ctx.fillStyle = "rgba(255, 255, 255, " + this.opacity + ")";
 		ctx.font = '20px Arial';
 		ctx.fillText('Incoming', ctx.canvas.width / 2, ctx.canvas.height / 2 + 20);
