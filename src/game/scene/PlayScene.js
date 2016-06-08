@@ -29,7 +29,6 @@ export default class {
 
 		//Setup cities
     	for(let i = 0; i < this.game.cities.info.length; i++) {
-    		console.log(this.game.cities.info[i].isAlive);
     		if(this.game.cities.info[i].isAlive) {
     			let city = this.game.cities.info[i];
     			city.instance = new City(this.game, city.x, city.y, i)
@@ -48,6 +47,8 @@ export default class {
 
 	update() {
 		this.timer += this.game.clockTick;
+
+		//Launch a missile on click or touch
 		if(this.game.click) {
 			this.launchPlayerMissile();
 		}
@@ -65,7 +66,6 @@ export default class {
 				var enemyMissile = new EnemyMissile(this.game, Math.floor(Math.random() * 480) +1, 10,  Math.floor(Math.random() * 480) +1, 320, this.launchSpeed);
       			this.game.addEntity(enemyMissile);
 			}
-			
 		}
 
 		//Run out of missiles
@@ -100,8 +100,16 @@ export default class {
 	}
 
 	draw(ctx) {
-		this.drawLandscape(ctx);
-		this.drawMissileIndicators(ctx);
+	  // Create gradient
+      let grd = ctx.createLinearGradient(0, ctx.canvas.height, 0, 0);
+      // Add colors
+      grd.addColorStop(0.000, 'rgba(0, 0, 255, 1.000)');
+      grd.addColorStop(1.000, 'rgba(0, 255, 255, 1.000)');
+      ctx.fillStyle = grd;
+      ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+	  this.drawLandscape(ctx);
+	  this.drawMissileIndicators(ctx);
 	}
 
 	drawLandscape(ctx) {

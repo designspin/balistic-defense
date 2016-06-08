@@ -52,7 +52,16 @@ export default class extends Entity {
 	}
 
 	draw(ctx) {
-		ctx.fillStyle = '#ffffff';
+		// Create gradient
+      let grd = ctx.createRadialGradient(this.x, this.y, this.radius / 4, this.x, this.y, this.radius);
+      
+      // Add colors
+      grd.addColorStop(0.379, 'rgba(255, 255, 255, 1.000)');
+      grd.addColorStop(0.551, 'rgba(255, 255, 0, 1.000)');
+      grd.addColorStop(0.877, 'rgba(255, 127, 0, 1.000)');
+      grd.addColorStop(0.937, 'rgba(255, 0, 0, 0.714)');
+
+		ctx.fillStyle = grd;
 		ctx.beginPath();
 		ctx.arc(this.x, this.y, this.radius, 0, 2*Math.PI);
 		ctx.fill();

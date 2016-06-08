@@ -318,11 +318,6 @@ var BalisticDefence = function (_GameEngine) {
 		////////////////////////////
 
 	}, {
-		key: 'onenterstartup',
-		value: function onenterstartup() {
-			console.log("Startup Called!");
-		}
-	}, {
 		key: 'onentertitle',
 		value: function onentertitle() {
 			this.scene = new _TitleScene2.default(this);
@@ -599,15 +594,17 @@ var _class = function (_Entity) {
 		value: function draw(ctx) {
 			_get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
 			ctx.beginPath();
-			ctx.strokeStyle = "#FF0000";
+			var gradient = ctx.createLinearGradient(this.startX, this.startY, this.x, this.y);
+			gradient.addColorStop(0, "rgba(255,255,255,0.1)");
+			gradient.addColorStop(0.8, "rgba(255,255,255,0.9)");
+			gradient.addColorStop(1, "rgba(255,255,0,0.9)");
+			ctx.strokeStyle = gradient;
 			ctx.moveTo(this.startX, this.startY);
 			ctx.lineTo(this.x, this.y);
 			ctx.lineWidth = 2;
 			ctx.stroke();
 			ctx.beginPath();
-			ctx.fillStyle = '#' + function co(lor) {
-				return (lor += [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'a', 'b', 'c', 'd', 'e', 'f'][Math.floor(Math.random() * 16)]) && lor.length == 6 ? lor : co(lor);
-			}('');
+			ctx.fillStyle = '#FFA500';
 			ctx.rect(this.x - 1, this.y - 1, 2, 2);
 			ctx.fill();
 		}
@@ -711,7 +708,16 @@ var _class = function (_Entity) {
 	}, {
 		key: 'draw',
 		value: function draw(ctx) {
-			ctx.fillStyle = '#ffffff';
+			// Create gradient
+			var grd = ctx.createRadialGradient(this.x, this.y, this.radius / 4, this.x, this.y, this.radius);
+
+			// Add colors
+			grd.addColorStop(0.379, 'rgba(255, 255, 255, 1.000)');
+			grd.addColorStop(0.551, 'rgba(255, 255, 0, 1.000)');
+			grd.addColorStop(0.877, 'rgba(255, 127, 0, 1.000)');
+			grd.addColorStop(0.937, 'rgba(255, 0, 0, 0.714)');
+
+			ctx.fillStyle = grd;
 			ctx.beginPath();
 			ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
 			ctx.fill();
@@ -1327,7 +1333,6 @@ var _class = function () {
 
 		//Setup cities
 		for (var i = 0; i < this.game.cities.info.length; i++) {
-			console.log(this.game.cities.info[i].isAlive);
 			if (this.game.cities.info[i].isAlive) {
 				var city = this.game.cities.info[i];
 				city.instance = new _City2.default(this.game, city.x, city.y, i);
@@ -1349,6 +1354,8 @@ var _class = function () {
 		key: 'update',
 		value: function update() {
 			this.timer += this.game.clockTick;
+
+			//Launch a missile on click or touch
 			if (this.game.click) {
 				this.launchPlayerMissile();
 			}
@@ -1400,6 +1407,14 @@ var _class = function () {
 	}, {
 		key: 'draw',
 		value: function draw(ctx) {
+			// Create gradient
+			var grd = ctx.createLinearGradient(0, ctx.canvas.height, 0, 0);
+			// Add colors
+			grd.addColorStop(0.000, 'rgba(0, 0, 255, 1.000)');
+			grd.addColorStop(1.000, 'rgba(0, 255, 255, 1.000)');
+			ctx.fillStyle = grd;
+			ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
 			this.drawLandscape(ctx);
 			this.drawMissileIndicators(ctx);
 		}

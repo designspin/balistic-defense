@@ -44,17 +44,19 @@ export default class extends Entity {
 	draw(ctx) {
 		super.draw(ctx);
 		ctx.beginPath();
-	  ctx.strokeStyle = "#FF0000";
-	  ctx.moveTo(this.startX, this.startY);
-	  ctx.lineTo(this.x, this.y);
-	  ctx.lineWidth = 2;
-	  ctx.stroke();
-	  ctx.beginPath();
-	  ctx.fillStyle = '#' + (function co(lor){   return (lor +=
-	  [0,1,2,3,4,5,6,7,8,9,'a','b','c','d','e','f'][Math.floor(Math.random()*16)])
-	  && (lor.length == 6) ?  lor : co(lor); })('');
-	  ctx.rect(this.x - 1, this.y - 1, 2 ,2);
-	  ctx.fill();
+		let gradient = ctx.createLinearGradient(this.startX, this.startY, this.x, this.y);
+		gradient.addColorStop(0, "rgba(255,255,255,0.1)");
+		gradient.addColorStop(0.8, "rgba(255,255,255,0.9)")
+		gradient.addColorStop(1, "rgba(255,255,0,0.9)");
+		ctx.strokeStyle = gradient;
+		ctx.moveTo(this.startX, this.startY);
+		ctx.lineTo(this.x, this.y);
+		ctx.lineWidth = 2;
+		ctx.stroke();
+		ctx.beginPath();
+		ctx.fillStyle = '#FFA500' 
+		ctx.rect(this.x - 1, this.y - 1, 2 ,2);
+	 	ctx.fill();
 	}
 
 	explode(x, y) {

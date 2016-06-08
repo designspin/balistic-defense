@@ -43,10 +43,6 @@ class BalisticDefence extends GameEngine {
 	////////////////////////////
 	// State machine handlers //
 	////////////////////////////
-	onenterstartup() {
-		console.log("Startup Called!");
-	}
-
 	onentertitle() {
 		this.scene = new TitleScene(this);
 		this.start();
