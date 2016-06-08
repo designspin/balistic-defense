@@ -280,13 +280,24 @@ var BalisticDefence = function (_GameEngine) {
 
 		_this.ctx = null;
 		_this.scene = null;
-		_this.showOutlines = true;
+		_this.showOutlines = false;
 		_this.wave = 0;
 		_this.cities = { qty: 6, info: [] };
 		_this.missilesInPlay = 0;
 		_this.speedMultiplier = false;
 		_this.landscapeImage = null;
 		_this.launchpads = [];
+
+		//Setup cities
+		for (var i = 0; i < _this.cities.qty; i++) {
+			var cityPosX = (i + 1) * 57 + 16;
+
+			if (i + 1 > 3) {
+				cityPosX = (i + 1) * 57 + 66;
+			}
+
+			_this.cities.info.push({ x: cityPosX, y: 26, isAlive: true, instance: null });
+		}
 		return _this;
 	}
 
@@ -306,6 +317,11 @@ var BalisticDefence = function (_GameEngine) {
 		// State machine handlers //
 		////////////////////////////
 
+	}, {
+		key: 'onenterstartup',
+		value: function onenterstartup() {
+			console.log("Startup Called!");
+		}
 	}, {
 		key: 'onentertitle',
 		value: function onentertitle() {
@@ -376,7 +392,7 @@ var BalisticDefence = function (_GameEngine) {
 
 _javascriptStateMachine2.default.create({
 	target: BalisticDefence.prototype,
-	events: [{ name: 'startup', from: 'none', to: 'title' }, { name: 'levelup', from: 'title', to: 'levelinfo' }, { name: 'startgame', from: 'levelinfo', to: 'playing' }, { name: 'levelover', from: 'playing', to: 'levelcomplete' }]
+	events: [{ name: 'startup', from: 'none', to: 'title' }, { name: 'levelup', from: ['title', 'levelcomplete'], to: 'levelinfo' }, { name: 'startgame', from: 'levelinfo', to: 'playing' }, { name: 'levelover', from: 'playing', to: 'levelcomplete' }]
 });
 
 exports.default = BalisticDefence;
@@ -1079,6 +1095,7 @@ var _class = function () {
 		this.missileBonusScore = 0;
 
 		this.citiesSurvived = [];
+		this.cityIndicators = [];
 
 		this.setupCitiesSurvived();
 	}
@@ -1108,7 +1125,8 @@ var _class = function () {
 					case 'cities':
 						if (this.citiesSurvived.length) {
 							this.citiesSurvived[0].original.removeFromWorld = true;
-							this.game.addEntity(new _City2.default(this.game, this.citiesSurvived[0].x, this.citiesSurvived[0].y));
+							this.cityIndicators.push(new _City2.default(this.game, this.citiesSurvived[0].x, this.citiesSurvived[0].y));
+							this.game.addEntity(this.cityIndicators[this.cityIndicators.length - 1]);
 							this.citiesSurvived.shift();
 							this.cityBonusScore += 100;
 						} else {
@@ -1132,6 +1150,12 @@ var _class = function () {
 							this.currentHandler += 1;
 						}
 
+						break;
+					case 'finished':
+						for (var i = 0; i < this.cityIndicators.length; i++) {
+							this.cityIndicators[i].removeFromWorld = true;
+						}
+						this.game.levelup();
 						break;
 				}
 			}
@@ -1301,15 +1325,13 @@ var _class = function () {
 		this.game.launchpads[2] = new _MissileLauncher2.default(this.game.ctx.canvas.width - 20, 30);
 
 		//Setup cities
-		for (var i = 0; i < this.game.cities.qty; i++) {
-			var cityPosX = (i + 1) * 57 + 16;
-
-			if (i + 1 > 3) {
-				cityPosX = (i + 1) * 57 + 66;
+		for (var i = 0; i < this.game.cities.info.length; i++) {
+			console.log(this.game.cities.info[i].isAlive);
+			if (this.game.cities.info[i].isAlive) {
+				var city = this.game.cities.info[i];
+				city.instance = new _City2.default(this.game, city.x, city.y, i);
+				this.game.addEntity(city.instance);
 			}
-
-			this.game.cities.info.push({ x: cityPosX, y: 26, isAlive: true, instance: new _City2.default(this.game, cityPosX, 26, i) });
-			this.game.addEntity(this.game.cities.info[i].instance);
 		}
 	}
 
@@ -1325,7 +1347,6 @@ var _class = function () {
 	}, {
 		key: 'update',
 		value: function update() {
-
 			this.timer += this.game.clockTick;
 			if (this.game.click) {
 				this.launchPlayerMissile();
@@ -1353,7 +1374,6 @@ var _class = function () {
 			}
 
 			//No entities on screen apart from cities and wave over or missiles used
-			console.log(this.missilesToRelease < 1);
 			if (this.game.speedMultiplier || this.missilesToRelease < 1) {
 				var complete = false;
 

@@ -28,17 +28,15 @@ export default class {
 		this.game.launchpads[2] = new MissileLauncher(this.game.ctx.canvas.width - 20, 30);
 
 		//Setup cities
-		for (let i = 0; i < this.game.cities.qty; i++) {
-			let cityPosX = ((i+1) * 57) + 16;
-
-	    if (i + 1 > 3) {
-	    	cityPosX = ((i+1) * 57) + 66;
-	    }
-
-	    this.game.cities.info.push({x: cityPosX, y: 26, isAlive: true, instance: new City(this.game, cityPosX, 26, i)});
-    	this.game.addEntity(this.game.cities.info[i].instance);
+    	for(let i = 0; i < this.game.cities.info.length; i++) {
+    		console.log(this.game.cities.info[i].isAlive);
+    		if(this.game.cities.info[i].isAlive) {
+    			let city = this.game.cities.info[i];
+    			city.instance = new City(this.game, city.x, city.y, i)
+    			this.game.addEntity(city.instance);
+    		}
+    	}	
   	}
-	}
 
 	setupLevel(wave) {
 		this.maxMissilesInPlay  = [8  ,8  ,8  ,8  ,10  ,10  ,10  ,10  ,12 ,12 ,12 ,12 ,14  ,14  ,14  ,14  ,16  ,16  ,16  ,16][wave-1];
@@ -65,7 +63,7 @@ export default class {
 			for(let i = 0; i < launchQuantity; i++) {
 				this.game.missilesInPlay += 1;
 				var enemyMissile = new EnemyMissile(this.game, Math.floor(Math.random() * 480) +1, 10,  Math.floor(Math.random() * 480) +1, 320, this.launchSpeed);
-      	this.game.addEntity(enemyMissile);
+      			this.game.addEntity(enemyMissile);
 			}
 			
 		}
@@ -78,7 +76,6 @@ export default class {
 
 
 		//No entities on screen apart from cities and wave over or missiles used
-		console.log(this.missilesToRelease < 1);
 		if(this.game.speedMultiplier || this.missilesToRelease < 1) {
 			let complete = false;
 

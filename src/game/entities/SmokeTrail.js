@@ -32,7 +32,7 @@ export default class extends Entity {
 	draw(ctx) {
 		super.draw(ctx);
 
-		if(this.updateCount < 3) {
+	if(this.updateCount < 3) {
 	    ctx.fillStyle = "rgba(255, 255, 0," + 0.3 + ")";
 	  }
 	  else if(this.updateCount < 6) {

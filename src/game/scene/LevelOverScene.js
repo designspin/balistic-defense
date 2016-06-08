@@ -14,6 +14,7 @@ export default class {
 		this.missileBonusScore = 0;
 
 		this.citiesSurvived = [];
+		this.cityIndicators = [];
 
 		this.setupCitiesSurvived();
 	}
@@ -41,7 +42,8 @@ export default class {
 				case 'cities':
 					if(this.citiesSurvived.length) {
 						this.citiesSurvived[0].original.removeFromWorld = true;
-						this.game.addEntity(new City(this.game, this.citiesSurvived[0].x, this.citiesSurvived[0].y));
+						this.cityIndicators.push(new City(this.game, this.citiesSurvived[0].x, this.citiesSurvived[0].y));
+						this.game.addEntity(this.cityIndicators[this.cityIndicators.length-1]);
 						this.citiesSurvived.shift();
 						this.cityBonusScore += 100;
 					} else {
@@ -65,6 +67,12 @@ export default class {
 					  this.currentHandler += 1;
 					}
 					
+					break;
+				case 'finished':
+					for(let i = 0; i < this.cityIndicators.length; i++) {
+						this.cityIndicators[i].removeFromWorld = true;
+					}
+					this.game.levelup();
 					break;
 			}
 

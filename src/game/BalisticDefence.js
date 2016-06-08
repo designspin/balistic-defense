@@ -11,13 +11,24 @@ class BalisticDefence extends GameEngine {
 		super();
 		this.ctx = null;
 		this.scene = null;
-		this.showOutlines = true;
+		this.showOutlines = false;
 		this.wave = 0;
 		this.cities = {qty: 6, info:[]};
 		this.missilesInPlay = 0;
 		this.speedMultiplier = false;
 		this.landscapeImage = null;
 		this.launchpads = [];
+
+		//Setup cities
+		for (let i = 0; i < this.cities.qty; i++) {
+			let cityPosX = ((i+1) * 57) + 16;
+
+		    if (i + 1 > 3) {
+		    	cityPosX = ((i+1) * 57) + 66;
+		    }
+
+		    this.cities.info.push({x: cityPosX, y: 26, isAlive: true, instance: null });
+		}
 	}
 
 	init(ctx) {
@@ -32,6 +43,9 @@ class BalisticDefence extends GameEngine {
 	////////////////////////////
 	// State machine handlers //
 	////////////////////////////
+	onenterstartup() {
+		console.log("Startup Called!");
+	}
 
 	onentertitle() {
 		this.scene = new TitleScene(this);
@@ -85,7 +99,7 @@ FSM.create({
 	target: BalisticDefence.prototype,
 	events: [
 		{name: 'startup', from: 'none', to: 'title'},
-		{name: 'levelup', from: 'title', to: 'levelinfo'},
+		{name: 'levelup', from: ['title', 'levelcomplete'], to: 'levelinfo'},
 		{name: 'startgame', from: 'levelinfo', to: 'playing'},
 		{name: 'levelover', from: 'playing', to: 'levelcomplete'}
 	]
