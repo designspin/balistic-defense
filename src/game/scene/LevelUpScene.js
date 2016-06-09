@@ -9,7 +9,7 @@ export default class {
 
 	update() {
 		this.timer += this.game.clockTick;
-		const toggle = (this.toggle) ? (this.opacity < 1 ? this.opacity += 0.05 : this.toggle = !this.toggle) : (this.opacity > 0 ? this.opacity -= 0.05 : this.toggle = !this.toggle);
+		const toggle = (this.toggle) ? (this.opacity < 1 ? this.opacity += 0.05 : this.toggle = !this.toggle) : (this.opacity > 0.05 ? this.opacity -= 0.05 : this.toggle = !this.toggle);
 
 		if(this.timer > 3) {
 			this.game.startgame();
@@ -19,13 +19,14 @@ export default class {
 	draw(ctx) {
 		ctx.restore();
 		ctx.strokeStyle = '#ffffff';
-		ctx.fillStyle = '#ffffff';
+		ctx.fillStyle = '#000000';
 		ctx.lineWidth = 1;
 		ctx.textBaseline = 'middle';
 		ctx.textAlign = 'center';
 		ctx.font = '40px Arial';
+		ctx.fillText(`Wave ${this.wave}`, ctx.canvas.width / 2, ctx.canvas.height / 2 - 20);
 		ctx.strokeText(`Wave ${this.wave}`, ctx.canvas.width / 2, ctx.canvas.height / 2 - 20);
-		ctx.fillStyle = "rgba(255, 255, 255, " + this.opacity + ")";
+		ctx.fillStyle = "rgba(255, 0, 0, " + this.opacity + ")";
 		ctx.font = '20px Arial';
 		ctx.fillText('Incoming', ctx.canvas.width / 2, ctx.canvas.height / 2 + 20);
 	}

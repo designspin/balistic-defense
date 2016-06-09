@@ -17,11 +17,12 @@ export default class {
 	draw(ctx) {
 		ctx.restore();
 		ctx.strokeStyle = '#ffffff';
-		ctx.fillStyle = '#ffffff';
+		ctx.fillStyle = '#000000';
 		ctx.lineWidth = 1;
 		ctx.textBaseline = 'middle';
 		ctx.textAlign = 'center';
 		ctx.font = '40px Arial';
+		ctx.fillText('Balistic Defence', ctx.canvas.width / 2, ctx.canvas.height / 2 - 20);
 		ctx.strokeText('Balistic Defence', ctx.canvas.width / 2, ctx.canvas.height / 2 - 20);
 		ctx.fillStyle = "rgba(255, 255, 255, " + this.opacity + ")";
 		ctx.font = '20px Arial';

@@ -294,6 +294,7 @@ var BalisticDefence = function (_GameEngine) {
 		_this.missilesInPlay = 0;
 		_this.speedMultiplier = false;
 		_this.landscapeImage = null;
+		_this.background = null;
 		_this.launchpads = [];
 
 		_this.ASSET_MANAGER = new _AssetManager2.default();
@@ -315,6 +316,7 @@ var BalisticDefence = function (_GameEngine) {
 		key: 'init',
 		value: function init(ctx) {
 			_get(Object.getPrototypeOf(BalisticDefence.prototype), 'init', this).call(this, ctx);
+			this.background = this.cacheBackgroundImage();
 			this.startup(); // Fire FSM startup event;
 		}
 	}, {
@@ -384,6 +386,7 @@ var BalisticDefence = function (_GameEngine) {
 			var _this2 = this;
 
 			_get(Object.getPrototypeOf(BalisticDefence.prototype), 'draw', this).call(this, function (game) {
+				_this2.ctx.drawImage(_this2.background, 0, 0);
 				game.drawScene(_this2.ctx);
 			});
 		}
@@ -394,6 +397,24 @@ var BalisticDefence = function (_GameEngine) {
 		key: 'drawScene',
 		value: function drawScene(ctx) {
 			this.scene.draw(ctx);
+		}
+	}, {
+		key: 'cacheBackgroundImage',
+		value: function cacheBackgroundImage() {
+			var offscreencanvas = document.createElement('canvas');
+			offscreencanvas.width = this.ctx.canvas.width;
+			offscreencanvas.height = this.ctx.canvas.height;
+			var offctx = offscreencanvas.getContext('2d');
+
+			// Create gradient
+			var grd = offctx.createLinearGradient(0, this.ctx.canvas.height, 0, 0);
+			// Add colors
+			grd.addColorStop(0.000, 'rgba(0, 0, 255, 1.000)');
+			grd.addColorStop(1.000, 'rgba(0, 255, 255, 1.000)');
+			offctx.fillStyle = grd;
+			offctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+
+			return offscreencanvas;
 		}
 	}]);
 
@@ -985,12 +1006,13 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var _class = function () {
-  function _class(x, y) {
+  function _class(game, x, y) {
     _classCallCheck(this, _class);
 
     this.x = x;
     this.y = y;
     this.missiles = 10;
+    this.sprite = game.ASSET_MANAGER.getAsset('images/missile-indicator.png');
   }
 
   _createClass(_class, [{
@@ -1010,7 +1032,7 @@ var _class = function () {
         ctx.fillStyle = "#0000FF";
         ctx.font = "10px Arial";
         ctx.textAlign = 'center';
-        ctx.fillText("LOW", this.x, -this.y + ctx.canvas.height + 20);
+        ctx.fillText("LOW", this.x, -this.y + ctx.canvas.height + 30);
         ctx.save();
         ctx.translate(0, ctx.canvas.height);
         ctx.scale(1, -1);
@@ -1021,59 +1043,46 @@ var _class = function () {
         ctx.fillStyle = "#0000FF";
         ctx.font = "10px Arial";
         ctx.textAlign = 'center';
-        ctx.fillText("OUT", this.x, -this.y + ctx.canvas.height + 20);
+        ctx.fillText("OUT", this.x, -this.y + ctx.canvas.height + 30);
         ctx.save();
         ctx.translate(0, ctx.canvas.height);
         ctx.scale(1, -1);
       }
 
       for (var m = 0; m < this.missiles; m++) {
-
-        ctx.strokeStyle = "#ff0000";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-
+        ctx.save();
+        ctx.translate(-3, -5);
         if (m === 0) {
-          ctx.moveTo(this.x, this.y - 2);
-          ctx.lineTo(this.x, this.y - 7);
+          ctx.drawImage(this.sprite, this.x, this.y, this.sprite.width, this.sprite.height);
         }
         if (m === 1) {
-          ctx.moveTo(this.x - 2, this.y - 9);
-          ctx.lineTo(this.x - 2, this.y - 14);
+          ctx.drawImage(this.sprite, this.x - 3, this.y - 11, this.sprite.width, this.sprite.height);
         }
         if (m === 2) {
-          ctx.moveTo(this.x + 2, this.y - 9);
-          ctx.lineTo(this.x + 2, this.y - 14);
+          ctx.drawImage(this.sprite, this.x + 3, this.y - 11, this.sprite.width, this.sprite.height);
         }
         if (m === 3) {
-          ctx.moveTo(this.x - 4, this.y - 16);
-          ctx.lineTo(this.x - 4, this.y - 21);
+          ctx.drawImage(this.sprite, this.x - 6, this.y - 22, this.sprite.width, this.sprite.height);
         }
         if (m === 4) {
-          ctx.moveTo(this.x, this.y - 16);
-          ctx.lineTo(this.x, this.y - 21);
+          ctx.drawImage(this.sprite, this.x, this.y - 22, this.sprite.width, this.sprite.height);
         }
         if (m === 5) {
-          ctx.moveTo(this.x + 4, this.y - 16);
-          ctx.lineTo(this.x + 4, this.y - 21);
+          ctx.drawImage(this.sprite, this.x + 6, this.y - 22, this.sprite.width, this.sprite.height);
         }
         if (m === 6) {
-          ctx.moveTo(this.x - 6, this.y - 23);
-          ctx.lineTo(this.x - 6, this.y - 28);
+          ctx.drawImage(this.sprite, this.x - 9, this.y - 33, this.sprite.width, this.sprite.height);
         }
         if (m === 7) {
-          ctx.moveTo(this.x - 2, this.y - 23);
-          ctx.lineTo(this.x - 2, this.y - 28);
+          ctx.drawImage(this.sprite, this.x - 3, this.y - 33, this.sprite.width, this.sprite.height);
         }
         if (m === 8) {
-          ctx.moveTo(this.x + 2, this.y - 23);
-          ctx.lineTo(this.x + 2, this.y - 28);
+          ctx.drawImage(this.sprite, this.x + 3, this.y - 33, this.sprite.width, this.sprite.height);
         }
         if (m === 9) {
-          ctx.moveTo(this.x + 6, this.y - 23);
-          ctx.lineTo(this.x + 6, this.y - 28);
+          ctx.drawImage(this.sprite, this.x + 9, this.y - 33, this.sprite.width, this.sprite.height);
         }
-        ctx.stroke();
+        ctx.restore();
       }
     }
   }]);
@@ -1190,13 +1199,15 @@ var _class = function () {
 
 			ctx.restore();
 			ctx.strokeStyle = '#ffffff';
-			ctx.fillStyle = '#ffffff';
+			ctx.fillStyle = '#000000';
 			ctx.lineWidth = 1;
 			ctx.textBaseline = 'middle';
 			ctx.textAlign = 'center';
 			ctx.font = '40px Arial';
+			ctx.fillText('Wave ' + this.game.wave + ' Complete', ctx.canvas.width / 2, ctx.canvas.height / 2 - 100);
 			ctx.strokeText('Wave ' + this.game.wave + ' Complete', ctx.canvas.width / 2, ctx.canvas.height / 2 - 100);
 			ctx.font = '20px Arial';
+			ctx.fillStyle = '#ffffff';
 			ctx.fillText('Bonus', ctx.canvas.width / 2, ctx.canvas.height / 2 - 50);
 			ctx.fillStyle = '#ffff00';
 			ctx.textAlign = 'left';
@@ -1265,7 +1276,7 @@ var _class = function () {
 		key: 'update',
 		value: function update() {
 			this.timer += this.game.clockTick;
-			var toggle = this.toggle ? this.opacity < 1 ? this.opacity += 0.05 : this.toggle = !this.toggle : this.opacity > 0 ? this.opacity -= 0.05 : this.toggle = !this.toggle;
+			var toggle = this.toggle ? this.opacity < 1 ? this.opacity += 0.05 : this.toggle = !this.toggle : this.opacity > 0.05 ? this.opacity -= 0.05 : this.toggle = !this.toggle;
 
 			if (this.timer > 3) {
 				this.game.startgame();
@@ -1276,13 +1287,14 @@ var _class = function () {
 		value: function draw(ctx) {
 			ctx.restore();
 			ctx.strokeStyle = '#ffffff';
-			ctx.fillStyle = '#ffffff';
+			ctx.fillStyle = '#000000';
 			ctx.lineWidth = 1;
 			ctx.textBaseline = 'middle';
 			ctx.textAlign = 'center';
 			ctx.font = '40px Arial';
+			ctx.fillText('Wave ' + this.wave, ctx.canvas.width / 2, ctx.canvas.height / 2 - 20);
 			ctx.strokeText('Wave ' + this.wave, ctx.canvas.width / 2, ctx.canvas.height / 2 - 20);
-			ctx.fillStyle = "rgba(255, 255, 255, " + this.opacity + ")";
+			ctx.fillStyle = "rgba(255, 0, 0, " + this.opacity + ")";
 			ctx.font = '20px Arial';
 			ctx.fillText('Incoming', ctx.canvas.width / 2, ctx.canvas.height / 2 + 20);
 		}
@@ -1395,9 +1407,9 @@ var _class = function () {
 		this.game.launchpads = [];
 		this.timer = 0;
 		//Setup launchpads
-		this.game.launchpads[0] = new _MissileLauncher2.default(20, 30);
-		this.game.launchpads[1] = new _MissileLauncher2.default(this.game.ctx.canvas.width / 2, 30);
-		this.game.launchpads[2] = new _MissileLauncher2.default(this.game.ctx.canvas.width - 20, 30);
+		this.game.launchpads[0] = new _MissileLauncher2.default(game, 20, 40);
+		this.game.launchpads[1] = new _MissileLauncher2.default(game, this.game.ctx.canvas.width / 2, 40);
+		this.game.launchpads[2] = new _MissileLauncher2.default(game, this.game.ctx.canvas.width - 20, 40);
 
 		//Setup cities
 		for (var i = 0; i < this.game.cities.info.length; i++) {
@@ -1475,14 +1487,6 @@ var _class = function () {
 	}, {
 		key: 'draw',
 		value: function draw(ctx) {
-			// Create gradient
-			var grd = ctx.createLinearGradient(0, ctx.canvas.height, 0, 0);
-			// Add colors
-			grd.addColorStop(0.000, 'rgba(0, 0, 255, 1.000)');
-			grd.addColorStop(1.000, 'rgba(0, 255, 255, 1.000)');
-			ctx.fillStyle = grd;
-			ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
 			this.drawLandscape(ctx);
 			this.drawMissileIndicators(ctx);
 		}
@@ -1530,7 +1534,7 @@ var _class = function () {
 		value: function cachedLandscape() {
 			var platformWidth = 40;
 			var platformIncline = 10;
-			var platformHeight = 30;
+			var platformHeight = 40;
 			var groundLevel = 10;
 
 			var offscreencanvas = document.createElement('canvas');
@@ -1542,7 +1546,14 @@ var _class = function () {
 			var landscapeDistance = (offscreenctx.canvas.width - platformWidth * 3 - platformIncline * 4) / 2;
 
 			offscreenctx.save();
-			offscreenctx.fillStyle = "#ffff00";
+			// Create gradient
+			var grd = offscreenctx.createLinearGradient(0, 0, offscreenctx.canvas.width, offscreenctx.canvas.height);
+
+			// Add colors
+			grd.addColorStop(0.000, 'rgba(0, 127, 63, 1.000)');
+			grd.addColorStop(0.500, 'rgba(95, 191, 0, 1.000)');
+			grd.addColorStop(1.000, 'rgba(0, 127, 63, 1.000)');
+			offscreenctx.fillStyle = grd;
 			offscreenctx.beginPath();
 			offscreenctx.moveTo(0, platformHeight);
 			offscreenctx.lineTo(platformWidth, platformHeight);
@@ -1603,11 +1614,12 @@ var _class = function () {
 		value: function draw(ctx) {
 			ctx.restore();
 			ctx.strokeStyle = '#ffffff';
-			ctx.fillStyle = '#ffffff';
+			ctx.fillStyle = '#000000';
 			ctx.lineWidth = 1;
 			ctx.textBaseline = 'middle';
 			ctx.textAlign = 'center';
 			ctx.font = '40px Arial';
+			ctx.fillText('Balistic Defence', ctx.canvas.width / 2, ctx.canvas.height / 2 - 20);
 			ctx.strokeText('Balistic Defence', ctx.canvas.width / 2, ctx.canvas.height / 2 - 20);
 			ctx.fillStyle = "rgba(255, 255, 255, " + this.opacity + ")";
 			ctx.font = '20px Arial';

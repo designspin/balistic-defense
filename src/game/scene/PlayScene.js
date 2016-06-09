@@ -23,9 +23,9 @@ export default class {
 		this.game.launchpads = [];
 		this.timer = 0;
 		//Setup launchpads
-		this.game.launchpads[0] = new MissileLauncher(20, 30);
-		this.game.launchpads[1] = new MissileLauncher(this.game.ctx.canvas.width / 2, 30);
-		this.game.launchpads[2] = new MissileLauncher(this.game.ctx.canvas.width - 20, 30);
+		this.game.launchpads[0] = new MissileLauncher(game, 20, 40);
+		this.game.launchpads[1] = new MissileLauncher(game, this.game.ctx.canvas.width / 2, 40);
+		this.game.launchpads[2] = new MissileLauncher(game, this.game.ctx.canvas.width - 20, 40);
 
 		//Setup cities
     	for(let i = 0; i < this.game.cities.info.length; i++) {
@@ -100,14 +100,6 @@ export default class {
 	}
 
 	draw(ctx) {
-	  // Create gradient
-      let grd = ctx.createLinearGradient(0, ctx.canvas.height, 0, 0);
-      // Add colors
-      grd.addColorStop(0.000, 'rgba(0, 0, 255, 1.000)');
-      grd.addColorStop(1.000, 'rgba(0, 255, 255, 1.000)');
-      ctx.fillStyle = grd;
-      ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
 	  this.drawLandscape(ctx);
 	  this.drawMissileIndicators(ctx);
 	}
@@ -149,7 +141,7 @@ export default class {
 	cachedLandscape() {
 		const platformWidth = 40;
 		const platformIncline = 10;
-		const platformHeight = 30;
+		const platformHeight = 40;
 		const groundLevel = 10;
 
 		const offscreencanvas = document.createElement('canvas');
@@ -161,7 +153,14 @@ export default class {
 		const landscapeDistance = (offscreenctx.canvas.width - (platformWidth * 3) - (platformIncline * 4))/2;
 
 		offscreenctx.save();
-	  offscreenctx.fillStyle = "#ffff00";
+		 // Create gradient
+      let grd = offscreenctx.createLinearGradient(0, 0, offscreenctx.canvas.width, offscreenctx.canvas.height);
+      
+      // Add colors
+       grd.addColorStop(0.000, 'rgba(0, 127, 63, 1.000)');
+      grd.addColorStop(0.500, 'rgba(95, 191, 0, 1.000)');
+      grd.addColorStop(1.000, 'rgba(0, 127, 63, 1.000)');
+	  offscreenctx.fillStyle = grd;
 	  offscreenctx.beginPath();
 	  offscreenctx.moveTo(0,platformHeight);
 	  offscreenctx.lineTo(platformWidth, platformHeight);

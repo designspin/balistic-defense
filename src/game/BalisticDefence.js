@@ -19,10 +19,11 @@ class BalisticDefence extends GameEngine {
 		this.missilesInPlay = 0;
 		this.speedMultiplier = false;
 		this.landscapeImage = null;
+		this.background = null;
 		this.launchpads = [];
 
 		this.ASSET_MANAGER = new AssetManager();
-		
+
 		//Setup cities
 		for (let i = 0; i < this.cities.qty; i++) {
 			let cityPosX = ((i+1) * 57) + 16;
@@ -37,6 +38,7 @@ class BalisticDefence extends GameEngine {
 
 	init(ctx) {
 		super.init(ctx);
+		this.background = this.cacheBackgroundImage();
 		this.startup(); // Fire FSM startup event;
 	}
 
@@ -89,6 +91,7 @@ class BalisticDefence extends GameEngine {
 
 	draw() {
 		super.draw((game) => {
+			this.ctx.drawImage(this.background, 0, 0);
 			game.drawScene(this.ctx);
 		});
 	}
@@ -96,6 +99,23 @@ class BalisticDefence extends GameEngine {
 	//Draw function for title screen
 	drawScene(ctx) {
 		this.scene.draw(ctx);
+	}
+
+	cacheBackgroundImage() {
+		const offscreencanvas = document.createElement('canvas');
+		offscreencanvas.width = this.ctx.canvas.width;
+		offscreencanvas.height = this.ctx.canvas.height;
+		const offctx = offscreencanvas.getContext('2d');
+
+		// Create gradient
+      let grd = offctx.createLinearGradient(0, this.ctx.canvas.height, 0, 0);
+      // Add colors
+      grd.addColorStop(0.000, 'rgba(0, 0, 255, 1.000)');
+      grd.addColorStop(1.000, 'rgba(0, 255, 255, 1.000)');
+      offctx.fillStyle = grd;
+      offctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+
+      return offscreencanvas;
 	}
 }
 

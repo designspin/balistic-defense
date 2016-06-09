@@ -86,13 +86,15 @@ export default class {
 		
 		ctx.restore();
 		ctx.strokeStyle = '#ffffff';
-		ctx.fillStyle = '#ffffff';
+		ctx.fillStyle = '#000000';
 		ctx.lineWidth = 1;
 		ctx.textBaseline = 'middle';
 		ctx.textAlign = 'center';
 		ctx.font = '40px Arial';
+		ctx.fillText(`Wave ${this.game.wave} Complete`, ctx.canvas.width / 2, ctx.canvas.height / 2 - 100);
 		ctx.strokeText(`Wave ${this.game.wave} Complete`, ctx.canvas.width / 2, ctx.canvas.height / 2 - 100);
 		ctx.font = '20px Arial';
+		ctx.fillStyle = '#ffffff';
 		ctx.fillText('Bonus',  ctx.canvas.width / 2, ctx.canvas.height / 2 - 50);
 		ctx.fillStyle = '#ffff00';
 		ctx.textAlign = 'left';
