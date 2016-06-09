@@ -242,9 +242,17 @@ var _GameEngine2 = require('../lib/GameEngine');
 
 var _GameEngine3 = _interopRequireDefault(_GameEngine2);
 
+var _AssetManager = require('../lib/AssetManager');
+
+var _AssetManager2 = _interopRequireDefault(_AssetManager);
+
 var _javascriptStateMachine = require('javascript-state-machine');
 
 var _javascriptStateMachine2 = _interopRequireDefault(_javascriptStateMachine);
+
+var _LoadingScene = require('./scene/LoadingScene');
+
+var _LoadingScene2 = _interopRequireDefault(_LoadingScene);
 
 var _TitleScene = require('./scene/TitleScene');
 
@@ -288,6 +296,8 @@ var BalisticDefence = function (_GameEngine) {
 		_this.landscapeImage = null;
 		_this.launchpads = [];
 
+		_this.ASSET_MANAGER = new _AssetManager2.default();
+
 		//Setup cities
 		for (var i = 0; i < _this.cities.qty; i++) {
 			var cityPosX = (i + 1) * 57 + 16;
@@ -318,10 +328,15 @@ var BalisticDefence = function (_GameEngine) {
 		////////////////////////////
 
 	}, {
+		key: 'onenterloading',
+		value: function onenterloading() {
+			this.scene = new _LoadingScene2.default(this);
+			this.start();
+		}
+	}, {
 		key: 'onentertitle',
 		value: function onentertitle() {
 			this.scene = new _TitleScene2.default(this);
-			this.start();
 		}
 	}, {
 		key: 'onenterlevelinfo',
@@ -387,12 +402,12 @@ var BalisticDefence = function (_GameEngine) {
 
 _javascriptStateMachine2.default.create({
 	target: BalisticDefence.prototype,
-	events: [{ name: 'startup', from: 'none', to: 'title' }, { name: 'levelup', from: ['title', 'levelcomplete'], to: 'levelinfo' }, { name: 'startgame', from: 'levelinfo', to: 'playing' }, { name: 'levelover', from: 'playing', to: 'levelcomplete' }]
+	events: [{ name: 'startup', from: 'none', to: 'loading' }, { name: 'gameloaded', from: 'loading', to: 'title' }, { name: 'levelup', from: ['title', 'levelcomplete'], to: 'levelinfo' }, { name: 'startgame', from: 'levelinfo', to: 'playing' }, { name: 'levelover', from: 'playing', to: 'levelcomplete' }]
 });
 
 exports.default = BalisticDefence;
 
-},{"../lib/GameEngine":15,"./scene/LevelOverScene":10,"./scene/LevelUpScene":11,"./scene/PlayScene":12,"./scene/TitleScene":13,"javascript-state-machine":1}],3:[function(require,module,exports){
+},{"../lib/AssetManager":16,"../lib/GameEngine":17,"./scene/LevelOverScene":10,"./scene/LevelUpScene":11,"./scene/LoadingScene":12,"./scene/PlayScene":13,"./scene/TitleScene":14,"javascript-state-machine":1}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -435,7 +450,7 @@ var _class = function (_Entity) {
 
 		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
 
-		_this.sprite = _this.cachedCityImage();
+		_this.sprite = _this.game.ASSET_MANAGER.getAsset('images/City.png');
 		_this.radius = 16;
 		_this.position = position;
 		return _this;
@@ -515,7 +530,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":16,"./EnemyMissile":4,"./Explosion":5,"./SmokeTrail":8}],4:[function(require,module,exports){
+},{"../../lib/GameEntity":18,"./EnemyMissile":4,"./Explosion":5,"./SmokeTrail":8}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -622,7 +637,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":16,"./Explosion":5}],5:[function(require,module,exports){
+},{"../../lib/GameEntity":18,"./Explosion":5}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -736,7 +751,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":16,"./EnemyMissile":4,"./PlayerMissile":7}],6:[function(require,module,exports){
+},{"../../lib/GameEntity":18,"./EnemyMissile":4,"./PlayerMissile":7}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -787,7 +802,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":16}],7:[function(require,module,exports){
+},{"../../lib/GameEntity":18}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -875,7 +890,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":16,"./Explosion":5,"./MissileTarget":6,"./SmokeTrail":8}],8:[function(require,module,exports){
+},{"../../lib/GameEntity":18,"./Explosion":5,"./MissileTarget":6,"./SmokeTrail":8}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -958,7 +973,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":16}],9:[function(require,module,exports){
+},{"../../lib/GameEntity":18}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1287,6 +1302,59 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var _class = function () {
+	function _class(game) {
+		_classCallCheck(this, _class);
+
+		this.game = game;
+		this.game.ASSET_MANAGER.queueDownload('images/City.png');
+		this.game.ASSET_MANAGER.queueDownload('images/missile-indicator.png');
+		this.init();
+	}
+
+	_createClass(_class, [{
+		key: 'init',
+		value: function init() {
+			var _this = this;
+
+			this.game.ASSET_MANAGER.downloadAll(function () {
+				console.log("Loaded callback!");
+				_this.game.gameloaded();
+			});
+		}
+	}, {
+		key: 'update',
+		value: function update() {}
+	}, {
+		key: 'draw',
+		value: function draw(ctx) {
+			ctx.restore();
+			ctx.strokeStyle = '#ffffff';
+			ctx.fillStyle = '#ffffff';
+			ctx.lineWidth = 1;
+			ctx.textBaseline = 'middle';
+			ctx.textAlign = 'center';
+			ctx.font = '40px Arial';
+			ctx.strokeText('LOADING', ctx.canvas.width / 2, ctx.canvas.height / 2 - 20);
+		}
+	}]);
+
+	return _class;
+}();
+
+exports.default = _class;
+
+},{}],13:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _MissileLauncher = require('../objects/MissileLauncher');
 
 var _MissileLauncher2 = _interopRequireDefault(_MissileLauncher);
@@ -1500,7 +1568,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{"../entities/City":3,"../entities/EnemyMissile":4,"../entities/PlayerMissile":7,"../objects/MissileLauncher":9}],13:[function(require,module,exports){
+},{"../entities/City":3,"../entities/EnemyMissile":4,"../entities/PlayerMissile":7,"../objects/MissileLauncher":9}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1552,7 +1620,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 var _BalisticDefence = require('./game/BalisticDefence');
@@ -1568,7 +1636,84 @@ var game = new _BalisticDefence2.default();
 
 game.init(ctx);
 
-},{"./game/BalisticDefence":2}],15:[function(require,module,exports){
+},{"./game/BalisticDefence":2}],16:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var _class = function () {
+	function _class() {
+		_classCallCheck(this, _class);
+
+		console.log("Asset!");
+		this.successCount = 0;
+		this.errorCount = 0;
+		this.cache = {};
+		this.downloadQueue = [];
+		this.soundsQueue = [];
+	}
+
+	_createClass(_class, [{
+		key: "queueDownload",
+		value: function queueDownload(path) {
+			this.downloadQueue.push(path);
+		}
+	}, {
+		key: "downloadAll",
+		value: function downloadAll(downloadCallback) {
+			var _this = this;
+
+			if (this.downloadQueue.length === 0) {
+				downloadCallback();
+			}
+
+			for (var i = 0; i < this.downloadQueue.length; i++) {
+
+				var path = this.downloadQueue[i];
+				var img = new Image();
+
+				img.addEventListener("load", function () {
+					_this.successCount += 1;
+					if (_this.isDone()) {
+						downloadCallback();
+					}
+				}, false);
+
+				img.addEventListener("error", function () {
+					_this.errorCount += 1;
+					if (_this.isDone()) {
+						downloadCallback();
+					}
+				}, false);
+
+				img.src = path;
+				this.cache[path] = img;
+			}
+		}
+	}, {
+		key: "getAsset",
+		value: function getAsset(path) {
+			return this.cache[path];
+		}
+	}, {
+		key: "isDone",
+		value: function isDone() {
+			return this.downloadQueue.length === this.successCount + this.errorCount;
+		}
+	}]);
+
+	return _class;
+}();
+
+exports.default = _class;
+
+},{}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1728,7 +1873,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{"./GameTimer":17}],16:[function(require,module,exports){
+},{"./GameTimer":19}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1771,7 +1916,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],17:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1813,4 +1958,4 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}]},{},[14]);
+},{}]},{},[15]);

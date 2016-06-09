@@ -1,6 +1,8 @@
 import GameEngine from '../lib/GameEngine';
+import AssetManager from '../lib/AssetManager';
 import FSM from 'javascript-state-machine';
 
+import LoadingScene from './scene/LoadingScene';
 import TitleScene from './scene/TitleScene';
 import PlayScene from './scene/PlayScene';
 import LevelUpScene from './scene/LevelUpScene';
@@ -19,6 +21,8 @@ class BalisticDefence extends GameEngine {
 		this.landscapeImage = null;
 		this.launchpads = [];
 
+		this.ASSET_MANAGER = new AssetManager();
+		
 		//Setup cities
 		for (let i = 0; i < this.cities.qty; i++) {
 			let cityPosX = ((i+1) * 57) + 16;
@@ -43,9 +47,13 @@ class BalisticDefence extends GameEngine {
 	////////////////////////////
 	// State machine handlers //
 	////////////////////////////
+	onenterloading() {
+		this.scene = new LoadingScene(this);
+		this.start();
+	}
+
 	onentertitle() {
 		this.scene = new TitleScene(this);
-		this.start();
 	}
 
 	onenterlevelinfo() {
@@ -94,7 +102,8 @@ class BalisticDefence extends GameEngine {
 FSM.create({
 	target: BalisticDefence.prototype,
 	events: [
-		{name: 'startup', from: 'none', to: 'title'},
+		{name: 'startup', from: 'none', to: 'loading'},
+		{name: 'gameloaded', from: 'loading', to: 'title' },
 		{name: 'levelup', from: ['title', 'levelcomplete'], to: 'levelinfo'},
 		{name: 'startgame', from: 'levelinfo', to: 'playing'},
 		{name: 'levelover', from: 'playing', to: 'levelcomplete'}

@@ -7,7 +7,7 @@ import EnemyMissile from './EnemyMissile';
 export default class extends Entity {
 	constructor(game, x, y, position) {
 		super(game, x, y);
-		this.sprite = this.cachedCityImage();
+		this.sprite = this.game.ASSET_MANAGER.getAsset('images/City.png');
 		this.radius = 16;
 		this.position = position;
 	}
