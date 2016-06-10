@@ -1,6 +1,5 @@
 export default class {
 	constructor() {
-		console.log("Asset!");
 		this.successCount = 0;
 		this.errorCount = 0;
 		this.cache = {};
@@ -12,10 +11,16 @@ export default class {
 		this.downloadQueue.push(path);
 	}
 
+	queueSound(id, path) {
+		this.soundsQueue.push({id: id, path: path});
+	}
+
 	downloadAll(downloadCallback) {
 		if(this.downloadQueue.length === 0) {
 			downloadCallback();
 		}
+
+		this.downloadSounds(downloadCallback);
 
 		for(let i = 0; i < this.downloadQueue.length; i++) {
 
@@ -41,12 +46,42 @@ export default class {
 		}
 	}
 
+	downloadSounds(downloadCallback) {
+		console.log("Download Sounds");
+		let AudioContext = window.AudioContext || window.webkitAudioContext;
+		let audioctx = new AudioContext();
+
+		for(let i = 0; i < this.soundsQueue.length; i++) {
+			let id = this.soundsQueue[i].id;
+			let request = new XMLHttpRequest();
+			request.open('get', this.soundsQueue[i].path, true);
+			request.responseType = 'arraybuffer';
+			request.onload = () => {
+				audioctx.decodeAudioData(request.response, (buffer) => {
+					console.log("Cached Audio with ID:", id);
+					this.successCount += 1;
+					this.cache[id] = buffer;
+					if(this.isDone()) {
+						downloadCallback();
+					}
+				});
+			}
+			request.onerror = () => {
+				this.errorCount += 1;
+				if(this.isDone()) {
+					downloadCallback();
+				}
+			}
+			request.send();
+		}
+	}
+
 	getAsset(path) {
 		return this.cache[path];
 	}
 
 	isDone() {
-		return (this.downloadQueue.length === this.successCount + this.errorCount);
+		return ((this.downloadQueue.length + this.soundsQueue.length) === this.successCount + this.errorCount);
 	}
 
 

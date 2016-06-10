@@ -119,6 +119,7 @@ export default class {
 
 		if(distance != null) {
 			this.game.launchpads[launcherIndex].missiles -= 1;
+			this.game.audioplayer.play('launch');
 			missile = new PlayerMissile(this.game, (click.x / this.game.scale), canvas.height - (click.y / this.game.scale), this.game.launchpads[launcherIndex].x, this.game.launchpads[launcherIndex].y);
 			this.game.addEntity(missile);
 		}

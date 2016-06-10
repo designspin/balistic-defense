@@ -246,6 +246,10 @@ var _AssetManager = require('../lib/AssetManager');
 
 var _AssetManager2 = _interopRequireDefault(_AssetManager);
 
+var _AudioPlayer = require('../lib/AudioPlayer');
+
+var _AudioPlayer2 = _interopRequireDefault(_AudioPlayer);
+
 var _javascriptStateMachine = require('javascript-state-machine');
 
 var _javascriptStateMachine2 = _interopRequireDefault(_javascriptStateMachine);
@@ -298,6 +302,7 @@ var BalisticDefence = function (_GameEngine) {
 		_this.launchpads = [];
 
 		_this.ASSET_MANAGER = new _AssetManager2.default();
+		_this.audioplayer = new _AudioPlayer2.default(_this.ASSET_MANAGER);
 
 		//Setup cities
 		for (var i = 0; i < _this.cities.qty; i++) {
@@ -476,7 +481,7 @@ _javascriptStateMachine2.default.create({
 
 exports.default = BalisticDefence;
 
-},{"../lib/AssetManager":16,"../lib/GameEngine":17,"./scene/LevelOverScene":10,"./scene/LevelUpScene":11,"./scene/LoadingScene":12,"./scene/PlayScene":13,"./scene/TitleScene":14,"javascript-state-machine":1}],3:[function(require,module,exports){
+},{"../lib/AssetManager":16,"../lib/AudioPlayer":17,"../lib/GameEngine":18,"./scene/LevelOverScene":10,"./scene/LevelUpScene":11,"./scene/LoadingScene":12,"./scene/PlayScene":13,"./scene/TitleScene":14,"javascript-state-machine":1}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -599,7 +604,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":18,"./EnemyMissile":4,"./Explosion":5,"./SmokeTrail":8}],4:[function(require,module,exports){
+},{"../../lib/GameEntity":19,"./EnemyMissile":4,"./Explosion":5,"./SmokeTrail":8}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -697,6 +702,7 @@ var _class = function (_Entity) {
 	}, {
 		key: 'explode',
 		value: function explode(x, y) {
+			this.game.audioplayer.play('explosion');
 			this.game.missilesInPlay -= 1;
 			var explosion = new _Explosion2.default(this.game, x, y, this);
 			this.game.addEntity(explosion);
@@ -717,7 +723,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":18,"./Explosion":5}],5:[function(require,module,exports){
+},{"../../lib/GameEntity":19,"./Explosion":5}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -831,7 +837,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":18,"./EnemyMissile":4,"./PlayerMissile":7}],6:[function(require,module,exports){
+},{"../../lib/GameEntity":19,"./EnemyMissile":4,"./PlayerMissile":7}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -882,7 +888,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":18}],7:[function(require,module,exports){
+},{"../../lib/GameEntity":19}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -980,7 +986,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":18,"./Explosion":5,"./MissileTarget":6,"./SmokeTrail":8}],8:[function(require,module,exports){
+},{"../../lib/GameEntity":19,"./Explosion":5,"./MissileTarget":6,"./SmokeTrail":8}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1063,7 +1069,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":18}],9:[function(require,module,exports){
+},{"../../lib/GameEntity":19}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1190,7 +1196,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":18}],10:[function(require,module,exports){
+},{"../../lib/GameEntity":19}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1424,6 +1430,8 @@ var _class = function () {
 		this.game = game;
 		this.game.ASSET_MANAGER.queueDownload('images/City.png');
 		this.game.ASSET_MANAGER.queueDownload('images/missile-indicator.png');
+		this.game.ASSET_MANAGER.queueSound('explosion', 'sounds/8-bit-explosion.wav');
+		this.game.ASSET_MANAGER.queueSound('launch', 'sounds/launch-sound.wav');
 		this.init();
 	}
 
@@ -1434,6 +1442,7 @@ var _class = function () {
 
 			this.game.ASSET_MANAGER.downloadAll(function () {
 				console.log("Loaded callback!");
+				_this.game.audioplayer.init();
 				_this.game.gameloaded();
 			});
 		}
@@ -1606,6 +1615,7 @@ var _class = function () {
 
 			if (distance != null) {
 				this.game.launchpads[launcherIndex].missiles -= 1;
+				this.game.audioplayer.play('launch');
 				missile = new _PlayerMissile2.default(this.game, click.x / this.game.scale, canvas.height - click.y / this.game.scale, this.game.launchpads[launcherIndex].x, this.game.launchpads[launcherIndex].y);
 				this.game.addEntity(missile);
 			}
@@ -1635,6 +1645,7 @@ var _class = function () {
 		this.game = game;
 		this.opacity = 0.1;
 		this.toggle = true;
+		this.firstTouch = true;
 	}
 
 	_createClass(_class, [{
@@ -1644,6 +1655,11 @@ var _class = function () {
 
 			if (this.game.click) {
 				this.game.click = null;
+
+				if (this.firstTouch) {
+					this.firstTouch = false;
+					this.game.audioplayer.unlock();
+				}
 				this.game.levelup(); // Fire FSM startgame event;
 			}
 		}
@@ -1701,7 +1717,6 @@ var _class = function () {
 	function _class() {
 		_classCallCheck(this, _class);
 
-		console.log("Asset!");
 		this.successCount = 0;
 		this.errorCount = 0;
 		this.cache = {};
@@ -1715,6 +1730,11 @@ var _class = function () {
 			this.downloadQueue.push(path);
 		}
 	}, {
+		key: "queueSound",
+		value: function queueSound(id, path) {
+			this.soundsQueue.push({ id: id, path: path });
+		}
+	}, {
 		key: "downloadAll",
 		value: function downloadAll(downloadCallback) {
 			var _this = this;
@@ -1722,6 +1742,8 @@ var _class = function () {
 			if (this.downloadQueue.length === 0) {
 				downloadCallback();
 			}
+
+			this.downloadSounds(downloadCallback);
 
 			for (var i = 0; i < this.downloadQueue.length; i++) {
 
@@ -1747,6 +1769,43 @@ var _class = function () {
 			}
 		}
 	}, {
+		key: "downloadSounds",
+		value: function downloadSounds(downloadCallback) {
+			var _this2 = this;
+
+			console.log("Download Sounds");
+			var AudioContext = window.AudioContext || window.webkitAudioContext;
+			var audioctx = new AudioContext();
+
+			var _loop = function _loop(i) {
+				var id = _this2.soundsQueue[i].id;
+				var request = new XMLHttpRequest();
+				request.open('get', _this2.soundsQueue[i].path, true);
+				request.responseType = 'arraybuffer';
+				request.onload = function () {
+					audioctx.decodeAudioData(request.response, function (buffer) {
+						console.log("Cached Audio with ID:", id);
+						_this2.successCount += 1;
+						_this2.cache[id] = buffer;
+						if (_this2.isDone()) {
+							downloadCallback();
+						}
+					});
+				};
+				request.onerror = function () {
+					_this2.errorCount += 1;
+					if (_this2.isDone()) {
+						downloadCallback();
+					}
+				};
+				request.send();
+			};
+
+			for (var i = 0; i < this.soundsQueue.length; i++) {
+				_loop(i);
+			}
+		}
+	}, {
 		key: "getAsset",
 		value: function getAsset(path) {
 			return this.cache[path];
@@ -1754,7 +1813,7 @@ var _class = function () {
 	}, {
 		key: "isDone",
 		value: function isDone() {
-			return this.downloadQueue.length === this.successCount + this.errorCount;
+			return this.downloadQueue.length + this.soundsQueue.length === this.successCount + this.errorCount;
 		}
 	}]);
 
@@ -1764,6 +1823,74 @@ var _class = function () {
 exports.default = _class;
 
 },{}],17:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var _class = function () {
+	function _class(assets_manager) {
+		_classCallCheck(this, _class);
+
+		var AudioContext = window.AudioContext || window.webkitAudioContext;
+
+		this.asset_manager = assets_manager;
+		this.audioctx = new AudioContext();
+		this.buffers = {};
+	}
+
+	_createClass(_class, [{
+		key: "init",
+		value: function init() {
+			for (var prop in this.asset_manager.cache) {
+				if (this.asset_manager.cache[prop] instanceof AudioBuffer) {
+					this.buffers[prop] = this.asset_manager.cache[prop];
+				}
+			}
+		}
+	}, {
+		key: "unlock",
+		value: function unlock() {
+			// create empty buffer
+			var buffer = this.audioctx.createBuffer(1, 1, 22050);
+			var source = this.audioctx.createBufferSource();
+			source.buffer = buffer;
+
+			// connect to output (your speakers)
+			source.connect(this.audioctx.destination);
+
+			// play the file
+			source.noteOn(0);
+		}
+	}, {
+		key: "play",
+		value: function play(id) {
+
+			var sound = this.audioctx.createBufferSource();
+			sound.buffer = this.buffers[id];
+			sound.connect(this.audioctx.destination);
+			sound.start(this.audioctx.currentTime);
+			sound.stop(this.audioctx.currentTime + this.buffers[id].duration);
+
+			/*this.buffers[prop] = this.audioctx.createBufferSource();
+   this.buffers[prop].buffer = this.asset_manager.cache[prop];
+   this.buffers[prop].connect(this.audioctx.destination);
+   this.buffers[id].stop();
+   this.buffers[id].start(this.audioctx.currentTime);*/
+		}
+	}]);
+
+	return _class;
+}();
+
+exports.default = _class;
+
+},{}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1923,7 +2050,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{"./GameTimer":19}],18:[function(require,module,exports){
+},{"./GameTimer":20}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1966,7 +2093,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

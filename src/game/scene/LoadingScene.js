@@ -3,12 +3,15 @@ export default class {
 		this.game = game;
 		this.game.ASSET_MANAGER.queueDownload('images/City.png');
 		this.game.ASSET_MANAGER.queueDownload('images/missile-indicator.png');
+		this.game.ASSET_MANAGER.queueSound('explosion', 'sounds/8-bit-explosion.wav');
+		this.game.ASSET_MANAGER.queueSound('launch', 'sounds/launch-sound.wav');
 		this.init();
 	}
 
 	init() {
 		this.game.ASSET_MANAGER.downloadAll(() => {
 			console.log("Loaded callback!");
+			this.game.audioplayer.init();
 			this.game.gameloaded();
 		});
 	}

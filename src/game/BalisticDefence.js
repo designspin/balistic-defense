@@ -1,5 +1,6 @@
 import GameEngine from '../lib/GameEngine';
 import AssetManager from '../lib/AssetManager';
+import AudioPlayer from '../lib/AudioPlayer';
 import FSM from 'javascript-state-machine';
 
 import LoadingScene from './scene/LoadingScene';
@@ -23,6 +24,7 @@ class BalisticDefence extends GameEngine {
 		this.launchpads = [];
 
 		this.ASSET_MANAGER = new AssetManager();
+		this.audioplayer = new AudioPlayer(this.ASSET_MANAGER);
 
 		//Setup cities
 		for (let i = 0; i < this.cities.qty; i++) {

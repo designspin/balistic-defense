@@ -3,6 +3,7 @@ export default class {
 		this.game = game;
 		this.opacity = 0.1;
 		this.toggle = true;
+		this.firstTouch = true;
 	}
 
 	update() {
@@ -10,6 +11,11 @@ export default class {
 
 		if(this.game.click) {
 			this.game.click = null;
+
+			if(this.firstTouch) {
+				this.firstTouch = false;
+				this.game.audioplayer.unlock();
+			}
 			this.game.levelup(); // Fire FSM startgame event;
 		}
 	}

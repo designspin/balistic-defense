@@ -62,6 +62,7 @@ export default class extends Entity {
 	}
 
 	explode(x, y) {
+		this.game.audioplayer.play('explosion');
 		this.game.missilesInPlay -= 1;
 		let explosion = new Explosion(this.game, x, y, this);
    		this.game.addEntity(explosion);
