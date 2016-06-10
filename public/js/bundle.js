@@ -288,7 +288,7 @@ var BalisticDefence = function (_GameEngine) {
 
 		_this.ctx = null;
 		_this.scene = null;
-		_this.showOutlines = false;
+		_this.showOutlines = true;
 		_this.wave = 0;
 		_this.cities = { qty: 6, info: [] };
 		_this.missilesInPlay = 0;
@@ -316,6 +316,7 @@ var BalisticDefence = function (_GameEngine) {
 		key: 'init',
 		value: function init(ctx) {
 			_get(Object.getPrototypeOf(BalisticDefence.prototype), 'init', this).call(this, ctx);
+			this.landscapeImage = this.cachedLandscape();
 			this.background = this.cacheBackgroundImage();
 			this.startup(); // Fire FSM startup event;
 		}
@@ -387,6 +388,7 @@ var BalisticDefence = function (_GameEngine) {
 
 			_get(Object.getPrototypeOf(BalisticDefence.prototype), 'draw', this).call(this, function (game) {
 				_this2.ctx.drawImage(_this2.background, 0, 0);
+				//this.ctx.drawImage(this.landscapeImage, 0, 0);
 				game.drawScene(_this2.ctx);
 			});
 		}
@@ -413,6 +415,52 @@ var BalisticDefence = function (_GameEngine) {
 			grd.addColorStop(1.000, 'rgba(0, 255, 255, 1.000)');
 			offctx.fillStyle = grd;
 			offctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+			offctx.drawImage(this.landscapeImage, 0, 0);
+			return offscreencanvas;
+		}
+
+		//Cahed landscape image
+
+	}, {
+		key: 'cachedLandscape',
+		value: function cachedLandscape() {
+			var platformWidth = 40;
+			var platformIncline = 10;
+			var platformHeight = 40;
+			var groundLevel = 10;
+
+			var offscreencanvas = document.createElement('canvas');
+			var offscreenctx = offscreencanvas.getContext('2d');
+
+			offscreencanvas.width = this.ctx.canvas.width;
+			offscreencanvas.height = platformHeight;
+
+			var landscapeDistance = (offscreenctx.canvas.width - platformWidth * 3 - platformIncline * 4) / 2;
+
+			offscreenctx.save();
+			// Create gradient
+			var grd = offscreenctx.createLinearGradient(0, 0, offscreenctx.canvas.width, offscreenctx.canvas.height);
+
+			// Add colors
+			grd.addColorStop(0.000, 'rgba(0, 127, 63, 1.000)');
+			grd.addColorStop(0.500, 'rgba(95, 191, 0, 1.000)');
+			grd.addColorStop(1.000, 'rgba(0, 127, 63, 1.000)');
+			offscreenctx.fillStyle = grd;
+			offscreenctx.beginPath();
+			offscreenctx.moveTo(0, platformHeight);
+			offscreenctx.lineTo(platformWidth, platformHeight);
+			offscreenctx.lineTo(platformWidth + platformIncline, groundLevel);
+			offscreenctx.lineTo(platformWidth + platformIncline + landscapeDistance, groundLevel);
+			offscreenctx.lineTo(platformWidth + platformIncline * 2 + landscapeDistance, platformHeight);
+			offscreenctx.lineTo(platformWidth * 2 + platformIncline * 2 + landscapeDistance, platformHeight);
+			offscreenctx.lineTo(platformWidth * 2 + platformIncline * 3 + landscapeDistance, groundLevel);
+			offscreenctx.lineTo(platformWidth * 2 + platformIncline * 3 + landscapeDistance * 2, groundLevel);
+			offscreenctx.lineTo(platformWidth * 2 + platformIncline * 4 + landscapeDistance * 2, platformHeight);
+			offscreenctx.lineTo(platformWidth * 3 + platformIncline * 4 + landscapeDistance * 2, platformHeight);
+			offscreenctx.lineTo(platformWidth * 3 + platformIncline * 4 + landscapeDistance * 2, 0);
+			offscreenctx.lineTo(0, 0);
+			offscreenctx.fill();
+			offscreenctx.restore();
 
 			return offscreencanvas;
 		}
@@ -594,6 +642,8 @@ var _class = function (_Entity) {
 		_this.angle = Math.atan2(x - startX, y - startY);
 		_this.startX = startX;
 		_this.startY = startY;
+
+		_this.distanceToTravel = _this.getDistance(startX, startY, x, y);
 		return _this;
 	}
 
@@ -616,7 +666,7 @@ var _class = function (_Entity) {
 				this.startY += this.speed * 20 * this.game.clockTick * Math.cos(this.angle);
 			}
 
-			if (Math.abs(this.y - this.targetY) < 2 && this.hitTarget === false) {
+			if (this.getDistance(this.startX, this.startY, this.x, this.y) >= this.distanceToTravel && this.hitTarget === false) {
 				this.hitTarget = true;
 				this.explode(this.targetX, this.targetY);
 			}
@@ -650,6 +700,15 @@ var _class = function (_Entity) {
 			this.game.missilesInPlay -= 1;
 			var explosion = new _Explosion2.default(this.game, x, y, this);
 			this.game.addEntity(explosion);
+		}
+	}, {
+		key: 'getDistance',
+		value: function getDistance(x1, y1, x2, y2) {
+			var a = x1 - x2;
+			var b = y1 - y2;
+			var length = Math.sqrt(a * a + b * b);
+
+			return length;
 		}
 	}]);
 
@@ -874,6 +933,7 @@ var _class = function (_Entity) {
 		_this.angle = Math.atan2(x - startX, y - startY);
 		_this.startX = startX;
 		_this.startY = startY;
+		_this.distanceToTravel = _this.getDistance(x, y, startX, startY);
 		return _this;
 	}
 
@@ -888,7 +948,7 @@ var _class = function (_Entity) {
 			this.x += this.speed * this.game.clockTick * Math.sin(this.angle);
 			this.y += this.speed * this.game.clockTick * Math.cos(this.angle);
 
-			if (Math.abs(this.y - this.targetY) < 5 && Math.abs(this.x - this.targetX) < 5) {
+			if (this.getDistance(this.x, this.y, this.startX, this.startY) >= this.distanceToTravel) {
 				this.removeFromWorld = true;
 				this.targetGraphic.removeFromWorld = true;
 				var explosion = new _Explosion2.default(this.game, this.targetX, this.targetY, this);
@@ -903,6 +963,15 @@ var _class = function (_Entity) {
 			ctx.beginPath();
 			ctx.fillRect(this.x - 1, this.y - 1, 3, 3);
 			ctx.stroke();
+		}
+	}, {
+		key: 'getDistance',
+		value: function getDistance(x1, y1, x2, y2) {
+			var a = x1 - x2;
+			var b = y1 - y2;
+			var length = Math.sqrt(a * a + b * b);
+
+			return length;
 		}
 	}]);
 
@@ -995,7 +1064,7 @@ var _class = function (_Entity) {
 exports.default = _class;
 
 },{"../../lib/GameEntity":18}],9:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -1003,20 +1072,36 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _GameEntity = require('../../lib/GameEntity');
+
+var _GameEntity2 = _interopRequireDefault(_GameEntity);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _class = function () {
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _class = function (_Entity) {
+  _inherits(_class, _Entity);
+
   function _class(game, x, y) {
     _classCallCheck(this, _class);
 
-    this.x = x;
-    this.y = y;
-    this.missiles = 10;
-    this.sprite = game.ASSET_MANAGER.getAsset('images/missile-indicator.png');
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
+
+    _this.radius = 20;
+    _this.missiles = 10;
+    _this.sprite = game.ASSET_MANAGER.getAsset('images/missile-indicator.png');
+    return _this;
   }
 
   _createClass(_class, [{
-    key: "getDistance",
+    key: 'getDistance',
     value: function getDistance(targetX, targetY, scale) {
       var a = targetX / scale - this.x;
       var b = targetY / scale - this.y;
@@ -1025,7 +1110,19 @@ var _class = function () {
       return length;
     }
   }, {
-    key: "drawMissileIndicators",
+    key: 'update',
+    value: function update() {
+      _get(Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
+    }
+  }, {
+    key: 'draw',
+    value: function draw(ctx) {
+      _get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+      console.log("Draw Missile Launcher!");
+      this.drawMissileIndicators(ctx);
+    }
+  }, {
+    key: 'drawMissileIndicators',
     value: function drawMissileIndicators(ctx) {
       if (this.missiles < 4 && this.missiles > 0) {
         ctx.restore();
@@ -1050,6 +1147,7 @@ var _class = function () {
       }
 
       for (var m = 0; m < this.missiles; m++) {
+
         ctx.save();
         ctx.translate(-3, -5);
         if (m === 0) {
@@ -1088,11 +1186,11 @@ var _class = function () {
   }]);
 
   return _class;
-}();
+}(_GameEntity2.default);
 
 exports.default = _class;
 
-},{}],10:[function(require,module,exports){
+},{"../../lib/GameEntity":18}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1186,6 +1284,9 @@ var _class = function () {
 						for (var i = 0; i < this.cityIndicators.length; i++) {
 							this.cityIndicators[i].removeFromWorld = true;
 						}
+						this.game.launchpads[0].removeFromWorld = true;
+						this.game.launchpads[1].removeFromWorld = true;
+						this.game.launchpads[2].removeFromWorld = true;
 						this.game.levelup();
 						break;
 				}
@@ -1403,14 +1504,15 @@ var _class = function () {
 
 		this.setupLevel(this.wave);
 
-		this.game.landscapeImage = this.cachedLandscape();
 		this.game.launchpads = [];
 		this.timer = 0;
 		//Setup launchpads
 		this.game.launchpads[0] = new _MissileLauncher2.default(game, 20, 40);
+		this.game.addEntity(this.game.launchpads[0]);
 		this.game.launchpads[1] = new _MissileLauncher2.default(game, this.game.ctx.canvas.width / 2, 40);
+		this.game.addEntity(this.game.launchpads[1]);
 		this.game.launchpads[2] = new _MissileLauncher2.default(game, this.game.ctx.canvas.width - 20, 40);
-
+		this.game.addEntity(this.game.launchpads[2]);
 		//Setup cities
 		for (var i = 0; i < this.game.cities.info.length; i++) {
 			if (this.game.cities.info[i].isAlive) {
@@ -1467,8 +1569,7 @@ var _class = function () {
 
 				if (this.game.entities.length) {
 					for (var k = 0; k < this.game.entities.length; k++) {
-						console.log("Object is City: ", this.game.entities[k] instanceof _City2.default);
-						if (this.game.entities[k] instanceof _City2.default) {
+						if (this.game.entities[k] instanceof _City2.default || this.game.entities[k] instanceof _MissileLauncher2.default) {
 							complete = true;
 						} else {
 							complete = false;
@@ -1477,31 +1578,14 @@ var _class = function () {
 				} else {
 					complete = true;
 				}
-				console.log("Complete: ", complete);
 				if (complete) {
-					console.log("Complete!");
 					this.game.levelover(this.game, this.landscapeImage, this.launchpads);
 				}
 			}
 		}
 	}, {
 		key: 'draw',
-		value: function draw(ctx) {
-			this.drawLandscape(ctx);
-			this.drawMissileIndicators(ctx);
-		}
-	}, {
-		key: 'drawLandscape',
-		value: function drawLandscape(ctx) {
-			ctx.drawImage(this.game.landscapeImage, 0, 0);
-		}
-	}, {
-		key: 'drawMissileIndicators',
-		value: function drawMissileIndicators(ctx) {
-			for (var i = 0; i < this.game.launchpads.length; i++) {
-				this.game.launchpads[i].drawMissileIndicators(ctx);
-			}
-		}
+		value: function draw(ctx) {}
 	}, {
 		key: 'launchPlayerMissile',
 		value: function launchPlayerMissile() {
@@ -1525,52 +1609,6 @@ var _class = function () {
 				missile = new _PlayerMissile2.default(this.game, click.x / this.game.scale, canvas.height - click.y / this.game.scale, this.game.launchpads[launcherIndex].x, this.game.launchpads[launcherIndex].y);
 				this.game.addEntity(missile);
 			}
-		}
-
-		//Cahed landscape image
-
-	}, {
-		key: 'cachedLandscape',
-		value: function cachedLandscape() {
-			var platformWidth = 40;
-			var platformIncline = 10;
-			var platformHeight = 40;
-			var groundLevel = 10;
-
-			var offscreencanvas = document.createElement('canvas');
-			var offscreenctx = offscreencanvas.getContext('2d');
-
-			offscreencanvas.width = this.game.ctx.canvas.width;
-			offscreencanvas.height = platformHeight;
-
-			var landscapeDistance = (offscreenctx.canvas.width - platformWidth * 3 - platformIncline * 4) / 2;
-
-			offscreenctx.save();
-			// Create gradient
-			var grd = offscreenctx.createLinearGradient(0, 0, offscreenctx.canvas.width, offscreenctx.canvas.height);
-
-			// Add colors
-			grd.addColorStop(0.000, 'rgba(0, 127, 63, 1.000)');
-			grd.addColorStop(0.500, 'rgba(95, 191, 0, 1.000)');
-			grd.addColorStop(1.000, 'rgba(0, 127, 63, 1.000)');
-			offscreenctx.fillStyle = grd;
-			offscreenctx.beginPath();
-			offscreenctx.moveTo(0, platformHeight);
-			offscreenctx.lineTo(platformWidth, platformHeight);
-			offscreenctx.lineTo(platformWidth + platformIncline, groundLevel);
-			offscreenctx.lineTo(platformWidth + platformIncline + landscapeDistance, groundLevel);
-			offscreenctx.lineTo(platformWidth + platformIncline * 2 + landscapeDistance, platformHeight);
-			offscreenctx.lineTo(platformWidth * 2 + platformIncline * 2 + landscapeDistance, platformHeight);
-			offscreenctx.lineTo(platformWidth * 2 + platformIncline * 3 + landscapeDistance, groundLevel);
-			offscreenctx.lineTo(platformWidth * 2 + platformIncline * 3 + landscapeDistance * 2, groundLevel);
-			offscreenctx.lineTo(platformWidth * 2 + platformIncline * 4 + landscapeDistance * 2, platformHeight);
-			offscreenctx.lineTo(platformWidth * 3 + platformIncline * 4 + landscapeDistance * 2, platformHeight);
-			offscreenctx.lineTo(platformWidth * 3 + platformIncline * 4 + landscapeDistance * 2, 0);
-			offscreenctx.lineTo(0, 0);
-			offscreenctx.fill();
-			offscreenctx.restore();
-
-			return offscreencanvas;
 		}
 	}]);
 
@@ -1914,7 +1952,7 @@ var _class = function () {
 		value: function draw(ctx) {
 			if (this.game.showOutlines && this.radius) {
 				ctx.beginPath();
-				ctx.strokeStyle = "green";
+				ctx.strokeStyle = "red";
 				ctx.lineWidth = 1;
 				ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
 				ctx.stroke();

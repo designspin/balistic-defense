@@ -12,6 +12,8 @@ export default class extends Entity {
 		this.angle = Math.atan2(x - startX, y - startY);
 		this.startX = startX;
 		this.startY = startY;
+
+		this.distanceToTravel = this.getDistance(startX, startY, x, y);
 	}
 
 	update() {
@@ -31,7 +33,7 @@ export default class extends Entity {
 	    this.startY += ((this.speed * 20) * this.game.clockTick) * Math.cos(this.angle);
 	  }
 
-    if (Math.abs(this.y - this.targetY) < 2 && this.hitTarget === false) {
+    if (this.getDistance(this.startX, this.startY, this.x, this.y) >= this.distanceToTravel && this.hitTarget === false) {
 	    this.hitTarget = true;
 	    this.explode(this.targetX, this.targetY);
 	  }
@@ -63,5 +65,13 @@ export default class extends Entity {
 		this.game.missilesInPlay -= 1;
 		let explosion = new Explosion(this.game, x, y, this);
    		this.game.addEntity(explosion);
+	}
+
+	getDistance(x1, y1, x2, y2) {
+		const a = x1 - x2;
+    	const b = y1 - y2;
+    	const length = Math.sqrt((a * a) + (b * b));
+
+    	return length;
 	} 
 }

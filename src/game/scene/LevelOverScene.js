@@ -73,6 +73,9 @@ export default class {
 					for(let i = 0; i < this.cityIndicators.length; i++) {
 						this.cityIndicators[i].removeFromWorld = true;
 					}
+					this.game.launchpads[0].removeFromWorld = true;
+					this.game.launchpads[1].removeFromWorld = true;
+					this.game.launchpads[2].removeFromWorld = true;
 					this.game.levelup();
 					break;
 			}

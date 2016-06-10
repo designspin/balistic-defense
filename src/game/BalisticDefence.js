@@ -13,7 +13,7 @@ class BalisticDefence extends GameEngine {
 		super();
 		this.ctx = null;
 		this.scene = null;
-		this.showOutlines = false;
+		this.showOutlines = true;
 		this.wave = 0;
 		this.cities = {qty: 6, info:[]};
 		this.missilesInPlay = 0;
@@ -38,6 +38,7 @@ class BalisticDefence extends GameEngine {
 
 	init(ctx) {
 		super.init(ctx);
+		this.landscapeImage = this.cachedLandscape();
 		this.background = this.cacheBackgroundImage();
 		this.startup(); // Fire FSM startup event;
 	}
@@ -92,6 +93,7 @@ class BalisticDefence extends GameEngine {
 	draw() {
 		super.draw((game) => {
 			this.ctx.drawImage(this.background, 0, 0);
+			//this.ctx.drawImage(this.landscapeImage, 0, 0);
 			game.drawScene(this.ctx);
 		});
 	}
@@ -114,8 +116,51 @@ class BalisticDefence extends GameEngine {
       grd.addColorStop(1.000, 'rgba(0, 255, 255, 1.000)');
       offctx.fillStyle = grd;
       offctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-
+      offctx.drawImage(this.landscapeImage, 0, 0);
       return offscreencanvas;
+	}
+
+	//Cahed landscape image
+	cachedLandscape() {
+		const platformWidth = 40;
+		const platformIncline = 10;
+		const platformHeight = 40;
+		const groundLevel = 10;
+
+		const offscreencanvas = document.createElement('canvas');
+		const offscreenctx = offscreencanvas.getContext('2d');
+		
+		offscreencanvas.width = this.ctx.canvas.width;
+		offscreencanvas.height = platformHeight;
+
+		const landscapeDistance = (offscreenctx.canvas.width - (platformWidth * 3) - (platformIncline * 4))/2;
+
+		offscreenctx.save();
+		 // Create gradient
+      let grd = offscreenctx.createLinearGradient(0, 0, offscreenctx.canvas.width, offscreenctx.canvas.height);
+      
+      // Add colors
+       grd.addColorStop(0.000, 'rgba(0, 127, 63, 1.000)');
+      grd.addColorStop(0.500, 'rgba(95, 191, 0, 1.000)');
+      grd.addColorStop(1.000, 'rgba(0, 127, 63, 1.000)');
+	  offscreenctx.fillStyle = grd;
+	  offscreenctx.beginPath();
+	  offscreenctx.moveTo(0,platformHeight);
+	  offscreenctx.lineTo(platformWidth, platformHeight);
+	  offscreenctx.lineTo(platformWidth + platformIncline, groundLevel);
+	  offscreenctx.lineTo(platformWidth + platformIncline + landscapeDistance, groundLevel);
+	  offscreenctx.lineTo(platformWidth + (platformIncline * 2) + landscapeDistance, platformHeight);
+	  offscreenctx.lineTo((platformWidth * 2) + (platformIncline * 2) + landscapeDistance, platformHeight);
+	  offscreenctx.lineTo((platformWidth * 2) + (platformIncline * 3) + landscapeDistance, groundLevel);
+	  offscreenctx.lineTo((platformWidth * 2) + (platformIncline * 3) + (landscapeDistance * 2), groundLevel);
+	  offscreenctx.lineTo((platformWidth * 2) + (platformIncline * 4) + (landscapeDistance * 2), platformHeight);
+	  offscreenctx.lineTo((platformWidth * 3) + (platformIncline * 4) + (landscapeDistance * 2), platformHeight);
+	  offscreenctx.lineTo((platformWidth * 3) + (platformIncline * 4) + (landscapeDistance * 2), 0);
+	  offscreenctx.lineTo(0,0);
+	  offscreenctx.fill();
+	  offscreenctx.restore();
+
+	  return offscreencanvas;
 	}
 }
 

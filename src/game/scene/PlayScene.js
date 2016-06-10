@@ -19,14 +19,15 @@ export default class {
 
 		this.setupLevel(this.wave);
 
-		this.game.landscapeImage = this.cachedLandscape();
 		this.game.launchpads = [];
 		this.timer = 0;
 		//Setup launchpads
 		this.game.launchpads[0] = new MissileLauncher(game, 20, 40);
+		this.game.addEntity(this.game.launchpads[0]);
 		this.game.launchpads[1] = new MissileLauncher(game, this.game.ctx.canvas.width / 2, 40);
+		this.game.addEntity(this.game.launchpads[1]);
 		this.game.launchpads[2] = new MissileLauncher(game, this.game.ctx.canvas.width - 20, 40);
-
+		this.game.addEntity(this.game.launchpads[2]);
 		//Setup cities
     	for(let i = 0; i < this.game.cities.info.length; i++) {
     		if(this.game.cities.info[i].isAlive) {
@@ -81,8 +82,7 @@ export default class {
 
 			if(this.game.entities.length) {
 				for(let k = 0; k < this.game.entities.length; k++) {
-					console.log("Object is City: ", this.game.entities[k] instanceof City);
-					if(this.game.entities[k] instanceof City) {
+					if(this.game.entities[k] instanceof City || this.game.entities[k] instanceof MissileLauncher) {
 						complete = true;
 					} else {
 						complete = false;
@@ -91,27 +91,14 @@ export default class {
 			} else {
 				complete = true;
 			}
-			console.log("Complete: ", complete);
 			if(complete) {
-				console.log("Complete!");
 				this.game.levelover(this.game, this.landscapeImage, this.launchpads);
 			}
 		}
 	}
 
 	draw(ctx) {
-	  this.drawLandscape(ctx);
-	  this.drawMissileIndicators(ctx);
-	}
-
-	drawLandscape(ctx) {
-		ctx.drawImage(this.game.landscapeImage, 0, 0);
-	}
-
-	drawMissileIndicators(ctx) {
-		for (let i = 0; i < this.game.launchpads.length; i++) {
-				this.game.launchpads[i].drawMissileIndicators(ctx);		
-		}
+	  
 	}
 
 	launchPlayerMissile() {
@@ -135,48 +122,5 @@ export default class {
 			missile = new PlayerMissile(this.game, (click.x / this.game.scale), canvas.height - (click.y / this.game.scale), this.game.launchpads[launcherIndex].x, this.game.launchpads[launcherIndex].y);
 			this.game.addEntity(missile);
 		}
-	}
-
-	//Cahed landscape image
-	cachedLandscape() {
-		const platformWidth = 40;
-		const platformIncline = 10;
-		const platformHeight = 40;
-		const groundLevel = 10;
-
-		const offscreencanvas = document.createElement('canvas');
-		const offscreenctx = offscreencanvas.getContext('2d');
-		
-		offscreencanvas.width = this.game.ctx.canvas.width;
-		offscreencanvas.height = platformHeight;
-
-		const landscapeDistance = (offscreenctx.canvas.width - (platformWidth * 3) - (platformIncline * 4))/2;
-
-		offscreenctx.save();
-		 // Create gradient
-      let grd = offscreenctx.createLinearGradient(0, 0, offscreenctx.canvas.width, offscreenctx.canvas.height);
-      
-      // Add colors
-       grd.addColorStop(0.000, 'rgba(0, 127, 63, 1.000)');
-      grd.addColorStop(0.500, 'rgba(95, 191, 0, 1.000)');
-      grd.addColorStop(1.000, 'rgba(0, 127, 63, 1.000)');
-	  offscreenctx.fillStyle = grd;
-	  offscreenctx.beginPath();
-	  offscreenctx.moveTo(0,platformHeight);
-	  offscreenctx.lineTo(platformWidth, platformHeight);
-	  offscreenctx.lineTo(platformWidth + platformIncline, groundLevel);
-	  offscreenctx.lineTo(platformWidth + platformIncline + landscapeDistance, groundLevel);
-	  offscreenctx.lineTo(platformWidth + (platformIncline * 2) + landscapeDistance, platformHeight);
-	  offscreenctx.lineTo((platformWidth * 2) + (platformIncline * 2) + landscapeDistance, platformHeight);
-	  offscreenctx.lineTo((platformWidth * 2) + (platformIncline * 3) + landscapeDistance, groundLevel);
-	  offscreenctx.lineTo((platformWidth * 2) + (platformIncline * 3) + (landscapeDistance * 2), groundLevel);
-	  offscreenctx.lineTo((platformWidth * 2) + (platformIncline * 4) + (landscapeDistance * 2), platformHeight);
-	  offscreenctx.lineTo((platformWidth * 3) + (platformIncline * 4) + (landscapeDistance * 2), platformHeight);
-	  offscreenctx.lineTo((platformWidth * 3) + (platformIncline * 4) + (landscapeDistance * 2), 0);
-	  offscreenctx.lineTo(0,0);
-	  offscreenctx.fill();
-	  offscreenctx.restore();
-
-	  return offscreencanvas;
 	}
 }

@@ -1,7 +1,9 @@
-export default class {
+import Entity from '../../lib/GameEntity';
+
+export default class extends Entity {
 	constructor(game, x, y) {
-		this.x = x;
-		this.y = y;
+    super(game, x, y)
+    this.radius = 20;
 		this.missiles = 10;
     this.sprite = game.ASSET_MANAGER.getAsset('images/missile-indicator.png');
 	}
@@ -13,6 +15,16 @@ export default class {
 
     return length;
 	}
+
+  update() {
+    super.update();
+  }
+
+  draw(ctx) {
+    super.draw(ctx);
+    console.log("Draw Missile Launcher!");
+    this.drawMissileIndicators(ctx);
+  }
 
 	drawMissileIndicators(ctx) {		
 		if(this.missiles < 4 && this.missiles > 0) {
@@ -39,6 +51,7 @@ export default class {
 
 		
 		for(let m = 0; m < this.missiles; m++) {
+    
       ctx.save();
       ctx.translate(-3, -5);
 			if(m === 0) {
@@ -72,6 +85,7 @@ export default class {
         ctx.drawImage(this.sprite, this.x+9, this.y-33, this.sprite.width, this.sprite.height);
       }
       ctx.restore();
+      
 		}
 	}
 

@@ -14,6 +14,7 @@ export default class extends Entity {
 		this.angle = Math.atan2(x - startX, y - startY);
 		this.startX = startX;
 		this.startY = startY;
+		this.distanceToTravel = this.getDistance(x, y, startX, startY);
 	}
 
 	update() {
@@ -25,7 +26,7 @@ export default class extends Entity {
 		this.x += (this.speed * this.game.clockTick) * Math.sin(this.angle);
 		this.y += (this.speed * this.game.clockTick) * Math.cos(this.angle);
 
-		if(Math.abs(this.y - this.targetY) < 5 && Math.abs(this.x - this.targetX) < 5) {
+		if(this.getDistance(this.x, this.y, this.startX, this.startY) >= this.distanceToTravel) {
 			this.removeFromWorld = true;
 			this.targetGraphic.removeFromWorld = true;
 			let explosion = new Explosion(this.game, this.targetX, this.targetY, this);
@@ -39,5 +40,13 @@ export default class extends Entity {
 		ctx.beginPath();
 		ctx.fillRect(this.x-1, this.y-1, 3, 3);
 		ctx.stroke();
+	}
+
+	getDistance(x1, y1, x2, y2) {
+		const a = x1 - x2;
+    	const b = y1 - y2;
+    	const length = Math.sqrt((a * a) + (b * b));
+
+    	return length;
 	}
 }
