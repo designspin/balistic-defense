@@ -23,6 +23,7 @@ class BalisticDefence extends GameEngine {
 		this.background = null;
 		this.launchpads = [];
 
+		this.soundUnlock = false;
 		this.ASSET_MANAGER = new AssetManager();
 		this.audioplayer = new AudioPlayer(this.ASSET_MANAGER);
 

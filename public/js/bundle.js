@@ -301,6 +301,7 @@ var BalisticDefence = function (_GameEngine) {
 		_this.background = null;
 		_this.launchpads = [];
 
+		_this.soundUnlock = false;
 		_this.ASSET_MANAGER = new _AssetManager2.default();
 		_this.audioplayer = new _AudioPlayer2.default(_this.ASSET_MANAGER);
 
@@ -1640,12 +1641,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var _class = function () {
 	function _class(game) {
+		var _this = this;
+
 		_classCallCheck(this, _class);
 
 		this.game = game;
 		this.opacity = 0.1;
 		this.toggle = true;
-		this.firstTouch = true;
+
+		window.addEventListener('touchstart', function () {
+			if (!_this.game.soundUnlock) {
+				_this.game.audioplayer.unlock();
+				_this.game.soundUnlock = true;
+				window.removeEventListener('touchstart');
+			}
+		});
 	}
 
 	_createClass(_class, [{
@@ -1655,11 +1665,6 @@ var _class = function () {
 
 			if (this.game.click) {
 				this.game.click = null;
-
-				if (this.firstTouch) {
-					this.firstTouch = false;
-					this.game.audioplayer.unlock();
-				}
 				this.game.levelup(); // Fire FSM startgame event;
 			}
 		}
