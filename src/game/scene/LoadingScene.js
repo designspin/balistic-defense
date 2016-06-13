@@ -5,6 +5,9 @@ export default class {
 		this.game.ASSET_MANAGER.queueDownload('images/missile-indicator.png');
 		this.game.ASSET_MANAGER.queueSound('explosion', 'sounds/8-bit-explosion.wav');
 		this.game.ASSET_MANAGER.queueSound('launch', 'sounds/launch-sound.wav');
+		this.game.ASSET_MANAGER.queueSound('bullet-ping', 'sounds/bullet-left-ping.wav');
+		this.game.ASSET_MANAGER.queueSound('city-ping', 'sounds/city-left-ping.wav');
+		this.game.ASSET_MANAGER.queueSound('incoming', 'sounds/incoming.mp3');
 		this.init();
 	}
 

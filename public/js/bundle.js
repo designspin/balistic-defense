@@ -1260,6 +1260,7 @@ var _class = function () {
 					case 'cities':
 						if (this.citiesSurvived.length) {
 							this.citiesSurvived[0].original.removeFromWorld = true;
+							this.game.audioplayer.play('city-ping');
 							this.cityIndicators.push(new _City2.default(this.game, this.citiesSurvived[0].x, this.citiesSurvived[0].y));
 							this.game.addEntity(this.cityIndicators[this.cityIndicators.length - 1]);
 							this.citiesSurvived.shift();
@@ -1272,14 +1273,15 @@ var _class = function () {
 					case 'missiles':
 						if (this.game.launchpads[0].missiles > 0) {
 							this.game.launchpads[0].missiles -= 1;
-							console.log("Pad 1: ", this.game.launchpads[0].missiles);
+							this.game.audioplayer.play('bullet-ping');
 							this.missileBonusScore += 5;
 						} else if (this.game.launchpads[1].missiles > 0) {
 							this.game.launchpads[1].missiles -= 1;
-							console.log("Pad 2: ", this.game.launchpads[1].missiles);
+							this.game.audioplayer.play('bullet-ping');
 							this.missileBonusScore += 5;
 						} else if (this.game.launchpads[2].missiles > 0) {
 							this.game.launchpads[2].missiles -= 1;
+							this.game.audioplayer.play('bullet-ping');
 							this.missileBonusScore += 5;
 						} else {
 							this.updateInterval = 3;
@@ -1378,6 +1380,8 @@ var _class = function () {
 		this.opacity = 0.1;
 		this.toggle = true;
 		this.timer = 0;
+		this.updates = 0;
+		this.game.audioplayer.play('incoming');
 	}
 
 	_createClass(_class, [{
@@ -1386,7 +1390,13 @@ var _class = function () {
 			this.timer += this.game.clockTick;
 			var toggle = this.toggle ? this.opacity < 1 ? this.opacity += 0.05 : this.toggle = !this.toggle : this.opacity > 0.05 ? this.opacity -= 0.05 : this.toggle = !this.toggle;
 
-			if (this.timer > 3) {
+			if (this.timer > 1) {
+				this.timer = 0;
+				this.updates += 1;
+				this.game.audioplayer.play('incoming');
+			}
+
+			if (this.updates > 3) {
 				this.game.startgame();
 			}
 		}
@@ -1433,6 +1443,9 @@ var _class = function () {
 		this.game.ASSET_MANAGER.queueDownload('images/missile-indicator.png');
 		this.game.ASSET_MANAGER.queueSound('explosion', 'sounds/8-bit-explosion.wav');
 		this.game.ASSET_MANAGER.queueSound('launch', 'sounds/launch-sound.wav');
+		this.game.ASSET_MANAGER.queueSound('bullet-ping', 'sounds/bullet-left-ping.wav');
+		this.game.ASSET_MANAGER.queueSound('city-ping', 'sounds/city-left-ping.wav');
+		this.game.ASSET_MANAGER.queueSound('incoming', 'sounds/incoming.mp3');
 		this.init();
 	}
 

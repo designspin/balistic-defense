@@ -42,6 +42,7 @@ export default class {
 				case 'cities':
 					if(this.citiesSurvived.length) {
 						this.citiesSurvived[0].original.removeFromWorld = true;
+						this.game.audioplayer.play('city-ping');
 						this.cityIndicators.push(new City(this.game, this.citiesSurvived[0].x, this.citiesSurvived[0].y));
 						this.game.addEntity(this.cityIndicators[this.cityIndicators.length-1]);
 						this.citiesSurvived.shift();
@@ -54,14 +55,15 @@ export default class {
 				case 'missiles':
 					if(this.game.launchpads[0].missiles > 0) {
 						this.game.launchpads[0].missiles -= 1;
-						console.log("Pad 1: ", this.game.launchpads[0].missiles);
+						this.game.audioplayer.play('bullet-ping');
 						this.missileBonusScore += 5;
 					} else if(this.game.launchpads[1].missiles > 0) {
 						this.game.launchpads[1].missiles -= 1;
-						console.log("Pad 2: ", this.game.launchpads[1].missiles);
+						this.game.audioplayer.play('bullet-ping');
 						this.missileBonusScore += 5;
 					} else if(this.game.launchpads[2].missiles > 0) {
 						this.game.launchpads[2].missiles -= 1;
+						this.game.audioplayer.play('bullet-ping');
 						this.missileBonusScore += 5;
 					} else {
 					  this.updateInterval = 3;

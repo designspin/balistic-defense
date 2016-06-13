@@ -5,13 +5,21 @@ export default class {
 		this.opacity = 0.1;
 		this.toggle = true;
 		this.timer = 0;
+		this.updates = 0;
+		this.game.audioplayer.play('incoming');
 	}
 
 	update() {
 		this.timer += this.game.clockTick;
 		const toggle = (this.toggle) ? (this.opacity < 1 ? this.opacity += 0.05 : this.toggle = !this.toggle) : (this.opacity > 0.05 ? this.opacity -= 0.05 : this.toggle = !this.toggle);
 
-		if(this.timer > 3) {
+		if(this.timer > 1) {
+			this.timer = 0;
+			this.updates += 1;
+			this.game.audioplayer.play('incoming');
+		}
+
+		if(this.updates > 3) {
 			this.game.startgame();
 		}
 	}
