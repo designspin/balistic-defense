@@ -92,6 +92,7 @@ export default class {
 				complete = true;
 			}
 			if(complete) {
+				this.game.speedMultiplier = false;
 				this.game.levelover(this.game, this.landscapeImage, this.launchpads);
 			}
 		}

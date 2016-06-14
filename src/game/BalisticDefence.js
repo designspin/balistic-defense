@@ -14,7 +14,7 @@ class BalisticDefence extends GameEngine {
 		super();
 		this.ctx = null;
 		this.scene = null;
-		this.showOutlines = true;
+		this.showOutlines = false;
 		this.wave = 0;
 		this.cities = {qty: 6, info:[]};
 		this.missilesInPlay = 0;

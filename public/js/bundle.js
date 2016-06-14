@@ -292,7 +292,7 @@ var BalisticDefence = function (_GameEngine) {
 
 		_this.ctx = null;
 		_this.scene = null;
-		_this.showOutlines = true;
+		_this.showOutlines = false;
 		_this.wave = 0;
 		_this.cities = { qty: 6, info: [] };
 		_this.missilesInPlay = 0;
@@ -1619,6 +1619,7 @@ var _class = function () {
 					complete = true;
 				}
 				if (complete) {
+					this.game.speedMultiplier = false;
 					this.game.levelover(this.game, this.landscapeImage, this.launchpads);
 				}
 			}
