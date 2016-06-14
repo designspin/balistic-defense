@@ -8,7 +8,8 @@ export default class extends Entity {
 	constructor(game, x, y, position) {
 		super(game, x, y);
 		this.sprite = this.game.ASSET_MANAGER.getAsset('images/City.png');
-		this.radius = 16;
+		//this.radius = 16;
+		this.hitBox = {x: x-16, y: y-16, width: 32, height: 32};
 		this.position = position;
 	}
 
@@ -43,35 +44,16 @@ export default class extends Entity {
 		}
 	}
 
-	isHit(entity) {
+	/*isHit(entity) {
 		let distance_squared = (((this.x - entity.x) * (this.x - entity.x)) + ((this.y - entity.y) * (this.y - entity.y)));
 	  let radii_squared = (this.radius + entity.radius) * (this.radius + entity.radius);
 	  return distance_squared < radii_squared;
-	}
+	}*/
 
-	cachedCityImage() {
-		const offscreencanvas = document.createElement('canvas');
-		const offscreenctx = offscreencanvas.getContext('2d');
+	isHit(entity) {
+		let withinX = ((entity.x > this.hitBox.x) && (entity.x < (this.hitBox.x + this.hitBox.width)));
+		let withinY = ((entity.y > this.hitBox.y) && (entity.y < (this.hitBox.y + this.hitBox.height)));
 
-		offscreencanvas.width = 32;
-		offscreencanvas.height = 32;
-
-		offscreenctx.save();
-	  offscreenctx.beginPath(); 
-	  offscreenctx.fillStyle = 'blue';
-	  offscreenctx.rect(0, 0, 4, 25);
-	  offscreenctx.rect(7, 0, 4, 22);
-	  offscreenctx.rect(14, 0, 4, 32);
-	  offscreenctx.rect(21, 0, 4, 15);
-	  offscreenctx.rect(28, 0, 4, 27);
-	  offscreenctx.fill();
-	  offscreenctx.beginPath();
-	  offscreenctx.fillStyle = 'cyan';
-	  offscreenctx.rect(2, 0, 4, 15);
-	  offscreenctx.rect(8, 0, 4, 18);
-	  offscreenctx.rect(18, 0, 4, 24);
-	  offscreenctx.fill();
-
-	  return offscreencanvas;
+		return (withinX && withinY);
 	}
 }

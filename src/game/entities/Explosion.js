@@ -68,7 +68,7 @@ export default class extends Entity {
 	}
 
 	isCaughtInExplosion(entity) {
-		const distance_squared = (((this.x - entity.x) * (this.x - entity.x)) + ((this.y - entity.y) * (this.y - entity.y)));
+	const distance_squared = (((this.x - entity.x) * (this.x - entity.x)) + ((this.y - entity.y) * (this.y - entity.y)));
 	  const radii_squared = (this.radius + entity.radius) * (this.radius + entity.radius);
 	  return distance_squared < radii_squared;
 	} 

@@ -16,15 +16,13 @@ export default class {
 	}
 
 	unlock() {
-		// create empty buffer
+		// Enable audio in iOS
 		let buffer = this.audioctx.createBuffer(1, 1, 22050);
 		let source = this.audioctx.createBufferSource();
 		source.buffer = buffer;
 
-		// connect to output (your speakers)
 		source.connect(this.audioctx.destination);
 
-		// play the file
 		source.noteOn(0);
 	}
 
@@ -35,11 +33,5 @@ export default class {
 		sound.connect(this.audioctx.destination);
 		sound.start(this.audioctx.currentTime);
 		sound.stop(this.audioctx.currentTime + this.buffers[id].duration);
-
-		/*this.buffers[prop] = this.audioctx.createBufferSource();
-		this.buffers[prop].buffer = this.asset_manager.cache[prop];
-		this.buffers[prop].connect(this.audioctx.destination);
-		this.buffers[id].stop();
-		this.buffers[id].start(this.audioctx.currentTime);*/
 	}
 }

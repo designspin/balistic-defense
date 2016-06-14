@@ -47,7 +47,7 @@ export default class {
 	}
 
 	downloadSounds(downloadCallback) {
-		console.log("Download Sounds");
+		
 		let AudioContext = window.AudioContext || window.webkitAudioContext;
 		let audioctx = new AudioContext();
 
@@ -58,7 +58,7 @@ export default class {
 			request.responseType = 'arraybuffer';
 			request.onload = () => {
 				audioctx.decodeAudioData(request.response, (buffer) => {
-					console.log("Cached Audio with ID:", id);
+					
 					this.successCount += 1;
 					this.cache[id] = buffer;
 					if(this.isDone()) {

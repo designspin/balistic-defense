@@ -526,7 +526,8 @@ var _class = function (_Entity) {
 		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
 
 		_this.sprite = _this.game.ASSET_MANAGER.getAsset('images/City.png');
-		_this.radius = 16;
+		//this.radius = 16;
+		_this.hitBox = { x: x - 16, y: y - 16, width: 32, height: 32 };
 		_this.position = position;
 		return _this;
 	}
@@ -564,39 +565,20 @@ var _class = function (_Entity) {
 				}
 			}
 		}
+
+		/*isHit(entity) {
+  	let distance_squared = (((this.x - entity.x) * (this.x - entity.x)) + ((this.y - entity.y) * (this.y - entity.y)));
+    let radii_squared = (this.radius + entity.radius) * (this.radius + entity.radius);
+    return distance_squared < radii_squared;
+  }*/
+
 	}, {
 		key: 'isHit',
 		value: function isHit(entity) {
-			var distance_squared = (this.x - entity.x) * (this.x - entity.x) + (this.y - entity.y) * (this.y - entity.y);
-			var radii_squared = (this.radius + entity.radius) * (this.radius + entity.radius);
-			return distance_squared < radii_squared;
-		}
-	}, {
-		key: 'cachedCityImage',
-		value: function cachedCityImage() {
-			var offscreencanvas = document.createElement('canvas');
-			var offscreenctx = offscreencanvas.getContext('2d');
+			var withinX = entity.x > this.hitBox.x && entity.x < this.hitBox.x + this.hitBox.width;
+			var withinY = entity.y > this.hitBox.y && entity.y < this.hitBox.y + this.hitBox.height;
 
-			offscreencanvas.width = 32;
-			offscreencanvas.height = 32;
-
-			offscreenctx.save();
-			offscreenctx.beginPath();
-			offscreenctx.fillStyle = 'blue';
-			offscreenctx.rect(0, 0, 4, 25);
-			offscreenctx.rect(7, 0, 4, 22);
-			offscreenctx.rect(14, 0, 4, 32);
-			offscreenctx.rect(21, 0, 4, 15);
-			offscreenctx.rect(28, 0, 4, 27);
-			offscreenctx.fill();
-			offscreenctx.beginPath();
-			offscreenctx.fillStyle = 'cyan';
-			offscreenctx.rect(2, 0, 4, 15);
-			offscreenctx.rect(8, 0, 4, 18);
-			offscreenctx.rect(18, 0, 4, 24);
-			offscreenctx.fill();
-
-			return offscreencanvas;
+			return withinX && withinY;
 		}
 	}]);
 
@@ -1085,6 +1067,14 @@ var _GameEntity = require('../../lib/GameEntity');
 
 var _GameEntity2 = _interopRequireDefault(_GameEntity);
 
+var _EnemyMissile = require('../entities/EnemyMissile');
+
+var _EnemyMissile2 = _interopRequireDefault(_EnemyMissile);
+
+var _Explosion = require('../entities/Explosion');
+
+var _Explosion2 = _interopRequireDefault(_Explosion);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1101,7 +1091,7 @@ var _class = function (_Entity) {
 
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
 
-    _this.radius = 20;
+    _this.hitTriangle = { p1: { x: x, y: y + 5 }, p2: { x: x - 12, y: y - 38 }, p3: { x: x + 12, y: y - 38 } };
     _this.missiles = 10;
     _this.sprite = game.ASSET_MANAGER.getAsset('images/missile-indicator.png');
     return _this;
@@ -1120,6 +1110,33 @@ var _class = function (_Entity) {
     key: 'update',
     value: function update() {
       _get(Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
+      for (var i = 0; i < this.game.entities.length; i++) {
+        var entity = this.game.entities[i];
+
+        if (entity instanceof _EnemyMissile2.default && this.isHit(entity)) {
+          if (entity.hitTarget === false) {
+            entity.hitTarget = true;
+            entity.explode(entity.x, entity.y);
+            var explosion = new _Explosion2.default(this.game, this.x, this.y - 19);
+            this.game.addEntity(explosion);
+            this.missiles = 0;
+          }
+        }
+      }
+    }
+  }, {
+    key: 'isHit',
+    value: function isHit(entity) {
+      var p1 = this.hitTriangle.p1;
+      var p2 = this.hitTriangle.p2;
+      var p3 = this.hitTriangle.p3;
+      var p = entity;
+
+      var alpha = ((p2.y - p3.y) * (p.x - p3.x) + (p3.x - p2.x) * (p.y - p3.y)) / ((p2.y - p3.y) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.y - p3.y));
+      var beta = ((p3.y - p1.y) * (p.x - p3.x) + (p1.x - p3.x) * (p.y - p3.y)) / ((p2.y - p3.y) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.y - p3.y));
+      var gamma = 1 - alpha - beta;
+
+      return alpha > 0 && beta > 0 && gamma > 0;
     }
   }, {
     key: 'draw',
@@ -1197,7 +1214,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":19}],10:[function(require,module,exports){
+},{"../../lib/GameEntity":19,"../entities/EnemyMissile":4,"../entities/Explosion":5}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1791,7 +1808,6 @@ var _class = function () {
 		value: function downloadSounds(downloadCallback) {
 			var _this2 = this;
 
-			console.log("Download Sounds");
 			var AudioContext = window.AudioContext || window.webkitAudioContext;
 			var audioctx = new AudioContext();
 
@@ -1802,7 +1818,7 @@ var _class = function () {
 				request.responseType = 'arraybuffer';
 				request.onload = function () {
 					audioctx.decodeAudioData(request.response, function (buffer) {
-						console.log("Cached Audio with ID:", id);
+
 						_this2.successCount += 1;
 						_this2.cache[id] = buffer;
 						if (_this2.isDone()) {
@@ -1874,15 +1890,13 @@ var _class = function () {
 	}, {
 		key: "unlock",
 		value: function unlock() {
-			// create empty buffer
+			// Enable audio in iOS
 			var buffer = this.audioctx.createBuffer(1, 1, 22050);
 			var source = this.audioctx.createBufferSource();
 			source.buffer = buffer;
 
-			// connect to output (your speakers)
 			source.connect(this.audioctx.destination);
 
-			// play the file
 			source.noteOn(0);
 		}
 	}, {
@@ -1894,12 +1908,6 @@ var _class = function () {
 			sound.connect(this.audioctx.destination);
 			sound.start(this.audioctx.currentTime);
 			sound.stop(this.audioctx.currentTime + this.buffers[id].duration);
-
-			/*this.buffers[prop] = this.audioctx.createBufferSource();
-   this.buffers[prop].buffer = this.asset_manager.cache[prop];
-   this.buffers[prop].connect(this.audioctx.destination);
-   this.buffers[id].stop();
-   this.buffers[id].start(this.audioctx.currentTime);*/
 		}
 	}]);
 
@@ -1957,7 +1965,6 @@ var _class = function () {
 				_this.loop();
 				requestAnimationFrame(gameLoop, _this.ctx.canvas);
 			};
-			console.log("Calling Game Loop for first time");
 			gameLoop();
 		}
 	}, {
@@ -2072,7 +2079,7 @@ exports.default = _class;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
-	value: true
+  value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -2080,33 +2087,51 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var _class = function () {
-	function _class(game, x, y) {
-		_classCallCheck(this, _class);
+  function _class(game, x, y) {
+    _classCallCheck(this, _class);
 
-		this.game = game;
-		this.x = x;
-		this.y = y;
-		this.removeFromWorld = false;
-	}
+    this.game = game;
+    this.x = x;
+    this.y = y;
+    this.removeFromWorld = false;
+  }
 
-	_createClass(_class, [{
-		key: "update",
-		value: function update() {}
-	}, {
-		key: "draw",
-		value: function draw(ctx) {
-			if (this.game.showOutlines && this.radius) {
-				ctx.beginPath();
-				ctx.strokeStyle = "red";
-				ctx.lineWidth = 1;
-				ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-				ctx.stroke();
-				ctx.closePath();
-			}
-		}
-	}]);
+  _createClass(_class, [{
+    key: "update",
+    value: function update() {}
+  }, {
+    key: "draw",
+    value: function draw(ctx) {
+      if (this.game.showOutlines && this.radius) {
+        ctx.beginPath();
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 1;
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+        ctx.stroke();
+        ctx.closePath();
+      }
 
-	return _class;
+      if (this.game.showOutlines && this.hitBox) {
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 1;
+        ctx.rect(this.hitBox.x, this.hitBox.y, this.hitBox.width, this.hitBox.height);
+        ctx.stroke();
+      }
+
+      if (this.game.showOutlines && this.hitTriangle) {
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(this.hitTriangle.p1.x, this.hitTriangle.p1.y);
+        ctx.lineTo(this.hitTriangle.p2.x, this.hitTriangle.p2.y);
+        ctx.lineTo(this.hitTriangle.p3.x, this.hitTriangle.p3.y);
+        ctx.closePath();
+        ctx.stroke();
+      }
+    }
+  }]);
+
+  return _class;
 }();
 
 exports.default = _class;

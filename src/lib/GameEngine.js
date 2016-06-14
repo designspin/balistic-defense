@@ -25,7 +25,6 @@ export default class {
 	 	this.loop();
 	 	requestAnimationFrame(gameLoop, this.ctx.canvas);
 	 };
-	 console.log("Calling Game Loop for first time")
 	 gameLoop();
 	}
 
