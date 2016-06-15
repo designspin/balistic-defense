@@ -1541,6 +1541,8 @@ var _class = function () {
 		this.maxMissileRelease = null;
 		this.missilesToRelease = null;
 		this.launchSpeed = null;
+		this.onTarget = { list: [true, false], weight: [0.7, 0.3] };
+		this.splitLaunch = { list: [true, false], weight: [0.4, 0.6] };
 
 		this.setupLevel(this.wave);
 
@@ -1573,18 +1575,47 @@ var _class = function () {
 			this.launchSpeed = [20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 120][wave - 1];
 		}
 	}, {
+		key: 'rand',
+		value: function rand(min, max) {
+			return Math.random() * (max - min) + min;
+		}
+	}, {
+		key: 'getRandomItem',
+		value: function getRandomItem(list, weight) {
+			var total_weight = weight.reduce(function (prev, cur, i, arr) {
+				return prev + cur;
+			});
+
+			var random_num = this.rand(0, total_weight);
+			var weight_sum = 0;
+
+			for (var i = 0; i < list.length; i++) {
+				weight_sum += weight[i];
+				weight_sum = +weight_sum.toFixed(2);
+
+				if (random_num <= weight_sum) {
+					return list[i];
+				}
+			}
+		}
+	}, {
 		key: 'update',
 		value: function update() {
 			this.timer += this.game.clockTick;
 
-			//Launch a missile on click or touch
+			//Launch a player missile on click or touch
 			if (this.game.click) {
 				this.launchPlayerMissile();
 			}
 
 			//Launch some missiles
 			if (this.timer > this.timeBetweenRelease && this.missilesToRelease > 0) {
+
 				this.timer = 0;
+
+				var onTarget = this.getRandomItem(this.onTarget.list, this.onTarget.weight);
+				var splitLaunch = this.getRandomItem(this.splitLaunch.list, this.splitLaunch.weight);
+
 				var launchQuantity = this.maxMissilesInPlay - this.game.missilesInPlay;
 				launchQuantity = launchQuantity > this.maxMissileRelease ? this.maxMissileRelease : launchQuantity < this.missilesToRelease ? launchQuantity : this.missilesToRelease;
 
@@ -1592,7 +1623,7 @@ var _class = function () {
 
 				for (var i = 0; i < launchQuantity; i++) {
 					this.game.missilesInPlay += 1;
-					var enemyMissile = new _EnemyMissile2.default(this.game, Math.floor(Math.random() * 480) + 1, 10, Math.floor(Math.random() * 480) + 1, 320, this.launchSpeed);
+					var enemyMissile = new _EnemyMissile2.default(this.game, Math.floor(Math.random() * this.game.ctx.canvas.width) + 1, 10, Math.floor(Math.random() * this.game.ctx.canvas.width) + 1, this.game.ctx.canvas.height, this.launchSpeed);
 					this.game.addEntity(enemyMissile);
 				}
 			}
