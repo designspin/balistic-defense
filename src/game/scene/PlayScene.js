@@ -72,6 +72,8 @@ export default class {
 
 	update() {
 		this.timer += this.game.clockTick;
+		let launchStart = null;
+		let launchTarget = null;
 
 		//Launch a player missile on click or touch
 		if(this.game.click) {
@@ -81,10 +83,28 @@ export default class {
 		//Launch some missiles
 		if (this.timer > this.timeBetweenRelease && this.missilesToRelease > 0) {
 
+			let targetlist = [];
+			let missilelist = [];
+
+			//Gather list of targets
+			for(let i = 0; i < this.game.entities.length; i++) {
+				if(this.game.entities[i] instanceof City || this.game.entities[i] instanceof MissileLauncher) {
+					targetlist.push(this.game.entities[i]);
+				}
+				if(this.game.entities[i] instanceof EnemyMissile) {
+					missilelist.push(this.game.entities[i]);
+				}
+			}
+
 			this.timer = 0;
 			
-			const onTarget = this.getRandomItem(this.onTarget.list, this.onTarget.weight);
-			const splitLaunch = this.getRandomItem(this.splitLaunch.list, this.splitLaunch.weight);
+			
+			if(missilelist.length && this.getRandomItem(this.splitLaunch.list, this.splitLaunch.weight)) {
+				const selection = missilelist[Math.floor(Math.random() * missilelist.length-1) + 1];
+				launchStart = {x: selection.x, y: selection.y};
+			} else {
+				launchStart = false;
+			}
 
 			let launchQuantity = this.maxMissilesInPlay - this.game.missilesInPlay;
 			launchQuantity = (launchQuantity > this.maxMissileRelease) ? this.maxMissileRelease : (launchQuantity < this.missilesToRelease ? launchQuantity : this.missilesToRelease);
@@ -92,8 +112,21 @@ export default class {
 			this.missilesToRelease -= launchQuantity;
 
 			for(let i = 0; i < launchQuantity; i++) {
+		
+				if(!launchStart) {
+					launchStart = {x: Math.floor(Math.random() * this.game.ctx.canvas.width) +1, y: this.game.ctx.canvas.height};
+				}
+
+				if(this.getRandomItem(this.onTarget.list, this.onTarget.weight)) {
+					const selection = targetlist[Math.floor(Math.random() * targetlist.length-1) + 1];
+					launchTarget = {x: selection.x, y: selection.y};
+				} else {
+					launchTarget = {x: Math.floor(Math.random() * this.game.ctx.canvas.width) +1, y: 10};
+				}
+
+
 				this.game.missilesInPlay += 1;
-				var enemyMissile = new EnemyMissile(this.game, Math.floor(Math.random() * this.game.ctx.canvas.width) +1, 10,  Math.floor(Math.random() * this.game.ctx.canvas.width) +1, this.game.ctx.canvas.height, this.launchSpeed);
+				var enemyMissile = new EnemyMissile(this.game, launchTarget.x, launchTarget.y, launchStart.x, launchStart.y, this.launchSpeed);
       			this.game.addEntity(enemyMissile);
 			}
 		}

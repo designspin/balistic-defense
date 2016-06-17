@@ -1602,6 +1602,8 @@ var _class = function () {
 		key: 'update',
 		value: function update() {
 			this.timer += this.game.clockTick;
+			var launchStart = null;
+			var launchTarget = null;
 
 			//Launch a player missile on click or touch
 			if (this.game.click) {
@@ -1611,19 +1613,48 @@ var _class = function () {
 			//Launch some missiles
 			if (this.timer > this.timeBetweenRelease && this.missilesToRelease > 0) {
 
+				var targetlist = [];
+				var missilelist = [];
+
+				//Gather list of targets
+				for (var i = 0; i < this.game.entities.length; i++) {
+					if (this.game.entities[i] instanceof _City2.default || this.game.entities[i] instanceof _MissileLauncher2.default) {
+						targetlist.push(this.game.entities[i]);
+					}
+					if (this.game.entities[i] instanceof _EnemyMissile2.default) {
+						missilelist.push(this.game.entities[i]);
+					}
+				}
+
 				this.timer = 0;
 
-				var onTarget = this.getRandomItem(this.onTarget.list, this.onTarget.weight);
-				var splitLaunch = this.getRandomItem(this.splitLaunch.list, this.splitLaunch.weight);
+				if (missilelist.length && this.getRandomItem(this.splitLaunch.list, this.splitLaunch.weight)) {
+					var selection = missilelist[Math.floor(Math.random() * missilelist.length - 1) + 1];
+					launchStart = { x: selection.x, y: selection.y };
+				} else {
+					launchStart = false;
+				}
 
 				var launchQuantity = this.maxMissilesInPlay - this.game.missilesInPlay;
 				launchQuantity = launchQuantity > this.maxMissileRelease ? this.maxMissileRelease : launchQuantity < this.missilesToRelease ? launchQuantity : this.missilesToRelease;
 
 				this.missilesToRelease -= launchQuantity;
 
-				for (var i = 0; i < launchQuantity; i++) {
+				for (var _i = 0; _i < launchQuantity; _i++) {
+
+					if (!launchStart) {
+						launchStart = { x: Math.floor(Math.random() * this.game.ctx.canvas.width) + 1, y: this.game.ctx.canvas.height };
+					}
+
+					if (this.getRandomItem(this.onTarget.list, this.onTarget.weight)) {
+						var _selection = targetlist[Math.floor(Math.random() * targetlist.length - 1) + 1];
+						launchTarget = { x: _selection.x, y: _selection.y };
+					} else {
+						launchTarget = { x: Math.floor(Math.random() * this.game.ctx.canvas.width) + 1, y: 10 };
+					}
+
 					this.game.missilesInPlay += 1;
-					var enemyMissile = new _EnemyMissile2.default(this.game, Math.floor(Math.random() * this.game.ctx.canvas.width) + 1, 10, Math.floor(Math.random() * this.game.ctx.canvas.width) + 1, this.game.ctx.canvas.height, this.launchSpeed);
+					var enemyMissile = new _EnemyMissile2.default(this.game, launchTarget.x, launchTarget.y, launchStart.x, launchStart.y, this.launchSpeed);
 					this.game.addEntity(enemyMissile);
 				}
 			}
