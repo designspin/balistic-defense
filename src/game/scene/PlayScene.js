@@ -85,6 +85,7 @@ export default class {
 
 			let targetlist = [];
 			let missilelist = [];
+			const splitLaunch = this.getRandomItem(this.splitLaunch.list, this.splitLaunch.weight);
 
 			//Gather list of targets
 			for(let i = 0; i < this.game.entities.length; i++) {
@@ -92,14 +93,16 @@ export default class {
 					targetlist.push(this.game.entities[i]);
 				}
 				if(this.game.entities[i] instanceof EnemyMissile) {
-					missilelist.push(this.game.entities[i]);
+					if(this.game.entities[i].x > this.game.ctx.canvas.height / 3) {
+						missilelist.push(this.game.entities[i]);
+					}
 				}
 			}
 
 			this.timer = 0;
 			
 			
-			if(missilelist.length && this.getRandomItem(this.splitLaunch.list, this.splitLaunch.weight)) {
+			if(missilelist.length && splitLaunch) {
 				const selection = missilelist[Math.floor(Math.random() * missilelist.length-1) + 1];
 				launchStart = {x: selection.x, y: selection.y};
 			} else {
@@ -128,6 +131,10 @@ export default class {
 				this.game.missilesInPlay += 1;
 				var enemyMissile = new EnemyMissile(this.game, launchTarget.x, launchTarget.y, launchStart.x, launchStart.y, this.launchSpeed);
       			this.game.addEntity(enemyMissile);
+      			
+      			if (!splitLaunch) {
+      				launchStart = false;
+      			}
 			}
 		}
 
