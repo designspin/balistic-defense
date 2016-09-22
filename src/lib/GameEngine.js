@@ -40,8 +40,8 @@ export default class {
 
 			this.scale = scale;
 
-			this.ctx.canvas.parentNode.style.top = `${offsetY}px`;
-			this.ctx.canvas.parentNode.style.left = `${offsetX}px`;
+			this.ctx.canvas.parentNode.parentNode.style.top = `${offsetY}px`;
+			this.ctx.canvas.parentNode.parentNode.style.left = `${offsetX}px`;
 			this.ctx.canvas.parentNode.style.webKitransform = `scale(${scale})`;
 			this.ctx.canvas.parentNode.style.transform = `scale(${scale})`;
 		}
@@ -62,8 +62,8 @@ export default class {
 		}
 
 		let getTouchXandTouchY = (e) => {
-			let x = e.targetTouches[0].pageX - this.ctx.canvas.clientLeft;
-			let y = e.targetTouches[0].pageY - this.ctx.canvas.clientTop;
+			let x = e.targetTouches[0].pageX - this.ctx.canvas.getBoundingClientRect().left;
+			let y = e.targetTouches[0].pageY - this.ctx.canvas.getBoundingClientRect().top;
 
 			return {x: x, y: y};
 		}

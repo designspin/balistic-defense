@@ -15,7 +15,9 @@
     		overflow: hidden;
             background-color: black;
     	}
-
+        .container {
+            position: relative;
+        }
     	#game {
             display: block;
             position: relative;
@@ -36,9 +38,11 @@
     </style>
 	</head>
 	<body>
-		<main id="game">
-			<canvas id="view" width="480" height="320"></canvas>
-		</main>
+        <div class="container">
+    		<div id="game">
+    			<canvas id="view" width="480" height="320"></canvas>
+    		</div>
+        </div>
 		<script src="js/bundle.js"></script>
 
 	</body>

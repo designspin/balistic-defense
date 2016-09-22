@@ -2053,8 +2053,8 @@ var _class = function () {
 
 				_this2.scale = scale;
 
-				_this2.ctx.canvas.parentNode.style.top = offsetY + 'px';
-				_this2.ctx.canvas.parentNode.style.left = offsetX + 'px';
+				_this2.ctx.canvas.parentNode.parentNode.style.top = offsetY + 'px';
+				_this2.ctx.canvas.parentNode.parentNode.style.left = offsetX + 'px';
 				_this2.ctx.canvas.parentNode.style.webKitransform = 'scale(' + scale + ')';
 				_this2.ctx.canvas.parentNode.style.transform = 'scale(' + scale + ')';
 			};
@@ -2078,8 +2078,8 @@ var _class = function () {
 			};
 
 			var getTouchXandTouchY = function getTouchXandTouchY(e) {
-				var x = e.targetTouches[0].pageX - _this3.ctx.canvas.clientLeft;
-				var y = e.targetTouches[0].pageY - _this3.ctx.canvas.clientTop;
+				var x = e.targetTouches[0].pageX - _this3.ctx.canvas.getBoundingClientRect().left;
+				var y = e.targetTouches[0].pageY - _this3.ctx.canvas.getBoundingClientRect().top;
 
 				return { x: x, y: y };
 			};
