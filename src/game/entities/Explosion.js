@@ -1,6 +1,7 @@
 import Entity from '../../lib/GameEntity';
 import EnemyMissile from './EnemyMissile';
 import PlayerMissile from './PlayerMissile';
+import { Events } from '../objects/constants';
 
 export default class extends Entity {
 	constructor(game, x, y, createdBy) {
@@ -35,7 +36,7 @@ export default class extends Entity {
 			if(entity instanceof EnemyMissile && entity.hitTarget === false && this.isCaughtInExplosion(entity)) {
 
 				if(this.createdBy instanceof PlayerMissile) {
-
+					this.game.publish(Events.PLAYER_KILLED_ENEMY_MISSILE);
 				} else {
 
 				}

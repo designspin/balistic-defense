@@ -54,7 +54,6 @@ export default class extends Entity {
 
   draw(ctx) {
     super.draw(ctx);
-    console.log("Draw Missile Launcher!");
     this.drawMissileIndicators(ctx);
   }
 

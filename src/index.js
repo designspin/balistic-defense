@@ -6,3 +6,5 @@ let ctx = canvas.getContext('2d');
 let game = new Game();
 
 game.init(ctx);
+
+console.log(game);

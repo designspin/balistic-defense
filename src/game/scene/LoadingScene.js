@@ -13,7 +13,6 @@ export default class {
 
 	init() {
 		this.game.ASSET_MANAGER.downloadAll(() => {
-			console.log("Loaded callback!");
 			this.game.audioplayer.init();
 			this.game.gameloaded();
 		});

@@ -4,6 +4,8 @@ import SmokeTrail from './SmokeTrail';
 import Explosion from './Explosion';
 import EnemyMissile from './EnemyMissile';
 
+import { Events } from '../objects/constants';
+
 export default class extends Entity {
 	constructor(game, x, y, position) {
 		super(game, x, y);
@@ -26,20 +28,23 @@ export default class extends Entity {
 			let entity = this.game.entities[i];
 
 			if(entity instanceof EnemyMissile && this.isHit(entity)) {
-				this.removeFromWorld = true;
-				this.game.cities.qty -= 1;
-				this.game.cities.info[this.position].isAlive = false;
-				entity.hitTarget = true;
-				entity.targetX = entity.x;
-				entity.targetY = entity.y;
-				entity.explode(entity.x, entity.y);
-				let explosion = new Explosion(this.game, this.x, this.y);
-				this.game.addEntity(explosion);
-
+				if(!this.removeFromWorld) {
+					this.game.publish(Events.CITY_DESTROYED, this);
+					this.removeFromWorld = true;
+					entity.hitTarget = true;
+					entity.targetX = entity.x;
+					entity.targetY = entity.y;
+					entity.explode(entity.x, entity.y);
+					let explosion = new Explosion(this.game, this.x, this.y);
+					this.game.addEntity(explosion);
+				}
+				
+				
 				for(let i = 0; i < 40; i++) {
 					let smoke = new SmokeTrail(this.game, this.x, this.y, 0 + (i+1 * 10));
 					this.game.addEntity(smoke);
 				}
+				
 			}
 		}
 	}

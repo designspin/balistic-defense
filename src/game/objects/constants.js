@@ -1,0 +1,4 @@
+export const Events = {
+	CITY_DESTROYED: 0,
+	PLAYER_KILLED_ENEMY_MISSILE: 1
+};

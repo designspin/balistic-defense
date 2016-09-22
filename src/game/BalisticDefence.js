@@ -2,12 +2,15 @@ import GameEngine from '../lib/GameEngine';
 import AssetManager from '../lib/AssetManager';
 import AudioPlayer from '../lib/AudioPlayer';
 import FSM from 'javascript-state-machine';
+import PubSub from '../lib/PubSub';
 
 import LoadingScene from './scene/LoadingScene';
 import TitleScene from './scene/TitleScene';
 import PlayScene from './scene/PlayScene';
 import LevelUpScene from './scene/LevelUpScene';
 import LevelOverScene from './scene/LevelOverScene';
+import GameOverScene from './scene/GameOverScene';
+import { Events } from './objects/constants';
 
 class BalisticDefence extends GameEngine {
 	constructor() {
@@ -15,9 +18,7 @@ class BalisticDefence extends GameEngine {
 		this.ctx = null;
 		this.scene = null;
 		this.showOutlines = false;
-		this.wave = 0;
-		this.cities = {qty: 6, info:[]};
-		this.missilesInPlay = 0;
+		
 		this.speedMultiplier = false;
 		this.landscapeImage = null;
 		this.background = null;
@@ -27,16 +28,16 @@ class BalisticDefence extends GameEngine {
 		this.ASSET_MANAGER = new AssetManager();
 		this.audioplayer = new AudioPlayer(this.ASSET_MANAGER);
 
-		//Setup cities
-		for (let i = 0; i < this.cities.qty; i++) {
-			let cityPosX = ((i+1) * 57) + 16;
+		this.reset();
 
-		    if (i + 1 > 3) {
-		    	cityPosX = ((i+1) * 57) + 66;
-		    }
+		this.subscribe(Events.CITY_DESTROYED, (city) => {
+			this.onCityDestroyed(city);
+		});
 
-		    this.cities.info.push({x: cityPosX, y: 26, isAlive: true, instance: null });
-		}
+		this.subscribe(Events.PLAYER_KILLED_ENEMY_MISSILE, () => {
+			this.onPlayerKilledEnemyMissile();
+		});
+
 	}
 
 	init(ctx) {
@@ -50,9 +51,32 @@ class BalisticDefence extends GameEngine {
 		super.start();
 	}
 
+	reset() {
+		this.entities = [];
+		this.wave = 0;
+		this.cities = {qty: 6, info:[]};
+		this.missilesInPlay = 0;
+
+		//Setup cities
+		for (let i = 0; i < this.cities.qty; i++) {
+			let cityPosX = ((i+1) * 57) + 16;
+
+		    if (i + 1 > 3) {
+		    	cityPosX = ((i+1) * 57) + 66;
+		    }
+
+		    this.cities.info.push({x: cityPosX, y: 26, isAlive: true, instance: null });
+		}
+	}
 	////////////////////////////
 	// State machine handlers //
 	////////////////////////////
+	// Event Handles
+
+	onafterlevelreset() {
+		this.reset();
+	}
+	// State Handles
 	onenterloading() {
 		this.scene = new LoadingScene(this);
 		this.start();
@@ -72,9 +96,27 @@ class BalisticDefence extends GameEngine {
 	}
 
 	onenterlevelcomplete() {
-		this.scene = new LevelOverScene(this);
+		if (this.cities.qty < 1) {
+			this.scene = new GameOverScene(this);
+		} else {
+			this.scene = new LevelOverScene(this);
+		}
+	}
+	////////////////////////////
+	//  PubSub handlers 			//
+	////////////////////////////
+	onCityDestroyed(city) {
+		this.cities.qty -= 1;
+		this.cities.info[city.position].isAlive = false;
+
+		if(this.cities.qty < 1) {
+			this.speedMultiplier = true;
+		}
 	}
 
+	onPlayerKilledEnemyMissile() {
+		console.log("Good shooting!");
+	}
 	////////////////////////////
 	// Update                 //
 	////////////////////////////
@@ -174,8 +216,11 @@ FSM.create({
 		{name: 'gameloaded', from: 'loading', to: 'title' },
 		{name: 'levelup', from: ['title', 'levelcomplete'], to: 'levelinfo'},
 		{name: 'startgame', from: 'levelinfo', to: 'playing'},
-		{name: 'levelover', from: 'playing', to: 'levelcomplete'}
+		{name: 'levelover', from: 'playing', to: 'levelcomplete'},
+		{name: 'levelreset', from: 'levelcomplete', to: 'title'}
 	]
 });
+
+PubSub.activate(BalisticDefence.prototype);
 
 export default BalisticDefence;

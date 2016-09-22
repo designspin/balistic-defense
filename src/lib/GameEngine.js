@@ -86,7 +86,6 @@ export default class {
 	}
 
 	addEntity(entity) {
-		console.log("Adding entity: ", entity);
 		this.entities.push(entity);
 	}
 
