@@ -1987,7 +1987,7 @@ var _class = function () {
 exports.default = _class;
 
 },{}],18:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
@@ -1995,7 +1995,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _GameTimer = require("./GameTimer");
+var _GameTimer = require('./GameTimer');
 
 var _GameTimer2 = _interopRequireDefault(_GameTimer);
 
@@ -2018,7 +2018,7 @@ var _class = function () {
 	}
 
 	_createClass(_class, [{
-		key: "init",
+		key: 'init',
 		value: function init(ctx) {
 			this.ctx = ctx;
 			this.surfaceWidth = this.ctx.canvas.width;
@@ -2027,7 +2027,7 @@ var _class = function () {
 			this.startInput();
 		}
 	}, {
-		key: "start",
+		key: 'start',
 		value: function start() {
 			var _this = this;
 
@@ -2038,7 +2038,7 @@ var _class = function () {
 			gameLoop();
 		}
 	}, {
-		key: "setSurface",
+		key: 'setSurface',
 		value: function setSurface() {
 			var _this2 = this;
 
@@ -2047,10 +2047,16 @@ var _class = function () {
 				var scaleX = window.innerWidth / _this2.ctx.canvas.width;
 				var scaleY = window.innerHeight / _this2.ctx.canvas.height;
 				var scale = Math.min(scaleX, scaleY);
+
+				var offsetY = (window.innerHeight - _this2.ctx.canvas.height * scale) / 2;
+				var offsetX = (window.innerWidth - _this2.ctx.canvas.width * scale) / 2;
+
 				_this2.scale = scale;
 
-				_this2.ctx.canvas.parentNode.style.webkitTransform = "scale(" + scale + ")";
-				_this2.ctx.canvas.parentNode.style.transform = "scale(" + scale + ")";
+				_this2.ctx.canvas.parentNode.style.top = offsetY + 'px';
+				_this2.ctx.canvas.parentNode.style.left = offsetX + 'px';
+				_this2.ctx.canvas.parentNode.style.webKitransform = 'scale(' + scale + ')';
+				_this2.ctx.canvas.parentNode.style.transform = 'scale(' + scale + ')';
 			};
 
 			window.addEventListener('resize', reflowStage);
@@ -2060,7 +2066,7 @@ var _class = function () {
 			reflowStage();
 		}
 	}, {
-		key: "startInput",
+		key: 'startInput',
 		value: function startInput() {
 			var _this3 = this;
 
@@ -2088,7 +2094,7 @@ var _class = function () {
 			});
 		}
 	}, {
-		key: "loop",
+		key: 'loop',
 		value: function loop() {
 			this.clockTick = this.timer.tick();
 			this.update();
@@ -2096,13 +2102,13 @@ var _class = function () {
 			this.click = null;
 		}
 	}, {
-		key: "addEntity",
+		key: 'addEntity',
 		value: function addEntity(entity) {
 			console.log("Adding entity: ", entity);
 			this.entities.push(entity);
 		}
 	}, {
-		key: "draw",
+		key: 'draw',
 		value: function draw(drawCallback) {
 			this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 			this.ctx.save();
@@ -2120,7 +2126,7 @@ var _class = function () {
 			this.ctx.restore();
 		}
 	}, {
-		key: "update",
+		key: 'update',
 		value: function update() {
 			var entitiesCount = this.entities.length;
 

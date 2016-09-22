@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build:js": "browserify src/index.js -t babelify --outfile public/js/bundle.js",
-    "serve": "http-server -p 3000 public/"
+    "build:js": "watchify src/index.js -t babelify --outfile public/js/bundle.js",
+    "serve": "parallelshell 'npm run build:js' 'http-server -p 3000 public/' 'browser-sync start --proxy localhost:3000 --files public/js/*.js'"
   },
   "keywords": [],
   "author": "",
@@ -14,7 +14,9 @@
     "babel-preset-es2015": "^6.9.0",
     "babelify": "^7.3.0",
     "browserify": "^13.0.1",
-    "http-server": "^0.9.0"
+    "http-server": "^0.9.0",
+    "parallelshell": "^2.0.0",
+    "watchify": "^3.7.0"
   },
   "dependencies": {
     "javascript-state-machine": "^2.3.5"

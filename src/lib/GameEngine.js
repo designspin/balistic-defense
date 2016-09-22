@@ -34,10 +34,16 @@ export default class {
 			const scaleX = window.innerWidth / this.ctx.canvas.width;
 			const scaleY = window.innerHeight / this.ctx.canvas.height;
 			let scale = Math.min(scaleX, scaleY);
+
+			let offsetY = (window.innerHeight - (this.ctx.canvas.height * scale)) / 2;
+			let offsetX = (window.innerWidth - (this.ctx.canvas.width * scale)) / 2;
+
 			this.scale = scale;
 
-			this.ctx.canvas.parentNode.style.webkitTransform = "scale(" + scale + ")";
-			this.ctx.canvas.parentNode.style.transform = "scale(" + scale + ")";
+			this.ctx.canvas.parentNode.style.top = `${offsetY}px`;
+			this.ctx.canvas.parentNode.style.left = `${offsetX}px`;
+			this.ctx.canvas.parentNode.style.webKitransform = `scale(${scale})`;
+			this.ctx.canvas.parentNode.style.transform = `scale(${scale})`;
 		}
 
 		window.addEventListener('resize', reflowStage);
