@@ -16,7 +16,7 @@ export default class {
 		this.maxMissileRelease = null;
 		this.missilesToRelease = null;
 		this.launchSpeed = null;
-		this.onTarget = {list: [true, false], weight: [0.7,0.3]};
+		this.onTarget = {list: [true, false], weight: [0.9,0.1]};
 		this.splitLaunch = {list: [true, false], weight: [0.4, 0.6]};
 
 		this.setupLevel(this.wave);
@@ -103,8 +103,13 @@ export default class {
 			
 			
 			if(missilelist.length && splitLaunch) {
-				const selection = missilelist[Math.floor(Math.random() * missilelist.length-1) + 1];
-				launchStart = {x: selection.x, y: selection.y};
+				
+				let filteredMissileList = missilelist.filter((object) => {
+						return object.y > 160;
+				});
+
+				const selection = filteredMissileList[Math.floor(Math.random() * filteredMissileList.length-1) + 1];
+				launchStart = (selection != undefined) ? {x: selection.x, y: selection.y} : false;
 			} else {
 				launchStart = false;
 			}
