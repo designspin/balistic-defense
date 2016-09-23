@@ -78,6 +78,7 @@ export default class {
 					this.game.launchpads[0].removeFromWorld = true;
 					this.game.launchpads[1].removeFromWorld = true;
 					this.game.launchpads[2].removeFromWorld = true;
+					this.game.score.add(this.cityBonusScore + this.missileBonusScore);
 					this.game.levelup();
 					break;
 			}

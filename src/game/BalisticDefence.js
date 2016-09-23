@@ -4,6 +4,7 @@ import AudioPlayer from '../lib/AudioPlayer';
 import FSM from 'javascript-state-machine';
 import PubSub from '../lib/PubSub';
 
+import ScoreBoard from './objects/ScoreBoard';
 import LoadingScene from './scene/LoadingScene';
 import TitleScene from './scene/TitleScene';
 import PlayScene from './scene/PlayScene';
@@ -22,6 +23,7 @@ class BalisticDefence extends GameEngine {
 		this.speedMultiplier = false;
 		this.landscapeImage = null;
 		this.background = null;
+		this.score = null;
 		this.launchpads = [];
 
 		this.soundUnlock = false;
@@ -42,6 +44,7 @@ class BalisticDefence extends GameEngine {
 
 	init(ctx) {
 		super.init(ctx);
+		this.score = new ScoreBoard(ctx);
 		this.setUpCities();
 		this.landscapeImage = this.cachedLandscape();
 		this.background = this.cacheBackgroundImage();
@@ -81,6 +84,7 @@ class BalisticDefence extends GameEngine {
 	onafterlevelreset() {
 		this.reset();
 		this.setUpCities();
+		this.score.reset();
 	}
 	// State Handles
 	onenterloading() {
@@ -121,7 +125,7 @@ class BalisticDefence extends GameEngine {
 	}
 
 	onPlayerKilledEnemyMissile() {
-		console.log("Good shooting!");
+		this.score.add(10);
 	}
 	////////////////////////////
 	// Update                 //
@@ -144,8 +148,10 @@ class BalisticDefence extends GameEngine {
 	draw() {
 		super.draw((game) => {
 			this.ctx.drawImage(this.background, 0, 0);
+			
 			//this.ctx.drawImage(this.landscapeImage, 0, 0);
 			game.drawScene(this.ctx);
+			
 		});
 	}
 

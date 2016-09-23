@@ -16,6 +16,7 @@ export default class {
 		this.launchSpeed = null;
 		this.onTarget = {list: [true, false], weight: [0.9,0.1]};
 		this.splitLaunch = {list: [true, false], weight: [0.4, 0.6]};
+		
 
 		this.setupLevel(this.wave);
 
@@ -171,7 +172,7 @@ export default class {
 	}
 
 	draw(ctx) {
-	  
+	  this.game.score.draw();
 	}
 
 	launchPlayerMissile() {
