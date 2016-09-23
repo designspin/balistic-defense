@@ -2,6 +2,7 @@ import Entity from '../../lib/GameEntity';
 import MissileTarget from './MissileTarget';
 import SmokeTrail from './SmokeTrail';
 import Explosion from './Explosion';
+import { Easing } from '../objects/easing';
 
 export default class extends Entity {
 	constructor(game, x, y, startX, startY) {
@@ -9,6 +10,7 @@ export default class extends Entity {
 		this.speed = 500;
 		this.targetX = x;
 		this.targetY = y;
+		this.time = 0;
 		this.targetGraphic = new MissileTarget(game, x, y);
 		game.addEntity(this.targetGraphic);
 		this.angle = Math.atan2(x - startX, y - startY);
@@ -23,8 +25,11 @@ export default class extends Entity {
 		let particle = new SmokeTrail(this.game, this.x, this.y, this.angle);
 		this.game.addEntity(particle);
 
-		this.x += (this.speed * this.game.clockTick) * Math.sin(this.angle);
-		this.y += (this.speed * this.game.clockTick) * Math.cos(this.angle);
+		//this.x += (this.speed * this.game.clockTick) * Math.sin(this.angle);
+		//this.y += (this.speed * this.game.clockTick) * Math.cos(this.angle);
+
+		this.x += Easing.easeInCubic(this.time, 0, this.speed, 3) * Math.sin(this.angle); 
+		this.y += Easing.easeInCubic(this.time, 0, this.speed, 3) * Math.cos(this.angle); 
 
 		if(this.getDistance(this.x, this.y, this.startX, this.startY) >= this.distanceToTravel) {
 			this.removeFromWorld = true;
@@ -32,6 +37,7 @@ export default class extends Entity {
 			let explosion = new Explosion(this.game, this.targetX, this.targetY, this);
 			this.game.addEntity(explosion);
 		}
+		this.time += this.game.clockTick;
 	}
 
 	draw(ctx) {

@@ -6,11 +6,9 @@ import EnemyMissile from '../entities/EnemyMissile';
 
 export default class {
 	constructor(game, wave) {
-
 		this.game = game;
 		
 		this.wave = wave;
-
 		this.maxMissilesInPlay = null;
 		this.timeBetweenRelease = null;
 		this.maxMissileRelease = null;

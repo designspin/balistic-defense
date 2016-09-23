@@ -42,6 +42,7 @@ class BalisticDefence extends GameEngine {
 
 	init(ctx) {
 		super.init(ctx);
+		this.setUpCities();
 		this.landscapeImage = this.cachedLandscape();
 		this.background = this.cacheBackgroundImage();
 		this.startup(); // Fire FSM startup event;
@@ -55,17 +56,21 @@ class BalisticDefence extends GameEngine {
 		this.entities = [];
 		this.wave = 0;
 		this.cities = {qty: 6, info:[]};
-		this.missilesInPlay = 0;
+		this.missilesInPlay = 0;	
+	}
 
-		//Setup cities
-		for (let i = 0; i < this.cities.qty; i++) {
-			let cityPosX = ((i+1) * 57) + 16;
+	setUpCities() {
+		let  step = (this.ctx.canvas.width - 160) / 6
+		let cityPosX = 50 + (step/2);
 
-		    if (i + 1 > 3) {
-		    	cityPosX = ((i+1) * 57) + 66;
-		    }
+		for(let i = 0; i < this.cities.qty; i++) {
+			this.cities.info.push({x: cityPosX, y: 26, isAlive: true, instance: null });
 
-		    this.cities.info.push({x: cityPosX, y: 26, isAlive: true, instance: null });
+			if ( i + 1 == 3) {
+				cityPosX = cityPosX + 60;
+			}
+
+			cityPosX = cityPosX + step;
 		}
 	}
 	////////////////////////////
@@ -75,6 +80,7 @@ class BalisticDefence extends GameEngine {
 
 	onafterlevelreset() {
 		this.reset();
+		this.setUpCities();
 	}
 	// State Handles
 	onenterloading() {

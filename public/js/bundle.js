@@ -298,7 +298,7 @@ var BalisticDefence = function (_GameEngine) {
 	function BalisticDefence() {
 		_classCallCheck(this, BalisticDefence);
 
-		var _this = _possibleConstructorReturn(this, (BalisticDefence.__proto__ || Object.getPrototypeOf(BalisticDefence)).call(this));
+		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(BalisticDefence).call(this));
 
 		_this.ctx = null;
 		_this.scene = null;
@@ -329,7 +329,8 @@ var BalisticDefence = function (_GameEngine) {
 	_createClass(BalisticDefence, [{
 		key: 'init',
 		value: function init(ctx) {
-			_get(BalisticDefence.prototype.__proto__ || Object.getPrototypeOf(BalisticDefence.prototype), 'init', this).call(this, ctx);
+			_get(Object.getPrototypeOf(BalisticDefence.prototype), 'init', this).call(this, ctx);
+			this.setUpCities();
 			this.landscapeImage = this.cachedLandscape();
 			this.background = this.cacheBackgroundImage();
 			this.startup(); // Fire FSM startup event;
@@ -337,7 +338,7 @@ var BalisticDefence = function (_GameEngine) {
 	}, {
 		key: 'start',
 		value: function start() {
-			_get(BalisticDefence.prototype.__proto__ || Object.getPrototypeOf(BalisticDefence.prototype), 'start', this).call(this);
+			_get(Object.getPrototypeOf(BalisticDefence.prototype), 'start', this).call(this);
 		}
 	}, {
 		key: 'reset',
@@ -346,16 +347,21 @@ var BalisticDefence = function (_GameEngine) {
 			this.wave = 0;
 			this.cities = { qty: 6, info: [] };
 			this.missilesInPlay = 0;
+		}
+	}, {
+		key: 'setUpCities',
+		value: function setUpCities() {
+			var step = (this.ctx.canvas.width - 160) / 6;
+			var cityPosX = 50 + step / 2;
 
-			//Setup cities
 			for (var i = 0; i < this.cities.qty; i++) {
-				var cityPosX = (i + 1) * 57 + 16;
+				this.cities.info.push({ x: cityPosX, y: 26, isAlive: true, instance: null });
 
-				if (i + 1 > 3) {
-					cityPosX = (i + 1) * 57 + 66;
+				if (i + 1 == 3) {
+					cityPosX = cityPosX + 60;
 				}
 
-				this.cities.info.push({ x: cityPosX, y: 26, isAlive: true, instance: null });
+				cityPosX = cityPosX + step;
 			}
 		}
 		////////////////////////////
@@ -367,6 +373,7 @@ var BalisticDefence = function (_GameEngine) {
 		key: 'onafterlevelreset',
 		value: function onafterlevelreset() {
 			this.reset();
+			this.setUpCities();
 		}
 		// State Handles
 
@@ -428,7 +435,7 @@ var BalisticDefence = function (_GameEngine) {
 		key: 'update',
 		value: function update() {
 			this.updateScene();
-			_get(BalisticDefence.prototype.__proto__ || Object.getPrototypeOf(BalisticDefence.prototype), 'update', this).call(this);
+			_get(Object.getPrototypeOf(BalisticDefence.prototype), 'update', this).call(this);
 		}
 
 		//Update function for title screen
@@ -448,7 +455,7 @@ var BalisticDefence = function (_GameEngine) {
 		value: function draw() {
 			var _this2 = this;
 
-			_get(BalisticDefence.prototype.__proto__ || Object.getPrototypeOf(BalisticDefence.prototype), 'draw', this).call(this, function (game) {
+			_get(Object.getPrototypeOf(BalisticDefence.prototype), 'draw', this).call(this, function (game) {
 				_this2.ctx.drawImage(_this2.background, 0, 0);
 				//this.ctx.drawImage(this.landscapeImage, 0, 0);
 				game.drawScene(_this2.ctx);
@@ -540,7 +547,7 @@ _PubSub2.default.activate(BalisticDefence.prototype);
 
 exports.default = BalisticDefence;
 
-},{"../lib/AssetManager":18,"../lib/AudioPlayer":19,"../lib/GameEngine":20,"../lib/PubSub":23,"./objects/constants":10,"./scene/GameOverScene":11,"./scene/LevelOverScene":12,"./scene/LevelUpScene":13,"./scene/LoadingScene":14,"./scene/PlayScene":15,"./scene/TitleScene":16,"javascript-state-machine":1}],3:[function(require,module,exports){
+},{"../lib/AssetManager":19,"../lib/AudioPlayer":20,"../lib/GameEngine":21,"../lib/PubSub":24,"./objects/constants":10,"./scene/GameOverScene":12,"./scene/LevelOverScene":13,"./scene/LevelUpScene":14,"./scene/LoadingScene":15,"./scene/PlayScene":16,"./scene/TitleScene":17,"javascript-state-machine":1}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -583,7 +590,7 @@ var _class = function (_Entity) {
 	function _class(game, x, y, position) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y));
+		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
 
 		_this.sprite = _this.game.ASSET_MANAGER.getAsset('images/City.png');
 		//this.radius = 16;
@@ -595,7 +602,7 @@ var _class = function (_Entity) {
 	_createClass(_class, [{
 		key: 'draw',
 		value: function draw(ctx) {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+			_get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
 			ctx.save();
 			ctx.translate(-this.sprite.width / 2, -this.sprite.height / 2);
 			ctx.drawImage(this.sprite, this.x, this.y);
@@ -648,7 +655,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":21,"../objects/constants":10,"./EnemyMissile":4,"./Explosion":5,"./SmokeTrail":8}],4:[function(require,module,exports){
+},{"../../lib/GameEntity":22,"../objects/constants":10,"./EnemyMissile":4,"./Explosion":5,"./SmokeTrail":8}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -681,7 +688,7 @@ var _class = function (_Entity) {
 	function _class(game, x, y, startX, startY, speed) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, startX, startY));
+		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, startX, startY));
 
 		_this.hitTarget = false;
 		_this.radius = 2;
@@ -699,7 +706,7 @@ var _class = function (_Entity) {
 	_createClass(_class, [{
 		key: 'update',
 		value: function update() {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
+			_get(Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
 
 			if (this.game.speedMultiplier) {
 				this.speed = 150;
@@ -727,7 +734,7 @@ var _class = function (_Entity) {
 	}, {
 		key: 'draw',
 		value: function draw(ctx) {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+			_get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
 			ctx.beginPath();
 			var gradient = ctx.createLinearGradient(this.startX, this.startY, this.x, this.y);
 			gradient.addColorStop(0, "rgba(255,255,255,0.1)");
@@ -767,7 +774,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":21,"./Explosion":5}],5:[function(require,module,exports){
+},{"../../lib/GameEntity":22,"./Explosion":5}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -806,7 +813,7 @@ var _class = function (_Entity) {
 	function _class(game, x, y, createdBy) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y));
+		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
 
 		_this.createdBy = createdBy;
 		_this.imploding = false;
@@ -819,7 +826,7 @@ var _class = function (_Entity) {
 	_createClass(_class, [{
 		key: 'update',
 		value: function update() {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
+			_get(Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
 
 			if (this.game.speedMultiplier) {
 				this.speed = 150;
@@ -885,7 +892,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":21,"../objects/constants":10,"./EnemyMissile":4,"./PlayerMissile":7}],6:[function(require,module,exports){
+},{"../../lib/GameEntity":22,"../objects/constants":10,"./EnemyMissile":4,"./PlayerMissile":7}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -914,13 +921,13 @@ var _class = function (_Entity) {
 	function _class(game, x, y) {
 		_classCallCheck(this, _class);
 
-		return _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y));
+		return _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
 	}
 
 	_createClass(_class, [{
 		key: 'draw',
 		value: function draw(ctx) {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+			_get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
 			ctx.strokeStyle = '#FFFFFF';
 			ctx.beginPath();
 			ctx.moveTo(this.x - 4, this.y - 2);
@@ -936,7 +943,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":21}],7:[function(require,module,exports){
+},{"../../lib/GameEntity":22}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -963,6 +970,8 @@ var _Explosion = require('./Explosion');
 
 var _Explosion2 = _interopRequireDefault(_Explosion);
 
+var _easing = require('../objects/easing');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -977,11 +986,12 @@ var _class = function (_Entity) {
 	function _class(game, x, y, startX, startY) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, startX, startY));
+		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, startX, startY));
 
 		_this.speed = 500;
 		_this.targetX = x;
 		_this.targetY = y;
+		_this.time = 0;
 		_this.targetGraphic = new _MissileTarget2.default(game, x, y);
 		game.addEntity(_this.targetGraphic);
 		_this.angle = Math.atan2(x - startX, y - startY);
@@ -994,13 +1004,16 @@ var _class = function (_Entity) {
 	_createClass(_class, [{
 		key: 'update',
 		value: function update() {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
+			_get(Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
 
 			var particle = new _SmokeTrail2.default(this.game, this.x, this.y, this.angle);
 			this.game.addEntity(particle);
 
-			this.x += this.speed * this.game.clockTick * Math.sin(this.angle);
-			this.y += this.speed * this.game.clockTick * Math.cos(this.angle);
+			//this.x += (this.speed * this.game.clockTick) * Math.sin(this.angle);
+			//this.y += (this.speed * this.game.clockTick) * Math.cos(this.angle);
+
+			this.x += _easing.Easing.easeInCubic(this.time, 0, this.speed, 3) * Math.sin(this.angle);
+			this.y += _easing.Easing.easeInCubic(this.time, 0, this.speed, 3) * Math.cos(this.angle);
 
 			if (this.getDistance(this.x, this.y, this.startX, this.startY) >= this.distanceToTravel) {
 				this.removeFromWorld = true;
@@ -1008,11 +1021,12 @@ var _class = function (_Entity) {
 				var explosion = new _Explosion2.default(this.game, this.targetX, this.targetY, this);
 				this.game.addEntity(explosion);
 			}
+			this.time += this.game.clockTick;
 		}
 	}, {
 		key: 'draw',
 		value: function draw(ctx) {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+			_get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
 			ctx.fillStyle = "#FFFFFF";
 			ctx.beginPath();
 			ctx.fillRect(this.x - 1, this.y - 1, 3, 3);
@@ -1034,7 +1048,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":21,"./Explosion":5,"./MissileTarget":6,"./SmokeTrail":8}],8:[function(require,module,exports){
+},{"../../lib/GameEntity":22,"../objects/easing":11,"./Explosion":5,"./MissileTarget":6,"./SmokeTrail":8}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1063,7 +1077,7 @@ var _class = function (_Entity) {
 	function _class(game, x, y, angle) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y));
+		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
 
 		_this.updateCount = 0;
 		_this.radius = 5;
@@ -1076,7 +1090,7 @@ var _class = function (_Entity) {
 	_createClass(_class, [{
 		key: "update",
 		value: function update() {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), "update", this).call(this);
+			_get(Object.getPrototypeOf(_class.prototype), "update", this).call(this);
 
 			if (this.game.speedMultiplier) {
 				this.speed = 10;
@@ -1096,7 +1110,7 @@ var _class = function (_Entity) {
 	}, {
 		key: "draw",
 		value: function draw(ctx) {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), "draw", this).call(this, ctx);
+			_get(Object.getPrototypeOf(_class.prototype), "draw", this).call(this, ctx);
 
 			if (this.updateCount < 3) {
 				ctx.fillStyle = "rgba(255, 255, 0," + 0.3 + ")";
@@ -1117,7 +1131,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":21}],9:[function(require,module,exports){
+},{"../../lib/GameEntity":22}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1154,7 +1168,7 @@ var _class = function (_Entity) {
   function _class(game, x, y) {
     _classCallCheck(this, _class);
 
-    var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y));
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
 
     _this.hitTriangle = { p1: { x: x, y: y + 5 }, p2: { x: x - 12, y: y - 38 }, p3: { x: x + 12, y: y - 38 } };
     _this.missiles = 10;
@@ -1174,7 +1188,7 @@ var _class = function (_Entity) {
   }, {
     key: 'update',
     value: function update() {
-      _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
+      _get(Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
       for (var i = 0; i < this.game.entities.length; i++) {
         var entity = this.game.entities[i];
 
@@ -1206,7 +1220,7 @@ var _class = function (_Entity) {
   }, {
     key: 'draw',
     value: function draw(ctx) {
-      _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+      _get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
       this.drawMissileIndicators(ctx);
     }
   }, {
@@ -1278,7 +1292,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":21,"../entities/EnemyMissile":4,"../entities/Explosion":5}],10:[function(require,module,exports){
+},{"../../lib/GameEntity":22,"../entities/EnemyMissile":4,"../entities/Explosion":5}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1290,6 +1304,18 @@ var Events = exports.Events = {
 };
 
 },{}],11:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+var Easing = exports.Easing = {
+	easeInCubic: function easeInCubic(time, start, end, duration) {
+		return end * (time /= duration) * time * time + start;
+	}
+};
+
+},{}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1343,7 +1369,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1506,7 +1532,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{"../entities/City":3}],13:[function(require,module,exports){
+},{"../entities/City":3}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1569,7 +1595,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1627,7 +1653,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1663,7 +1689,6 @@ var _class = function () {
 		this.game = game;
 
 		this.wave = wave;
-
 		this.maxMissilesInPlay = null;
 		this.timeBetweenRelease = null;
 		this.maxMissileRelease = null;
@@ -1861,7 +1886,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{"../entities/City":3,"../entities/EnemyMissile":4,"../entities/PlayerMissile":7,"../objects/MissileLauncher":9}],16:[function(require,module,exports){
+},{"../entities/City":3,"../entities/EnemyMissile":4,"../entities/PlayerMissile":7,"../objects/MissileLauncher":9}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1924,7 +1949,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 
 var _BalisticDefence = require('./game/BalisticDefence');
@@ -1936,13 +1961,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var canvas = document.getElementById('view');
 var ctx = canvas.getContext('2d');
 
+//Detect iPhone
+if (navigator.userAgent.match(/iPhone/i)) {
+	canvas.width = window.innerHeight;
+}
+
 var game = new _BalisticDefence2.default();
 
 game.init(ctx);
 
 console.log(game);
 
-},{"./game/BalisticDefence":2}],18:[function(require,module,exports){
+},{"./game/BalisticDefence":2}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2061,7 +2091,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2121,7 +2151,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2285,7 +2315,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{"./GameTimer":22}],21:[function(require,module,exports){
+},{"./GameTimer":23}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2346,7 +2376,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2388,7 +2418,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2420,4 +2450,4 @@ exports.default = {
 	}
 };
 
-},{}]},{},[17]);
+},{}]},{},[18]);
