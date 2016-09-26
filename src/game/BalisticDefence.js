@@ -44,7 +44,18 @@ class BalisticDefence extends GameEngine {
 
 	init(ctx) {
 		super.init(ctx);
-		this.score = new ScoreBoard(ctx);
+		this.score = new ScoreBoard(ctx, 'ballistic-highscore-table', 
+			[
+				{ name: 'JLF', score: 50000 },
+				{ name: 'JLF', score: 40000 },
+				{ name: 'JLF', score: 30000 },
+				{ name: 'JLF', score: 20000 },
+				{ name: 'JLF', score: 10000 },
+				{ name: 'JLF', score: 5000 },
+				{ name: 'JLF', score: 1000 },
+				{ name: 'JLF', score: 500 }
+			]
+		);
 		this.setUpCities();
 		this.landscapeImage = this.cachedLandscape();
 		this.background = this.cacheBackgroundImage();

@@ -1,8 +1,17 @@
 export default class {
 	
-	constructor(ctx) {
+	constructor(ctx, key, defaultScores) {
 		this.currentScore = 0;
+		this.highScores = defaultScores || [];
 		this.ctx = ctx;
+		this.key = key;
+		this.init();
+	}
+
+	init() {
+		if(localStorage && localStorage.getItem(this.key)) {
+			this.highScores = JSON.parse(localStorage.getItem(this.key));
+		} 
 	}
 
 	add(n) {
@@ -28,6 +37,32 @@ export default class {
 		ctx.textAlign = 'end';
 		ctx.fillText(`Score: ${this.currentScore}` , ctx.canvas.width - 10, 10);
 		ctx.restore();
-  	
+	}
+
+	drawHighScores() {
+
+		
+
+		let ctx = this.ctx;
+		ctx.save();
+		ctx.translate(0, ctx.canvas.height);
+		ctx.scale(1, -1);
+
+		ctx.fillStyle = '#ffffff';
+		ctx.lineWidth = 1;
+		ctx.textAlign = 'center';
+		ctx.font = '20px Arial';
+		ctx.fillText('TOP DEFENDERS', ctx.canvas.width / 2, 60);
+
+		ctx.font = '12px Arial';
+		ctx.fillStyle = '#fff';
+		for (var i = 0; i < this.highScores.length; i++) {
+			let entry = this.highScores[i];
+			ctx.textAlign = 'start';
+			ctx.fillText(`${entry.name}`, 170, (((ctx.canvas.height - 200) / this.highScores.length) * i) + 100);
+			ctx.textAlign = 'end';
+			ctx.fillText(`${entry.score}`, 310, (((ctx.canvas.height - 200) / this.highScores.length) * i) + 100);
+		}
+		ctx.restore();
 	}
 }

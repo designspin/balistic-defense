@@ -335,7 +335,7 @@ var BalisticDefence = function (_GameEngine) {
 		key: 'init',
 		value: function init(ctx) {
 			_get(Object.getPrototypeOf(BalisticDefence.prototype), 'init', this).call(this, ctx);
-			this.score = new _ScoreBoard2.default(ctx);
+			this.score = new _ScoreBoard2.default(ctx, 'ballistic-highscore-table', [{ name: 'JLF', score: 50000 }, { name: 'JLF', score: 40000 }, { name: 'JLF', score: 30000 }, { name: 'JLF', score: 20000 }, { name: 'JLF', score: 10000 }, { name: 'JLF', score: 5000 }, { name: 'JLF', score: 1000 }, { name: 'JLF', score: 500 }]);
 			this.setUpCities();
 			this.landscapeImage = this.cachedLandscape();
 			this.background = this.cacheBackgroundImage();
@@ -1347,14 +1347,24 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var _class = function () {
-	function _class(ctx) {
+	function _class(ctx, key, defaultScores) {
 		_classCallCheck(this, _class);
 
 		this.currentScore = 0;
+		this.highScores = defaultScores || [];
 		this.ctx = ctx;
+		this.key = key;
+		this.init();
 	}
 
 	_createClass(_class, [{
+		key: 'init',
+		value: function init() {
+			if (localStorage && localStorage.getItem(this.key)) {
+				this.highScores = JSON.parse(localStorage.getItem(this.key));
+			}
+		}
+	}, {
 		key: 'add',
 		value: function add(n) {
 			this.currentScore += n;
@@ -1381,6 +1391,32 @@ var _class = function () {
 			ctx.textBaseline = 'top';
 			ctx.textAlign = 'end';
 			ctx.fillText('Score: ' + this.currentScore, ctx.canvas.width - 10, 10);
+			ctx.restore();
+		}
+	}, {
+		key: 'drawHighScores',
+		value: function drawHighScores() {
+
+			var ctx = this.ctx;
+			ctx.save();
+			ctx.translate(0, ctx.canvas.height);
+			ctx.scale(1, -1);
+
+			ctx.fillStyle = '#ffffff';
+			ctx.lineWidth = 1;
+			ctx.textAlign = 'center';
+			ctx.font = '20px Arial';
+			ctx.fillText('TOP DEFENDERS', ctx.canvas.width / 2, 60);
+
+			ctx.font = '12px Arial';
+			ctx.fillStyle = '#fff';
+			for (var i = 0; i < this.highScores.length; i++) {
+				var entry = this.highScores[i];
+				ctx.textAlign = 'start';
+				ctx.fillText('' + entry.name, 170, (ctx.canvas.height - 200) / this.highScores.length * i + 100);
+				ctx.textAlign = 'end';
+				ctx.fillText('' + entry.score, 310, (ctx.canvas.height - 200) / this.highScores.length * i + 100);
+			}
 			ctx.restore();
 		}
 	}]);
@@ -1523,6 +1559,7 @@ var _class = function () {
 							this.game.addEntity(this.cityIndicators[this.cityIndicators.length - 1]);
 							this.citiesSurvived.shift();
 							this.cityBonusScore += 100;
+							this.game.score.add(100);
 						} else {
 							this.currentHandler += 1;
 							this.updateInterval = 0.05;
@@ -1532,15 +1569,18 @@ var _class = function () {
 						if (this.game.launchpads[0].missiles > 0) {
 							this.game.launchpads[0].missiles -= 1;
 							this.game.audioplayer.play('bullet-ping');
-							this.missileBonusScore += 5;
+							this.missileBonusScore += 10;
+							this.game.score.add(10);
 						} else if (this.game.launchpads[1].missiles > 0) {
 							this.game.launchpads[1].missiles -= 1;
 							this.game.audioplayer.play('bullet-ping');
-							this.missileBonusScore += 5;
+							this.missileBonusScore += 10;
+							this.game.score.add(10);
 						} else if (this.game.launchpads[2].missiles > 0) {
 							this.game.launchpads[2].missiles -= 1;
 							this.game.audioplayer.play('bullet-ping');
-							this.missileBonusScore += 5;
+							this.missileBonusScore += 10;
+							this.game.score.add(10);
 						} else {
 							this.updateInterval = 3;
 							this.currentHandler += 1;
@@ -1554,7 +1594,6 @@ var _class = function () {
 						this.game.launchpads[0].removeFromWorld = true;
 						this.game.launchpads[1].removeFromWorld = true;
 						this.game.launchpads[2].removeFromWorld = true;
-						this.game.score.add(this.cityBonusScore + this.missileBonusScore);
 						this.game.levelup();
 						break;
 				}
@@ -1565,7 +1604,7 @@ var _class = function () {
 		value: function draw(ctx) {
 			this.drawLandscape(ctx);
 			this.drawMissileIndicators(ctx);
-
+			this.game.score.draw();
 			ctx.restore();
 			ctx.strokeStyle = '#ffffff';
 			ctx.fillStyle = '#000000';
@@ -1585,7 +1624,7 @@ var _class = function () {
 
 			if (this.missileBonusScore > 0) {
 				var xPos = -97;
-				for (var i = 0; i < this.missileBonusScore / 5; i++) {
+				for (var i = 0; i < this.missileBonusScore / 10; i++) {
 					ctx.strokeStyle = "#ff0000";
 					ctx.lineWidth = 5;
 					ctx.beginPath();
@@ -1662,6 +1701,7 @@ var _class = function () {
 	}, {
 		key: 'draw',
 		value: function draw(ctx) {
+			this.game.score.draw();
 			ctx.restore();
 			ctx.strokeStyle = '#ffffff';
 			ctx.fillStyle = '#000000';
@@ -1733,12 +1773,11 @@ var _class = function () {
 		key: 'draw',
 		value: function draw(ctx) {
 			ctx.beginPath();
-			ctx.strokeStyle = '#000000';
+			ctx.strokeStyle = '#ffffff';
 			ctx.fillStyle = '#000000';
 			ctx.lineWidth = 1;
 			ctx.rect(48, ctx.canvas.height / 2 - 22, ctx.canvas.width - 98, 14);
 			ctx.stroke();
-			ctx.fill();
 
 			ctx.beginPath();
 			ctx.fillStyle = "#ffffff";
@@ -2017,6 +2056,8 @@ var _class = function () {
 		this.game = game;
 		this.opacity = 0.1;
 		this.toggle = true;
+		this.display = true;
+		this.timer = 0;
 
 		window.addEventListener('touchstart', function () {
 			if (!_this.game.soundUnlock) {
@@ -2031,6 +2072,12 @@ var _class = function () {
 		key: 'update',
 		value: function update() {
 			var toggle = this.toggle ? this.opacity < 1 ? this.opacity += 0.01 : this.toggle = !this.toggle : this.opacity > 0 ? this.opacity -= 0.01 : this.toggle = !this.toggle;
+			this.timer += this.game.clockTick;
+
+			if (this.timer > 10) {
+				this.timer = 0;
+				this.display = !this.display;
+			}
 
 			if (this.game.click) {
 				this.game.click = null;
@@ -2040,18 +2087,29 @@ var _class = function () {
 	}, {
 		key: 'draw',
 		value: function draw(ctx) {
-			ctx.restore();
-			ctx.strokeStyle = '#ffffff';
-			ctx.fillStyle = '#000000';
-			ctx.lineWidth = 1;
-			ctx.textBaseline = 'middle';
-			ctx.textAlign = 'center';
-			ctx.font = '40px Arial';
-			ctx.fillText('Balistic Defence', ctx.canvas.width / 2, ctx.canvas.height / 2 - 20);
-			ctx.strokeText('Balistic Defence', ctx.canvas.width / 2, ctx.canvas.height / 2 - 20);
-			ctx.fillStyle = "rgba(255, 255, 255, " + this.opacity + ")";
-			ctx.font = '20px Arial';
-			ctx.fillText('click or touch to start', ctx.canvas.width / 2, ctx.canvas.height / 2 + 20);
+			if (this.display) {
+				ctx.restore();
+				ctx.strokeStyle = '#ffffff';
+				ctx.fillStyle = '#000000';
+				ctx.lineWidth = 1;
+				ctx.textBaseline = 'middle';
+				ctx.textAlign = 'center';
+				ctx.font = '40px Arial';
+				ctx.fillText('Balistic Defence', ctx.canvas.width / 2, ctx.canvas.height / 2 - 20);
+				ctx.strokeText('Balistic Defence', ctx.canvas.width / 2, ctx.canvas.height / 2 - 20);
+				ctx.fillStyle = "rgba(255, 255, 255, " + this.opacity + ")";
+				ctx.font = '20px Arial';
+				ctx.fillText('click or touch to start', ctx.canvas.width / 2, ctx.canvas.height / 2 + 20);
+			} else {
+				this.game.score.drawHighScores();
+				ctx.save();
+				ctx.translate(0, ctx.canvas.height);
+				ctx.scale(1, -1);
+				ctx.fillStyle = "rgba(255, 255, 255, " + this.opacity + ")";
+				ctx.font = '20px Arial';
+				ctx.fillText('click or touch to start', ctx.canvas.width / 2, ctx.canvas.height - 80);
+				ctx.restore();
+			}
 		}
 	}]);
 

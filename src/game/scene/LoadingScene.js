@@ -30,12 +30,12 @@ export default class {
 
 	draw(ctx) {
 		ctx.beginPath();
-		ctx.strokeStyle='#000000';
+		ctx.strokeStyle='#ffffff';
 		ctx.fillStyle='#000000';
 		ctx.lineWidth = 1;
 		ctx.rect(48, ctx.canvas.height / 2 - 22, ctx.canvas.width - 98, 14);
 		ctx.stroke();
-		ctx.fill();
+		
 
 		ctx.beginPath();
 		ctx.fillStyle="#ffffff";

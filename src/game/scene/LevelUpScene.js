@@ -25,6 +25,7 @@ export default class {
 	}
 
 	draw(ctx) {
+		this.game.score.draw();
 		ctx.restore();
 		ctx.strokeStyle = '#ffffff';
 		ctx.fillStyle = '#000000';

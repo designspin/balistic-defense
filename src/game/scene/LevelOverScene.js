@@ -47,6 +47,7 @@ export default class {
 						this.game.addEntity(this.cityIndicators[this.cityIndicators.length-1]);
 						this.citiesSurvived.shift();
 						this.cityBonusScore += 100;
+						this.game.score.add(100);
 					} else {
 						this.currentHandler += 1;
 						this.updateInterval = 0.05;
@@ -56,15 +57,18 @@ export default class {
 					if(this.game.launchpads[0].missiles > 0) {
 						this.game.launchpads[0].missiles -= 1;
 						this.game.audioplayer.play('bullet-ping');
-						this.missileBonusScore += 5;
+						this.missileBonusScore += 10;
+						this.game.score.add(10);
 					} else if(this.game.launchpads[1].missiles > 0) {
 						this.game.launchpads[1].missiles -= 1;
 						this.game.audioplayer.play('bullet-ping');
-						this.missileBonusScore += 5;
+						this.missileBonusScore += 10;
+						this.game.score.add(10);
 					} else if(this.game.launchpads[2].missiles > 0) {
 						this.game.launchpads[2].missiles -= 1;
 						this.game.audioplayer.play('bullet-ping');
-						this.missileBonusScore += 5;
+						this.missileBonusScore += 10;
+						this.game.score.add(10);
 					} else {
 					  this.updateInterval = 3;
 					  this.currentHandler += 1;
@@ -78,7 +82,6 @@ export default class {
 					this.game.launchpads[0].removeFromWorld = true;
 					this.game.launchpads[1].removeFromWorld = true;
 					this.game.launchpads[2].removeFromWorld = true;
-					this.game.score.add(this.cityBonusScore + this.missileBonusScore);
 					this.game.levelup();
 					break;
 			}
@@ -89,7 +92,7 @@ export default class {
 	draw(ctx) {
 		this.drawLandscape(ctx);
 		this.drawMissileIndicators(ctx);
-		
+		this.game.score.draw();
 		ctx.restore();
 		ctx.strokeStyle = '#ffffff';
 		ctx.fillStyle = '#000000';
@@ -109,7 +112,7 @@ export default class {
 
 		if(this.missileBonusScore > 0) {
 			let xPos = -97;
-			for (let i = 0; i < this.missileBonusScore / 5; i++) {
+			for (let i = 0; i < this.missileBonusScore / 10; i++) {
 				ctx.strokeStyle = "#ff0000";
 				ctx.lineWidth = 5;
 				ctx.beginPath();
