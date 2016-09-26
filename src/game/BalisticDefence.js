@@ -125,7 +125,7 @@ class BalisticDefence extends GameEngine {
 	}
 
 	onPlayerKilledEnemyMissile() {
-		this.score.add(10);
+		this.score.add(100);
 	}
 	////////////////////////////
 	// Update                 //

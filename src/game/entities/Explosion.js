@@ -37,10 +37,11 @@ export default class extends Entity {
 
 				if(this.createdBy instanceof PlayerMissile) {
 					this.game.publish(Events.PLAYER_KILLED_ENEMY_MISSILE);
+					entity.explode(entity.x, entity.y, this.createdBy);
 				} else {
-
+					entity.explode(entity.x, entity.y);
 				}
-				entity.explode(entity.x, entity.y);
+				
 				entity.targetX = entity.x;
 				entity.targetY = entity.y;
 				entity.hitTarget = true;

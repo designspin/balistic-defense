@@ -432,7 +432,7 @@ var BalisticDefence = function (_GameEngine) {
 	}, {
 		key: 'onPlayerKilledEnemyMissile',
 		value: function onPlayerKilledEnemyMissile() {
-			this.score.add(10);
+			this.score.add(100);
 		}
 		////////////////////////////
 		// Update                 //
@@ -760,10 +760,10 @@ var _class = function (_Entity) {
 		}
 	}, {
 		key: 'explode',
-		value: function explode(x, y) {
+		value: function explode(x, y, instance) {
 			this.game.audioplayer.play('explosion');
 			this.game.missilesInPlay -= 1;
-			var explosion = new _Explosion2.default(this.game, x, y, this);
+			var explosion = new _Explosion2.default(this.game, x, y, instance ? instance : this);
 			this.game.addEntity(explosion);
 		}
 	}, {
@@ -857,8 +857,11 @@ var _class = function (_Entity) {
 
 					if (this.createdBy instanceof _PlayerMissile2.default) {
 						this.game.publish(_constants.Events.PLAYER_KILLED_ENEMY_MISSILE);
-					} else {}
-					entity.explode(entity.x, entity.y);
+						entity.explode(entity.x, entity.y, this.createdBy);
+					} else {
+						entity.explode(entity.x, entity.y);
+					}
+
 					entity.targetX = entity.x;
 					entity.targetY = entity.y;
 					entity.hitTarget = true;
@@ -1702,6 +1705,8 @@ var _class = function () {
 		this.game.ASSET_MANAGER.queueSound('bullet-ping', 'sounds/bullet-left-ping.wav');
 		this.game.ASSET_MANAGER.queueSound('city-ping', 'sounds/city-left-ping.wav');
 		this.game.ASSET_MANAGER.queueSound('incoming', 'sounds/incoming.mp3');
+		this.queued = null;
+		this.loaded = 0;
 		this.init();
 	}
 
@@ -1710,24 +1715,44 @@ var _class = function () {
 		value: function init() {
 			var _this = this;
 
-			this.game.ASSET_MANAGER.downloadAll(function () {
+			this.queued = this.game.ASSET_MANAGER.downloadAll(function () {
 				_this.game.audioplayer.init();
 				_this.game.gameloaded();
-			});
+			}, this.itemLoaded.bind(this));
 		}
 	}, {
 		key: 'update',
 		value: function update() {}
 	}, {
+		key: 'itemLoaded',
+		value: function itemLoaded(queued, loaded) {
+			this.loaded = loaded;
+			this.queued = queued;
+		}
+	}, {
 		key: 'draw',
 		value: function draw(ctx) {
+			ctx.beginPath();
+			ctx.strokeStyle = '#000000';
+			ctx.fillStyle = '#000000';
+			ctx.lineWidth = 1;
+			ctx.rect(48, ctx.canvas.height / 2 - 22, ctx.canvas.width - 98, 14);
+			ctx.stroke();
+			ctx.fill();
+
+			ctx.beginPath();
+			ctx.fillStyle = "#ffffff";
+			ctx.rect(50, ctx.canvas.height / 2 - 20, (ctx.canvas.width - 100) / (this.queued / this.loaded), 10);
+			ctx.fill();
+
 			ctx.restore();
 			ctx.strokeStyle = '#ffffff';
-			ctx.fillStyle = '#ffffff';
+			ctx.fillStyle = '#000000';
 			ctx.lineWidth = 1;
 			ctx.textBaseline = 'middle';
 			ctx.textAlign = 'center';
 			ctx.font = '40px Arial';
+			ctx.fillText('LOADING', ctx.canvas.width / 2, ctx.canvas.height / 2 - 20);
 			ctx.strokeText('LOADING', ctx.canvas.width / 2, ctx.canvas.height / 2 - 20);
 		}
 	}]);
@@ -2092,14 +2117,14 @@ var _class = function () {
 		}
 	}, {
 		key: "downloadAll",
-		value: function downloadAll(downloadCallback) {
+		value: function downloadAll(downloadCallback, itemLoaded) {
 			var _this = this;
 
 			if (this.downloadQueue.length === 0) {
 				downloadCallback();
 			}
 
-			this.downloadSounds(downloadCallback);
+			this.downloadSounds(downloadCallback, itemLoaded);
 
 			for (var i = 0; i < this.downloadQueue.length; i++) {
 
@@ -2109,7 +2134,12 @@ var _class = function () {
 				img.addEventListener("load", function () {
 					_this.successCount += 1;
 					if (_this.isDone()) {
+						itemLoaded(_this.downloadQueue.length + _this.soundsQueue.length, _this.successCount + _this.errorCount);
 						downloadCallback();
+					} else {
+						if (typeof itemLoaded === 'function') {
+							itemLoaded(_this.downloadQueue.length + _this.soundsQueue.length, _this.successCount + _this.errorCount);
+						}
 					}
 				}, false);
 
@@ -2123,10 +2153,12 @@ var _class = function () {
 				img.src = path;
 				this.cache[path] = img;
 			}
+
+			return this.downloadQueue.length + this.soundsQueue.length;
 		}
 	}, {
 		key: "downloadSounds",
-		value: function downloadSounds(downloadCallback) {
+		value: function downloadSounds(downloadCallback, itemLoaded) {
 			var _this2 = this;
 
 			var AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -2143,7 +2175,12 @@ var _class = function () {
 						_this2.successCount += 1;
 						_this2.cache[id] = buffer;
 						if (_this2.isDone()) {
+							itemLoaded(_this2.downloadQueue.length + _this2.soundsQueue.length, _this2.successCount + _this2.errorCount);
 							downloadCallback();
+						} else {
+							if (typeof itemLoaded === 'function') {
+								itemLoaded(_this2.downloadQueue.length + _this2.soundsQueue.length, _this2.successCount + _this2.errorCount);
+							}
 						}
 					});
 				};

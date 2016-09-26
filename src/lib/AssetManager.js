@@ -15,12 +15,12 @@ export default class {
 		this.soundsQueue.push({id: id, path: path});
 	}
 
-	downloadAll(downloadCallback) {
+	downloadAll(downloadCallback, itemLoaded) {
 		if(this.downloadQueue.length === 0) {
 			downloadCallback();
 		}
 
-		this.downloadSounds(downloadCallback);
+		this.downloadSounds(downloadCallback, itemLoaded);
 
 		for(let i = 0; i < this.downloadQueue.length; i++) {
 
@@ -30,7 +30,12 @@ export default class {
 			img.addEventListener("load", () => {
 				this.successCount += 1;
 				if(this.isDone()) {
+					itemLoaded((this.downloadQueue.length + this.soundsQueue.length), (this.successCount + this.errorCount));
 					downloadCallback();
+				} else {
+					if (typeof itemLoaded === 'function') {
+						itemLoaded((this.downloadQueue.length + this.soundsQueue.length), (this.successCount + this.errorCount));
+					}
 				}
 			}, false);
 
@@ -44,9 +49,11 @@ export default class {
 			img.src = path;
 			this.cache[path] = img;
 		}
+
+		return this.downloadQueue.length + this.soundsQueue.length;
 	}
 
-	downloadSounds(downloadCallback) {
+	downloadSounds(downloadCallback, itemLoaded) {
 		
 		let AudioContext = window.AudioContext || window.webkitAudioContext;
 		let audioctx = new AudioContext();
@@ -62,8 +69,13 @@ export default class {
 					this.successCount += 1;
 					this.cache[id] = buffer;
 					if(this.isDone()) {
+						itemLoaded((this.downloadQueue.length + this.soundsQueue.length), (this.successCount + this.errorCount));
 						downloadCallback();
-					}
+					} else {
+						if (typeof itemLoaded === 'function') {
+							itemLoaded((this.downloadQueue.length + this.soundsQueue.length), (this.successCount + this.errorCount));
+						}
+				}
 				});
 			}
 			request.onerror = () => {
