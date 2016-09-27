@@ -3,6 +3,7 @@ import Entity from '../../lib/GameEntity';
 export default class extends Entity {
 	constructor(game, x, y) {
 		super(game, x, y);
+		this.radius = 8;
 	}
 
 	draw(ctx) {

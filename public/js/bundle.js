@@ -563,7 +563,7 @@ _PubSub2.default.activate(BalisticDefence.prototype);
 
 exports.default = BalisticDefence;
 
-},{"../lib/AssetManager":21,"../lib/AudioPlayer":22,"../lib/GameEngine":23,"../lib/PubSub":26,"./objects/ScoreBoard":11,"./objects/constants":12,"./scene/GameOverScene":13,"./scene/LevelOverScene":14,"./scene/LevelUpScene":15,"./scene/LoadingScene":16,"./scene/PlayScene":17,"./scene/ScoreEntryScene":18,"./scene/TitleScene":19,"javascript-state-machine":1}],3:[function(require,module,exports){
+},{"../lib/AssetManager":22,"../lib/AudioPlayer":23,"../lib/GameEngine":24,"../lib/PubSub":27,"./objects/ScoreBoard":12,"./objects/constants":13,"./scene/GameOverScene":14,"./scene/LevelOverScene":15,"./scene/LevelUpScene":16,"./scene/LoadingScene":17,"./scene/PlayScene":18,"./scene/ScoreEntryScene":19,"./scene/TitleScene":20,"javascript-state-machine":1}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -671,7 +671,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":24,"../objects/constants":12,"./EnemyMissile":4,"./Explosion":5,"./SmokeTrail":8}],4:[function(require,module,exports){
+},{"../../lib/GameEntity":25,"../objects/constants":13,"./EnemyMissile":4,"./Explosion":6,"./SmokeTrail":9}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -790,7 +790,178 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":24,"./Explosion":5}],5:[function(require,module,exports){
+},{"../../lib/GameEntity":25,"./Explosion":6}],5:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _GameEntity = require('../../lib/GameEntity');
+
+var _GameEntity2 = _interopRequireDefault(_GameEntity);
+
+var _MissileTarget = require('./MissileTarget');
+
+var _MissileTarget2 = _interopRequireDefault(_MissileTarget);
+
+var _Explosion = require('./Explosion');
+
+var _Explosion2 = _interopRequireDefault(_Explosion);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _class = function (_Entity) {
+	_inherits(_class, _Entity);
+
+	function _class(game, x, y, startX, startY, speed) {
+		_classCallCheck(this, _class);
+
+		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, startX, startY));
+
+		_this.hitTarget = false;
+		_this.radius = 4;
+		_this.speed = speed;
+		_this.targetX = x;
+		_this.targetY = y;
+		_this.angle = Math.atan2(x - startX, y - startY);
+		_this.startX = startX;
+		_this.startY = startY;
+
+		_this.distanceToTravel = _this.getDistance(startX, startY, x, y);
+		_this.normalised = { x: (startX - x) / _this.distanceToTravel, y: (startY - y) / _this.distanceToTravel };
+		_this.lookAhead = { x: _this.x + _this.normalised.x * 100, y: _this.y + _this.normalised.y * 100 };
+		_this.lookAhead2 = { x: _this.x + _this.normalised.x * 50, y: _this.y + _this.normalised.y * 50 };
+		return _this;
+	}
+
+	_createClass(_class, [{
+		key: 'update',
+		value: function update() {
+			_get(Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
+
+			if (this.game.speedMultiplier) {
+				this.speed = 150;
+			}
+
+			this.angle = Math.atan2(this.targetX - this.x, this.targetY - this.y);
+			this.distanceToTravel = this.getDistance(this.x, this.y, this.targetX, this.targetY);
+			console.log(this.distanceToTravel);
+			this.normalised = { x: (this.x - this.targetX) / this.distanceToTravel, y: (this.y - this.targetY) / this.distanceToTravel };
+			console.log(this.normalised);
+			this.lookAhead = { x: this.x - this.normalised.x * 50, y: this.y - this.normalised.y * 50 };
+			this.lookAhead2 = { x: this.x - this.normalised.x * 10, y: this.y - this.normalised.y * 10 };
+
+			var avoidance = this.collisionAvoidance();
+
+			if (this.hitTarget === false) {
+				this.x += this.speed * this.game.clockTick * (Math.sin(this.angle) + avoidance.x);
+				this.y += this.speed * this.game.clockTick * (Math.cos(this.angle) + avoidance.y);
+			}
+		}
+	}, {
+		key: 'draw',
+		value: function draw(ctx) {
+			_get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+
+			ctx.beginPath();
+			ctx.fillStyle = '#FFA500';
+			ctx.rect(this.x - 1, this.y - 1, 2, 2);
+			ctx.fill();
+			ctx.beginPath();
+			ctx.fillStyle = '#ff0000';
+			ctx.rect(this.lookAhead.x - 1, this.lookAhead.y - 1, 2, 2);
+			ctx.fill();
+			ctx.beginPath();
+			ctx.fillStyle = '#00ff00';
+			ctx.rect(this.lookAhead2.x - 1, this.lookAhead2.y - 1, 2, 2);
+			ctx.fill();
+		}
+	}, {
+		key: 'lineIntersectsCircle',
+		value: function lineIntersectsCircle(ahead, ahead2, obstacle) {
+			return this.getDistance(obstacle.x, obstacle.y, ahead.x, ahead.y) < obstacle.radius || this.getDistance(obstacle.x, obstacle.y, ahead2.x, ahead2.y) < obstacle.radius;
+		}
+	}, {
+		key: 'collisionAvoidance',
+		value: function collisionAvoidance() {
+			var mostThreatening = this.findThreat();
+			var avoidance = { x: 0, y: 0 };
+
+			if (mostThreatening != null) {
+				avoidance.x = this.lookAhead.x - mostThreatening.x;
+				avoidance.y = this.lookAhead.y - mostThreatening.y;
+
+				// Create a vector library for the next game!
+				var length = Math.sqrt(avoidance.x * avoidance.x + avoidance.y * avoidance.y);
+				avoidance.x /= length;
+				avoidance.y /= length;
+				avoidance.x * 500;
+				avoidance.y * 500;
+			} else {
+				avoidance.x = 0;
+				avoidance.y = 0;
+			}
+
+			return avoidance;
+		}
+	}, {
+		key: 'findThreat',
+		value: function findThreat() {
+			var mostThreatening = null;
+
+			for (var i = 0; i < this.game.entities.length; i++) {
+				var obstacle = this.game.entities[i];
+				var collision = null;
+
+				if (obstacle instanceof _MissileTarget2.default || obstacle instanceof _Explosion2.default) {
+					collision = this.lineIntersectsCircle(this.lookAhead, this.lookAhead2, obstacle);
+				} else {
+					continue;
+				}
+
+				if (collision && (mostThreatening == null || this.getDistance(this.x, this.y, obstacle.x, obstacle.y) < this.getDistance(this.x, this.y, mostThreatening.x, mostThreatening.y))) {
+					mostThreatening = obstacle;
+				}
+			}
+
+			return mostThreatening;
+		}
+	}, {
+		key: 'explode',
+		value: function explode(x, y, instance) {
+			this.game.audioplayer.play('explosion');
+			this.game.missilesInPlay -= 1;
+			var explosion = new _Explosion2.default(this.game, x, y, instance ? instance : this);
+			this.game.addEntity(explosion);
+		}
+	}, {
+		key: 'getDistance',
+		value: function getDistance(x1, y1, x2, y2) {
+			var a = x1 - x2;
+			var b = y1 - y2;
+			var length = Math.sqrt(a * a + b * b);
+
+			return length;
+		}
+	}]);
+
+	return _class;
+}(_GameEntity2.default);
+
+exports.default = _class;
+
+},{"../../lib/GameEntity":25,"./Explosion":6,"./MissileTarget":7}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -911,7 +1082,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":24,"../objects/constants":12,"./EnemyMissile":4,"./PlayerMissile":7}],6:[function(require,module,exports){
+},{"../../lib/GameEntity":25,"../objects/constants":13,"./EnemyMissile":4,"./PlayerMissile":8}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -940,7 +1111,10 @@ var _class = function (_Entity) {
 	function _class(game, x, y) {
 		_classCallCheck(this, _class);
 
-		return _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
+		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
+
+		_this.radius = 8;
+		return _this;
 	}
 
 	_createClass(_class, [{
@@ -962,7 +1136,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":24}],7:[function(require,module,exports){
+},{"../../lib/GameEntity":25}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1067,7 +1241,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":24,"../objects/Easing":9,"./Explosion":5,"./MissileTarget":6,"./SmokeTrail":8}],8:[function(require,module,exports){
+},{"../../lib/GameEntity":25,"../objects/Easing":10,"./Explosion":6,"./MissileTarget":7,"./SmokeTrail":9}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1150,7 +1324,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":24}],9:[function(require,module,exports){
+},{"../../lib/GameEntity":25}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1185,7 +1359,7 @@ exports.default = {
 	}
 };
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1346,7 +1520,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":24,"../entities/EnemyMissile":4,"../entities/Explosion":5}],11:[function(require,module,exports){
+},{"../../lib/GameEntity":25,"../entities/EnemyMissile":4,"../entities/Explosion":6}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1471,7 +1645,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1482,7 +1656,7 @@ var Events = exports.Events = {
 	PLAYER_KILLED_ENEMY_MISSILE: 1
 };
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1535,7 +1709,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1702,7 +1876,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{"../entities/City":3}],15:[function(require,module,exports){
+},{"../entities/City":3}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1766,7 +1940,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1845,7 +2019,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1869,6 +2043,10 @@ var _PlayerMissile2 = _interopRequireDefault(_PlayerMissile);
 var _EnemyMissile = require('../entities/EnemyMissile');
 
 var _EnemyMissile2 = _interopRequireDefault(_EnemyMissile);
+
+var _EnemySmartMissile = require('../entities/EnemySmartMissile');
+
+var _EnemySmartMissile2 = _interopRequireDefault(_EnemySmartMissile);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1913,10 +2091,10 @@ var _class = function () {
 	_createClass(_class, [{
 		key: 'setupLevel',
 		value: function setupLevel(wave) {
-			this.maxMissilesInPlay = [8, 8, 8, 8, 10, 10, 10, 10, 12, 12, 12, 12, 14, 14, 14, 14, 16, 16, 16, 16][wave - 1];
+			this.maxMissilesInPlay = [1 /*8*/, 8, 8, 8, 10, 10, 10, 10, 12, 12, 12, 12, 14, 14, 14, 14, 16, 16, 16, 16][wave - 1];
 			this.timeBetweenRelease = [3, 3, 3, 3, 2.5, 2.5, 2.5, 2.5, 2, 2, 2, 2, 1.5, 1.5, 1.5, 1.5, 1, 1, 1, 1][wave - 1];
-			this.maxMissileRelease = [4, 4, 4, 4, 6, 6, 6, 6, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8][wave - 1];
-			this.missilesToRelease = [18, 18, 18, 18, 22, 22, 22, 22, 24, 24, 24, 24, 26, 26, 26, 26, 28, 28, 30, 30][wave - 1];
+			this.maxMissileRelease = [1 /*4*/, 4, 4, 4, 6, 6, 6, 6, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8][wave - 1];
+			this.missilesToRelease = [1 /*18*/, 18, 18, 18, 22, 22, 22, 22, 24, 24, 24, 24, 26, 26, 26, 26, 28, 28, 30, 30][wave - 1];
 			this.launchSpeed = [20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 120][wave - 1];
 		}
 	}, {
@@ -2007,7 +2185,7 @@ var _class = function () {
 					}
 
 					this.game.missilesInPlay += 1;
-					var enemyMissile = new _EnemyMissile2.default(this.game, launchTarget.x, launchTarget.y, launchStart.x, launchStart.y, this.launchSpeed);
+					var enemyMissile = new _EnemySmartMissile2.default(this.game, launchTarget.x, launchTarget.y, launchStart.x, launchStart.y, this.launchSpeed);
 					this.game.addEntity(enemyMissile);
 
 					if (!splitLaunch) {
@@ -2081,7 +2259,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{"../entities/City":3,"../entities/EnemyMissile":4,"../entities/PlayerMissile":7,"../objects/MissileLauncher":10}],18:[function(require,module,exports){
+},{"../entities/City":3,"../entities/EnemyMissile":4,"../entities/EnemySmartMissile":5,"../entities/PlayerMissile":8,"../objects/MissileLauncher":11}],19:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2230,7 +2408,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{"../objects/Easing":9}],19:[function(require,module,exports){
+},{"../objects/Easing":10}],20:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2289,8 +2467,8 @@ var _class = function () {
 				ctx.textBaseline = 'middle';
 				ctx.textAlign = 'center';
 				ctx.font = '40px Arial';
-				ctx.fillText('Balistic Defence', ctx.canvas.width / 2, ctx.canvas.height / 2 - 20);
-				ctx.strokeText('Balistic Defence', ctx.canvas.width / 2, ctx.canvas.height / 2 - 20);
+				ctx.fillText('Ballistic Defence', ctx.canvas.width / 2, ctx.canvas.height / 2 - 20);
+				ctx.strokeText('Ballistic Defence', ctx.canvas.width / 2, ctx.canvas.height / 2 - 20);
 				ctx.fillStyle = "rgba(255, 255, 255, " + this.opacity + ")";
 				ctx.font = '20px Arial';
 				ctx.fillText('click or touch to start', ctx.canvas.width / 2, ctx.canvas.height / 2 + 20);
@@ -2312,7 +2490,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 'use strict';
 
 var _BalisticDefence = require('./game/BalisticDefence');
@@ -2335,7 +2513,7 @@ game.init(ctx);
 
 console.log(game);
 
-},{"./game/BalisticDefence":2}],21:[function(require,module,exports){
+},{"./game/BalisticDefence":2}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2466,7 +2644,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2526,7 +2704,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2690,7 +2868,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{"./GameTimer":25}],24:[function(require,module,exports){
+},{"./GameTimer":26}],25:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2751,7 +2929,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2793,7 +2971,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2825,4 +3003,4 @@ exports.default = {
 	}
 };
 
-},{}]},{},[20]);
+},{}]},{},[21]);

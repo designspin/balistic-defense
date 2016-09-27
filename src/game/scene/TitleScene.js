@@ -39,8 +39,8 @@ export default class {
 			ctx.textBaseline = 'middle';
 			ctx.textAlign = 'center';
 			ctx.font = '40px Arial';
-			ctx.fillText('Balistic Defence', ctx.canvas.width / 2, ctx.canvas.height / 2 - 20);
-			ctx.strokeText('Balistic Defence', ctx.canvas.width / 2, ctx.canvas.height / 2 - 20);
+			ctx.fillText('Ballistic Defence', ctx.canvas.width / 2, ctx.canvas.height / 2 - 20);
+			ctx.strokeText('Ballistic Defence', ctx.canvas.width / 2, ctx.canvas.height / 2 - 20);
 			ctx.fillStyle = "rgba(255, 255, 255, " + this.opacity + ")";
 			ctx.font = '20px Arial';
 			ctx.fillText('click or touch to start', ctx.canvas.width / 2, ctx.canvas.height / 2 + 20);
