@@ -172,6 +172,7 @@ export default class {
 	}
 
 	draw(ctx) {
+		ctx.drawImage(this.game.background, 0, 0);
 	  this.game.score.draw();
 	}
 

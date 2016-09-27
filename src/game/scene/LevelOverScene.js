@@ -90,7 +90,7 @@ export default class {
 	}
 
 	draw(ctx) {
-		this.drawLandscape(ctx);
+		ctx.drawImage(this.game.background, 0, 0);
 		this.drawMissileIndicators(ctx);
 		this.game.score.draw();
 		ctx.restore();

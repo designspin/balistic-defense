@@ -2,19 +2,18 @@ export default class {
 	constructor(game) {
 		this.game = game;
 		this.timer = 0;
-		this.updates = 0;
 	}
 
 	update() {
 		this.timer += this.game.clockTick;
 
-		if(this.timer > 1) {
-			this.timer = 0;
-			this.updates += 1;
-		}
+		if(this.timer > 3) {
 
-		if(this.updates > 3) {
-			this.game.levelreset();
+			if(this.game.score.isHighScore()) {
+				this.game.highscore();
+			} else {
+				this.game.levelreset();
+			}
 		}
 	}
 

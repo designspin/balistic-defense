@@ -306,7 +306,7 @@ var BalisticDefence = function (_GameEngine) {
 	function BalisticDefence() {
 		_classCallCheck(this, BalisticDefence);
 
-		var _this = _possibleConstructorReturn(this, (BalisticDefence.__proto__ || Object.getPrototypeOf(BalisticDefence)).call(this));
+		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(BalisticDefence).call(this));
 
 		_this.ctx = null;
 		_this.scene = null;
@@ -338,8 +338,9 @@ var BalisticDefence = function (_GameEngine) {
 	_createClass(BalisticDefence, [{
 		key: 'init',
 		value: function init(ctx) {
-			_get(BalisticDefence.prototype.__proto__ || Object.getPrototypeOf(BalisticDefence.prototype), 'init', this).call(this, ctx);
+			_get(Object.getPrototypeOf(BalisticDefence.prototype), 'init', this).call(this, ctx);
 			this.score = new _ScoreBoard2.default(ctx, 'ballistic-highscore-table', [{ name: 'JLF', score: 50000 }, { name: 'JLF', score: 40000 }, { name: 'JLF', score: 30000 }, { name: 'JLF', score: 20000 }, { name: 'JLF', score: 10000 }, { name: 'JLF', score: 5000 }, { name: 'JLF', score: 1000 }, { name: 'JLF', score: 500 }]);
+
 			this.setUpCities();
 			this.landscapeImage = this.cachedLandscape();
 			this.background = this.cacheBackgroundImage();
@@ -348,7 +349,7 @@ var BalisticDefence = function (_GameEngine) {
 	}, {
 		key: 'start',
 		value: function start() {
-			_get(BalisticDefence.prototype.__proto__ || Object.getPrototypeOf(BalisticDefence.prototype), 'start', this).call(this);
+			_get(Object.getPrototypeOf(BalisticDefence.prototype), 'start', this).call(this);
 		}
 	}, {
 		key: 'reset',
@@ -397,7 +398,7 @@ var BalisticDefence = function (_GameEngine) {
 	}, {
 		key: 'onentertitle',
 		value: function onentertitle() {
-			this.scene = new _ScoreEntryScene2.default(this);
+			this.scene = new _TitleScene2.default(this);
 		}
 	}, {
 		key: 'onenterlevelinfo',
@@ -418,6 +419,11 @@ var BalisticDefence = function (_GameEngine) {
 			} else {
 				this.scene = new _LevelOverScene2.default(this);
 			}
+		}
+	}, {
+		key: 'onenternewhighscore',
+		value: function onenternewhighscore() {
+			this.scene = new _ScoreEntryScene2.default(this);
 		}
 		////////////////////////////
 		//  PubSub handlers 			//
@@ -446,7 +452,7 @@ var BalisticDefence = function (_GameEngine) {
 		key: 'update',
 		value: function update() {
 			this.updateScene();
-			_get(BalisticDefence.prototype.__proto__ || Object.getPrototypeOf(BalisticDefence.prototype), 'update', this).call(this);
+			_get(Object.getPrototypeOf(BalisticDefence.prototype), 'update', this).call(this);
 		}
 
 		//Update function for title screen
@@ -466,10 +472,8 @@ var BalisticDefence = function (_GameEngine) {
 		value: function draw() {
 			var _this2 = this;
 
-			_get(BalisticDefence.prototype.__proto__ || Object.getPrototypeOf(BalisticDefence.prototype), 'draw', this).call(this, function (game) {
-				_this2.ctx.drawImage(_this2.background, 0, 0);
-
-				//this.ctx.drawImage(this.landscapeImage, 0, 0);
+			_get(Object.getPrototypeOf(BalisticDefence.prototype), 'draw', this).call(this, function (game) {
+				// this.ctx.drawImage(this.background, 0, 0);
 				game.drawScene(_this2.ctx);
 			});
 		}
@@ -552,7 +556,7 @@ var BalisticDefence = function (_GameEngine) {
 
 _javascriptStateMachine2.default.create({
 	target: BalisticDefence.prototype,
-	events: [{ name: 'startup', from: 'none', to: 'loading' }, { name: 'gameloaded', from: 'loading', to: 'title' }, { name: 'levelup', from: ['title', 'levelcomplete'], to: 'levelinfo' }, { name: 'startgame', from: 'levelinfo', to: 'playing' }, { name: 'levelover', from: 'playing', to: 'levelcomplete' }, { name: 'levelreset', from: 'levelcomplete', to: 'title' }]
+	events: [{ name: 'startup', from: 'none', to: 'loading' }, { name: 'gameloaded', from: 'loading', to: 'title' }, { name: 'levelup', from: ['title', 'levelcomplete'], to: 'levelinfo' }, { name: 'startgame', from: 'levelinfo', to: 'playing' }, { name: 'levelover', from: 'playing', to: 'levelcomplete' }, { name: 'levelreset', from: ['levelcomplete', 'newhighscore'], to: 'title' }, { name: 'highscore', from: 'levelcomplete', to: 'newhighscore' }]
 });
 
 _PubSub2.default.activate(BalisticDefence.prototype);
@@ -602,7 +606,7 @@ var _class = function (_Entity) {
 	function _class(game, x, y, position) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y));
+		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
 
 		_this.sprite = _this.game.ASSET_MANAGER.getAsset('images/City.png');
 		//this.radius = 16;
@@ -614,7 +618,7 @@ var _class = function (_Entity) {
 	_createClass(_class, [{
 		key: 'draw',
 		value: function draw(ctx) {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+			_get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
 			ctx.save();
 			ctx.translate(-this.sprite.width / 2, -this.sprite.height / 2);
 			ctx.drawImage(this.sprite, this.x, this.y);
@@ -700,7 +704,7 @@ var _class = function (_Entity) {
 	function _class(game, x, y, startX, startY, speed) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, startX, startY));
+		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, startX, startY));
 
 		_this.hitTarget = false;
 		_this.radius = 2;
@@ -718,7 +722,7 @@ var _class = function (_Entity) {
 	_createClass(_class, [{
 		key: 'update',
 		value: function update() {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
+			_get(Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
 
 			if (this.game.speedMultiplier) {
 				this.speed = 150;
@@ -746,7 +750,7 @@ var _class = function (_Entity) {
 	}, {
 		key: 'draw',
 		value: function draw(ctx) {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+			_get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
 			ctx.beginPath();
 			var gradient = ctx.createLinearGradient(this.startX, this.startY, this.x, this.y);
 			gradient.addColorStop(0, "rgba(255,255,255,0.1)");
@@ -825,7 +829,7 @@ var _class = function (_Entity) {
 	function _class(game, x, y, createdBy) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y));
+		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
 
 		_this.createdBy = createdBy;
 		_this.imploding = false;
@@ -838,7 +842,7 @@ var _class = function (_Entity) {
 	_createClass(_class, [{
 		key: 'update',
 		value: function update() {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
+			_get(Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
 
 			if (this.game.speedMultiplier) {
 				this.speed = 150;
@@ -936,13 +940,13 @@ var _class = function (_Entity) {
 	function _class(game, x, y) {
 		_classCallCheck(this, _class);
 
-		return _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y));
+		return _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
 	}
 
 	_createClass(_class, [{
 		key: 'draw',
 		value: function draw(ctx) {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+			_get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
 			ctx.strokeStyle = '#FFFFFF';
 			ctx.beginPath();
 			ctx.moveTo(this.x - 4, this.y - 2);
@@ -1003,7 +1007,7 @@ var _class = function (_Entity) {
 	function _class(game, x, y, startX, startY) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, startX, startY));
+		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, startX, startY));
 
 		_this.speed = 200;
 		_this.targetX = x;
@@ -1021,7 +1025,7 @@ var _class = function (_Entity) {
 	_createClass(_class, [{
 		key: 'update',
 		value: function update() {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
+			_get(Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
 
 			var particle = new _SmokeTrail2.default(this.game, this.x, this.y, this.angle);
 			this.game.addEntity(particle);
@@ -1041,7 +1045,7 @@ var _class = function (_Entity) {
 	}, {
 		key: 'draw',
 		value: function draw(ctx) {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+			_get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
 			ctx.fillStyle = "#FFFFFF";
 			ctx.beginPath();
 			ctx.fillRect(this.x - 1, this.y - 1, 3, 3);
@@ -1092,7 +1096,7 @@ var _class = function (_Entity) {
 	function _class(game, x, y, angle) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y));
+		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
 
 		_this.updateCount = 0;
 		_this.radius = 5;
@@ -1105,7 +1109,7 @@ var _class = function (_Entity) {
 	_createClass(_class, [{
 		key: "update",
 		value: function update() {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), "update", this).call(this);
+			_get(Object.getPrototypeOf(_class.prototype), "update", this).call(this);
 
 			if (this.game.speedMultiplier) {
 				this.speed = 10;
@@ -1125,7 +1129,7 @@ var _class = function (_Entity) {
 	}, {
 		key: "draw",
 		value: function draw(ctx) {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), "draw", this).call(this, ctx);
+			_get(Object.getPrototypeOf(_class.prototype), "draw", this).call(this, ctx);
 
 			if (this.updateCount < 3) {
 				ctx.fillStyle = "rgba(255, 255, 0," + 0.3 + ")";
@@ -1159,6 +1163,9 @@ exports.default = {
 	easeInCirc: function easeInCirc(t, b, c, d) {
 		t /= d;
 		return -c * (Math.sqrt(1 - t * t) - 1) + b;
+	},
+	easeOutQuad: function easeOutQuad(t, b, c, d) {
+		return -c * (t /= d) * (t - 2) + b;
 	},
 	easeInQuad: function easeInQuad(t, b, c, d) {
 		t /= d;
@@ -1215,7 +1222,7 @@ var _class = function (_Entity) {
   function _class(game, x, y) {
     _classCallCheck(this, _class);
 
-    var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y));
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
 
     _this.hitTriangle = { p1: { x: x, y: y + 5 }, p2: { x: x - 12, y: y - 38 }, p3: { x: x + 12, y: y - 38 } };
     _this.missiles = 10;
@@ -1235,7 +1242,7 @@ var _class = function (_Entity) {
   }, {
     key: 'update',
     value: function update() {
-      _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
+      _get(Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
       for (var i = 0; i < this.game.entities.length; i++) {
         var entity = this.game.entities[i];
 
@@ -1267,7 +1274,7 @@ var _class = function (_Entity) {
   }, {
     key: 'draw',
     value: function draw(ctx) {
-      _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+      _get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
       this.drawMissileIndicators(ctx);
     }
   }, {
@@ -1374,6 +1381,40 @@ var _class = function () {
 			this.currentScore += n;
 		}
 	}, {
+		key: 'isHighScore',
+		value: function isHighScore() {
+			for (var i = 0; i < this.highScores.length; i++) {
+				if (this.currentScore > this.highScores[i].score) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}, {
+		key: 'addHighScore',
+		value: function addHighScore(name) {
+			var position = null;
+
+			for (var i = 0; i < this.highScores.length; i++) {
+
+				var row = this.highScores[i];
+
+				if (this.currentScore > row.score) {
+					position = i;
+					break;
+				}
+			}
+			console.log('position: ' + position);
+			if (position != null) {
+				this.highScores.splice(position, 0, { name: name, score: this.currentScore });
+				this.highScores.pop();
+
+				if (localStorage) {
+					localStorage.setItem(this.key, JSON.stringify(this.highScores));
+				}
+			}
+		}
+	}, {
 		key: 'minus',
 		value: function minus(n) {
 			this.currentScore -= n;
@@ -1458,7 +1499,6 @@ var _class = function () {
 
 		this.game = game;
 		this.timer = 0;
-		this.updates = 0;
 	}
 
 	_createClass(_class, [{
@@ -1466,13 +1506,13 @@ var _class = function () {
 		value: function update() {
 			this.timer += this.game.clockTick;
 
-			if (this.timer > 1) {
-				this.timer = 0;
-				this.updates += 1;
-			}
+			if (this.timer > 3) {
 
-			if (this.updates > 3) {
-				this.game.levelreset();
+				if (this.game.score.isHighScore()) {
+					this.game.highscore();
+				} else {
+					this.game.levelreset();
+				}
 			}
 		}
 	}, {
@@ -1606,7 +1646,7 @@ var _class = function () {
 	}, {
 		key: 'draw',
 		value: function draw(ctx) {
-			this.drawLandscape(ctx);
+			ctx.drawImage(this.game.background, 0, 0);
 			this.drawMissileIndicators(ctx);
 			this.game.score.draw();
 			ctx.restore();
@@ -2006,6 +2046,7 @@ var _class = function () {
 	}, {
 		key: 'draw',
 		value: function draw(ctx) {
+			ctx.drawImage(this.game.background, 0, 0);
 			this.game.score.draw();
 		}
 	}, {
@@ -2049,6 +2090,12 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _Easing = require('../objects/Easing');
+
+var _Easing2 = _interopRequireDefault(_Easing);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var _class = function () {
@@ -2059,6 +2106,7 @@ var _class = function () {
 		this.characters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '.', ' ', 'DEL', 'END'];
 		this.buttons = [];
 		this.entry = '';
+		this.entryAllowed = true;
 		this.init();
 	}
 
@@ -2084,6 +2132,7 @@ var _class = function () {
 						height: 46,
 						pressed: false,
 						fillOpacity: 0,
+						timer: 0,
 						label: temp[k]
 					});
 				}
@@ -2102,15 +2151,49 @@ var _class = function () {
 
 					if (click.x / scale >= btn.x1 && click.x / scale <= btn.x1 + btn.width && click.y / scale >= btn.y1 && click.y / scale <= btn.y1 + btn.height) {
 						btn.pressed = true;
-						this.entry += btn.label;
+						btn.timer = 0;
+						this.updateEntry(btn.label);
+					}
+				}
+			}
+
+			for (var _i = 0; _i < this.buttons.length; _i++) {
+				var _btn = this.buttons[_i];
+
+				if (_btn.pressed) {
+
+					_btn.fillOpacity = 1 - _Easing2.default.easeOutQuad(_btn.timer, 0, 1, 1.5);
+					_btn.timer += this.game.clockTick;
+					if (_btn.timer > 1.5) {
+						_btn.timer = 0;
+						_btn.pressed = false;
+						_btn.fillOpacity = 0;
 					}
 				}
 			}
 		}
 	}, {
+		key: 'updateEntry',
+		value: function updateEntry(char) {
+			switch (char) {
+				case 'DEL':
+					this.entry = this.entry.slice(0, -1);
+					this.entryAllowed = true;
+					break;
+				case 'END':
+					this.game.score.addHighScore(this.entry);
+					this.game.levelreset();
+					break;
+				default:
+					if (this.entry.length < 10) {
+						this.entry += char;
+						this.entryAllowed = this.entry.length < 10 ? true : false;
+					}
+			}
+		}
+	}, {
 		key: 'draw',
 		value: function draw(ctx) {
-
 			ctx.save();
 			ctx.translate(0, ctx.canvas.height);
 			ctx.scale(1, -1);
@@ -2118,16 +2201,25 @@ var _class = function () {
 			ctx.fillStyle = "#fff";
 			ctx.strokeStyle = "#fff";
 			ctx.lineWidth = 1;
+			ctx.font = "16px Arial";
+			ctx.textAlign = 'center';
+			ctx.fillText('Top Defending, Enter Your Name!', ctx.canvas.width / 2, 30);
 			ctx.font = "24px Arial";
 			ctx.textAlign = 'center';
-			ctx.fillText(this.entry, ctx.canvas.width / 2, 30);
+			ctx.fillText(this.entry, ctx.canvas.width / 2, 60);
 			for (var i = 0; i < this.buttons.length; i++) {
 				var btn = this.buttons[i];
 				ctx.beginPath();
+				ctx.fillStyle = 'rgba(255, 255, 255, ' + btn.fillOpacity + ')';
 				ctx.rect(btn.x1, btn.y1, btn.width, btn.height);
+				ctx.fill();
 				ctx.stroke();
-				ctx.font = "16px Arial";
-				ctx.fillText(btn.label, btn.x1 + btn.width / 2, btn.y1 + btn.height / 2);
+
+				if (this.entryAllowed || btn.label == 'DEL' || btn.label == 'END') {
+					ctx.font = "16px Arial";
+					ctx.fillStyle = "#fff";
+					ctx.fillText(btn.label, btn.x1 + btn.width / 2, btn.y1 + btn.height / 2);
+				}
 			}
 			ctx.restore();
 		}
@@ -2138,7 +2230,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],19:[function(require,module,exports){
+},{"../objects/Easing":9}],19:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

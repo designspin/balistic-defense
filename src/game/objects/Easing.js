@@ -6,6 +6,9 @@ export default {
 		t /= d;
 		return -c * (Math.sqrt(1 - t*t) - 1) + b;
 	},
+	easeOutQuad: function(t, b, c, d) {
+		return -c *(t/=d)*(t-2) + b;
+	},
 	easeInQuad: function (t, b, c, d) {
 		t /= d;
 		return c*t*t + b;

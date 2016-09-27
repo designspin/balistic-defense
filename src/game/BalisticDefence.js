@@ -58,6 +58,7 @@ class BalisticDefence extends GameEngine {
 				{ name: 'JLF', score: 500 }
 			]
 		);
+		
 		this.setUpCities();
 		this.landscapeImage = this.cachedLandscape();
 		this.background = this.cacheBackgroundImage();
@@ -106,7 +107,7 @@ class BalisticDefence extends GameEngine {
 	}
 
 	onentertitle() {
-		this.scene = new ScoreEntryScene(this);
+		this.scene = new TitleScene(this);
 	}
 
 	onenterlevelinfo() {
@@ -124,6 +125,10 @@ class BalisticDefence extends GameEngine {
 		} else {
 			this.scene = new LevelOverScene(this);
 		}
+	}
+
+	onenternewhighscore() {
+		this.scene = new ScoreEntryScene(this);
 	}
 	////////////////////////////
 	//  PubSub handlers 			//
@@ -160,9 +165,7 @@ class BalisticDefence extends GameEngine {
 
 	draw() {
 		super.draw((game) => {
-			this.ctx.drawImage(this.background, 0, 0);
-			
-			//this.ctx.drawImage(this.landscapeImage, 0, 0);
+			// this.ctx.drawImage(this.background, 0, 0);
 			game.drawScene(this.ctx);
 			
 		});
@@ -242,7 +245,8 @@ FSM.create({
 		{name: 'levelup', from: ['title', 'levelcomplete'], to: 'levelinfo'},
 		{name: 'startgame', from: 'levelinfo', to: 'playing'},
 		{name: 'levelover', from: 'playing', to: 'levelcomplete'},
-		{name: 'levelreset', from: 'levelcomplete', to: 'title'}
+		{name: 'levelreset', from: ['levelcomplete', 'newhighscore'], to: 'title'},
+		{name: 'highscore', from: 'levelcomplete', to: 'newhighscore'}
 	]
 });
 

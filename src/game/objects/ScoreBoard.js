@@ -18,6 +18,38 @@ export default class {
 		this.currentScore += n;
 	}
 
+	isHighScore() {
+		for(let i = 0; i < this.highScores.length; i++) {
+			if(this.currentScore > this.highScores[i].score) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	addHighScore(name) {
+		let position = null;
+		
+		for (let i = 0; i < this.highScores.length; i++) {
+
+			let row = this.highScores[i];
+			
+			if (this.currentScore > row.score) {
+				position = i;
+				break;
+			}
+		}
+		console.log(`position: ${position}`);
+		if(position != null) {
+			this.highScores.splice(position, 0, { name: name, score: this.currentScore });
+			this.highScores.pop();
+
+			if(localStorage) {
+				localStorage.setItem(this.key, JSON.stringify(this.highScores));
+			}
+		}
+	}
+
 	minus(n) {
 		this.currentScore -= n;
 	}
