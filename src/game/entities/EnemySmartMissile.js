@@ -30,11 +30,9 @@ export default class extends Entity {
 
 		this.angle = Math.atan2(this.targetX - this.x, this.targetY - this.y);
 		this.distanceToTravel = this.getDistance(this.x, this.y, this.targetX, this.targetY);
-		console.log(this.distanceToTravel);
 		this.normalised = { x: (this.x - this.targetX) / this.distanceToTravel, y: (this.y - this.targetY) / this.distanceToTravel };
-		console.log(this.normalised);
-		this.lookAhead = { x: this.x - this.normalised.x * 50, y: this.y - this.normalised.y * 50 };
-		this.lookAhead2 = { x: this.x - this.normalised.x * 10, y: this.y - this.normalised.y * 10 };
+		this.lookAhead = { x: this.x - this.normalised.x * (this.speed / 2) , y: this.y - this.normalised.y * (this.speed / 2) };
+		this.lookAhead2 = { x: this.x - this.normalised.x * (this.speed / 2) / 2, y: this.y - this.normalised.y * (this.speed / 2) / 2 };
 
 		let avoidance = this.collisionAvoidance();
 
@@ -78,8 +76,8 @@ export default class extends Entity {
 			let length = Math.sqrt(avoidance.x * avoidance.x + avoidance.y * avoidance.y);
 			avoidance.x /= length;
 			avoidance.y /= length;
-			avoidance.x * 500;
-			avoidance.y * 500;
+			avoidance.x * 10000;
+			avoidance.y * 10000;
 		} else {
 			avoidance.x = 0;
 			avoidance.y = 0;

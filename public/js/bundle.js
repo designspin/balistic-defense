@@ -856,11 +856,9 @@ var _class = function (_Entity) {
 
 			this.angle = Math.atan2(this.targetX - this.x, this.targetY - this.y);
 			this.distanceToTravel = this.getDistance(this.x, this.y, this.targetX, this.targetY);
-			console.log(this.distanceToTravel);
 			this.normalised = { x: (this.x - this.targetX) / this.distanceToTravel, y: (this.y - this.targetY) / this.distanceToTravel };
-			console.log(this.normalised);
-			this.lookAhead = { x: this.x - this.normalised.x * 50, y: this.y - this.normalised.y * 50 };
-			this.lookAhead2 = { x: this.x - this.normalised.x * 10, y: this.y - this.normalised.y * 10 };
+			this.lookAhead = { x: this.x - this.normalised.x * (this.speed / 2), y: this.y - this.normalised.y * (this.speed / 2) };
+			this.lookAhead2 = { x: this.x - this.normalised.x * (this.speed / 2) / 2, y: this.y - this.normalised.y * (this.speed / 2) / 2 };
 
 			var avoidance = this.collisionAvoidance();
 
@@ -906,8 +904,8 @@ var _class = function (_Entity) {
 				var length = Math.sqrt(avoidance.x * avoidance.x + avoidance.y * avoidance.y);
 				avoidance.x /= length;
 				avoidance.y /= length;
-				avoidance.x * 500;
-				avoidance.y * 500;
+				avoidance.x * 10000;
+				avoidance.y * 10000;
 			} else {
 				avoidance.x = 0;
 				avoidance.y = 0;
@@ -1113,7 +1111,7 @@ var _class = function (_Entity) {
 
 		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
 
-		_this.radius = 8;
+		_this.radius = 30;
 		return _this;
 	}
 
