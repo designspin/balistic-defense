@@ -11,6 +11,8 @@ import PlayScene from './scene/PlayScene';
 import LevelUpScene from './scene/LevelUpScene';
 import LevelOverScene from './scene/LevelOverScene';
 import GameOverScene from './scene/GameOverScene';
+import ScoreEntryScene from './scene/ScoreEntryScene';
+
 import { Events } from './objects/constants';
 
 class BalisticDefence extends GameEngine {
@@ -104,7 +106,7 @@ class BalisticDefence extends GameEngine {
 	}
 
 	onentertitle() {
-		this.scene = new TitleScene(this);
+		this.scene = new ScoreEntryScene(this);
 	}
 
 	onenterlevelinfo() {

@@ -59,9 +59,9 @@ export default class {
 		for (var i = 0; i < this.highScores.length; i++) {
 			let entry = this.highScores[i];
 			ctx.textAlign = 'start';
-			ctx.fillText(`${entry.name}`, 170, (((ctx.canvas.height - 200) / this.highScores.length) * i) + 100);
+			ctx.fillText(`${entry.name}`, (ctx.canvas.width / 2) - 70, (((ctx.canvas.height - 200) / this.highScores.length) * i) + 100);
 			ctx.textAlign = 'end';
-			ctx.fillText(`${entry.score}`, 310, (((ctx.canvas.height - 200) / this.highScores.length) * i) + 100);
+			ctx.fillText(`${entry.score}`, (ctx.canvas.width / 2) + 70, (((ctx.canvas.height - 200) / this.highScores.length) * i) + 100);
 		}
 		ctx.restore();
 	}

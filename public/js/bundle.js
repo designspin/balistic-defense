@@ -286,6 +286,10 @@ var _GameOverScene = require('./scene/GameOverScene');
 
 var _GameOverScene2 = _interopRequireDefault(_GameOverScene);
 
+var _ScoreEntryScene = require('./scene/ScoreEntryScene');
+
+var _ScoreEntryScene2 = _interopRequireDefault(_ScoreEntryScene);
+
 var _constants = require('./objects/constants');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -302,7 +306,7 @@ var BalisticDefence = function (_GameEngine) {
 	function BalisticDefence() {
 		_classCallCheck(this, BalisticDefence);
 
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(BalisticDefence).call(this));
+		var _this = _possibleConstructorReturn(this, (BalisticDefence.__proto__ || Object.getPrototypeOf(BalisticDefence)).call(this));
 
 		_this.ctx = null;
 		_this.scene = null;
@@ -334,7 +338,7 @@ var BalisticDefence = function (_GameEngine) {
 	_createClass(BalisticDefence, [{
 		key: 'init',
 		value: function init(ctx) {
-			_get(Object.getPrototypeOf(BalisticDefence.prototype), 'init', this).call(this, ctx);
+			_get(BalisticDefence.prototype.__proto__ || Object.getPrototypeOf(BalisticDefence.prototype), 'init', this).call(this, ctx);
 			this.score = new _ScoreBoard2.default(ctx, 'ballistic-highscore-table', [{ name: 'JLF', score: 50000 }, { name: 'JLF', score: 40000 }, { name: 'JLF', score: 30000 }, { name: 'JLF', score: 20000 }, { name: 'JLF', score: 10000 }, { name: 'JLF', score: 5000 }, { name: 'JLF', score: 1000 }, { name: 'JLF', score: 500 }]);
 			this.setUpCities();
 			this.landscapeImage = this.cachedLandscape();
@@ -344,7 +348,7 @@ var BalisticDefence = function (_GameEngine) {
 	}, {
 		key: 'start',
 		value: function start() {
-			_get(Object.getPrototypeOf(BalisticDefence.prototype), 'start', this).call(this);
+			_get(BalisticDefence.prototype.__proto__ || Object.getPrototypeOf(BalisticDefence.prototype), 'start', this).call(this);
 		}
 	}, {
 		key: 'reset',
@@ -393,7 +397,7 @@ var BalisticDefence = function (_GameEngine) {
 	}, {
 		key: 'onentertitle',
 		value: function onentertitle() {
-			this.scene = new _TitleScene2.default(this);
+			this.scene = new _ScoreEntryScene2.default(this);
 		}
 	}, {
 		key: 'onenterlevelinfo',
@@ -442,7 +446,7 @@ var BalisticDefence = function (_GameEngine) {
 		key: 'update',
 		value: function update() {
 			this.updateScene();
-			_get(Object.getPrototypeOf(BalisticDefence.prototype), 'update', this).call(this);
+			_get(BalisticDefence.prototype.__proto__ || Object.getPrototypeOf(BalisticDefence.prototype), 'update', this).call(this);
 		}
 
 		//Update function for title screen
@@ -462,7 +466,7 @@ var BalisticDefence = function (_GameEngine) {
 		value: function draw() {
 			var _this2 = this;
 
-			_get(Object.getPrototypeOf(BalisticDefence.prototype), 'draw', this).call(this, function (game) {
+			_get(BalisticDefence.prototype.__proto__ || Object.getPrototypeOf(BalisticDefence.prototype), 'draw', this).call(this, function (game) {
 				_this2.ctx.drawImage(_this2.background, 0, 0);
 
 				//this.ctx.drawImage(this.landscapeImage, 0, 0);
@@ -555,7 +559,7 @@ _PubSub2.default.activate(BalisticDefence.prototype);
 
 exports.default = BalisticDefence;
 
-},{"../lib/AssetManager":20,"../lib/AudioPlayer":21,"../lib/GameEngine":22,"../lib/PubSub":25,"./objects/ScoreBoard":11,"./objects/constants":12,"./scene/GameOverScene":13,"./scene/LevelOverScene":14,"./scene/LevelUpScene":15,"./scene/LoadingScene":16,"./scene/PlayScene":17,"./scene/TitleScene":18,"javascript-state-machine":1}],3:[function(require,module,exports){
+},{"../lib/AssetManager":21,"../lib/AudioPlayer":22,"../lib/GameEngine":23,"../lib/PubSub":26,"./objects/ScoreBoard":11,"./objects/constants":12,"./scene/GameOverScene":13,"./scene/LevelOverScene":14,"./scene/LevelUpScene":15,"./scene/LoadingScene":16,"./scene/PlayScene":17,"./scene/ScoreEntryScene":18,"./scene/TitleScene":19,"javascript-state-machine":1}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -598,7 +602,7 @@ var _class = function (_Entity) {
 	function _class(game, x, y, position) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
+		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y));
 
 		_this.sprite = _this.game.ASSET_MANAGER.getAsset('images/City.png');
 		//this.radius = 16;
@@ -610,7 +614,7 @@ var _class = function (_Entity) {
 	_createClass(_class, [{
 		key: 'draw',
 		value: function draw(ctx) {
-			_get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
 			ctx.save();
 			ctx.translate(-this.sprite.width / 2, -this.sprite.height / 2);
 			ctx.drawImage(this.sprite, this.x, this.y);
@@ -663,7 +667,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":23,"../objects/constants":12,"./EnemyMissile":4,"./Explosion":5,"./SmokeTrail":8}],4:[function(require,module,exports){
+},{"../../lib/GameEntity":24,"../objects/constants":12,"./EnemyMissile":4,"./Explosion":5,"./SmokeTrail":8}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -696,7 +700,7 @@ var _class = function (_Entity) {
 	function _class(game, x, y, startX, startY, speed) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, startX, startY));
+		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, startX, startY));
 
 		_this.hitTarget = false;
 		_this.radius = 2;
@@ -714,7 +718,7 @@ var _class = function (_Entity) {
 	_createClass(_class, [{
 		key: 'update',
 		value: function update() {
-			_get(Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
+			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
 
 			if (this.game.speedMultiplier) {
 				this.speed = 150;
@@ -742,7 +746,7 @@ var _class = function (_Entity) {
 	}, {
 		key: 'draw',
 		value: function draw(ctx) {
-			_get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
 			ctx.beginPath();
 			var gradient = ctx.createLinearGradient(this.startX, this.startY, this.x, this.y);
 			gradient.addColorStop(0, "rgba(255,255,255,0.1)");
@@ -782,7 +786,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":23,"./Explosion":5}],5:[function(require,module,exports){
+},{"../../lib/GameEntity":24,"./Explosion":5}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -821,7 +825,7 @@ var _class = function (_Entity) {
 	function _class(game, x, y, createdBy) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
+		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y));
 
 		_this.createdBy = createdBy;
 		_this.imploding = false;
@@ -834,7 +838,7 @@ var _class = function (_Entity) {
 	_createClass(_class, [{
 		key: 'update',
 		value: function update() {
-			_get(Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
+			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
 
 			if (this.game.speedMultiplier) {
 				this.speed = 150;
@@ -903,7 +907,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":23,"../objects/constants":12,"./EnemyMissile":4,"./PlayerMissile":7}],6:[function(require,module,exports){
+},{"../../lib/GameEntity":24,"../objects/constants":12,"./EnemyMissile":4,"./PlayerMissile":7}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -932,13 +936,13 @@ var _class = function (_Entity) {
 	function _class(game, x, y) {
 		_classCallCheck(this, _class);
 
-		return _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
+		return _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y));
 	}
 
 	_createClass(_class, [{
 		key: 'draw',
 		value: function draw(ctx) {
-			_get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
 			ctx.strokeStyle = '#FFFFFF';
 			ctx.beginPath();
 			ctx.moveTo(this.x - 4, this.y - 2);
@@ -954,7 +958,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":23}],7:[function(require,module,exports){
+},{"../../lib/GameEntity":24}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -999,7 +1003,7 @@ var _class = function (_Entity) {
 	function _class(game, x, y, startX, startY) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, startX, startY));
+		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, startX, startY));
 
 		_this.speed = 200;
 		_this.targetX = x;
@@ -1017,7 +1021,7 @@ var _class = function (_Entity) {
 	_createClass(_class, [{
 		key: 'update',
 		value: function update() {
-			_get(Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
+			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
 
 			var particle = new _SmokeTrail2.default(this.game, this.x, this.y, this.angle);
 			this.game.addEntity(particle);
@@ -1037,7 +1041,7 @@ var _class = function (_Entity) {
 	}, {
 		key: 'draw',
 		value: function draw(ctx) {
-			_get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
 			ctx.fillStyle = "#FFFFFF";
 			ctx.beginPath();
 			ctx.fillRect(this.x - 1, this.y - 1, 3, 3);
@@ -1059,7 +1063,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":23,"../objects/Easing":9,"./Explosion":5,"./MissileTarget":6,"./SmokeTrail":8}],8:[function(require,module,exports){
+},{"../../lib/GameEntity":24,"../objects/Easing":9,"./Explosion":5,"./MissileTarget":6,"./SmokeTrail":8}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1088,7 +1092,7 @@ var _class = function (_Entity) {
 	function _class(game, x, y, angle) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
+		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y));
 
 		_this.updateCount = 0;
 		_this.radius = 5;
@@ -1101,7 +1105,7 @@ var _class = function (_Entity) {
 	_createClass(_class, [{
 		key: "update",
 		value: function update() {
-			_get(Object.getPrototypeOf(_class.prototype), "update", this).call(this);
+			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), "update", this).call(this);
 
 			if (this.game.speedMultiplier) {
 				this.speed = 10;
@@ -1121,7 +1125,7 @@ var _class = function (_Entity) {
 	}, {
 		key: "draw",
 		value: function draw(ctx) {
-			_get(Object.getPrototypeOf(_class.prototype), "draw", this).call(this, ctx);
+			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), "draw", this).call(this, ctx);
 
 			if (this.updateCount < 3) {
 				ctx.fillStyle = "rgba(255, 255, 0," + 0.3 + ")";
@@ -1142,7 +1146,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":23}],9:[function(require,module,exports){
+},{"../../lib/GameEntity":24}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1211,7 +1215,7 @@ var _class = function (_Entity) {
   function _class(game, x, y) {
     _classCallCheck(this, _class);
 
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
+    var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y));
 
     _this.hitTriangle = { p1: { x: x, y: y + 5 }, p2: { x: x - 12, y: y - 38 }, p3: { x: x + 12, y: y - 38 } };
     _this.missiles = 10;
@@ -1231,7 +1235,7 @@ var _class = function (_Entity) {
   }, {
     key: 'update',
     value: function update() {
-      _get(Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
+      _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
       for (var i = 0; i < this.game.entities.length; i++) {
         var entity = this.game.entities[i];
 
@@ -1263,7 +1267,7 @@ var _class = function (_Entity) {
   }, {
     key: 'draw',
     value: function draw(ctx) {
-      _get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+      _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
       this.drawMissileIndicators(ctx);
     }
   }, {
@@ -1335,7 +1339,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":23,"../entities/EnemyMissile":4,"../entities/Explosion":5}],11:[function(require,module,exports){
+},{"../../lib/GameEntity":24,"../entities/EnemyMissile":4,"../entities/Explosion":5}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1413,9 +1417,9 @@ var _class = function () {
 			for (var i = 0; i < this.highScores.length; i++) {
 				var entry = this.highScores[i];
 				ctx.textAlign = 'start';
-				ctx.fillText('' + entry.name, 170, (ctx.canvas.height - 200) / this.highScores.length * i + 100);
+				ctx.fillText('' + entry.name, ctx.canvas.width / 2 - 70, (ctx.canvas.height - 200) / this.highScores.length * i + 100);
 				ctx.textAlign = 'end';
-				ctx.fillText('' + entry.score, 310, (ctx.canvas.height - 200) / this.highScores.length * i + 100);
+				ctx.fillText('' + entry.score, ctx.canvas.width / 2 + 70, (ctx.canvas.height - 200) / this.highScores.length * i + 100);
 			}
 			ctx.restore();
 		}
@@ -2049,6 +2053,104 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var _class = function () {
 	function _class(game) {
+		_classCallCheck(this, _class);
+
+		this.game = game;
+		this.characters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '.', ' ', 'DEL', 'END'];
+		this.buttons = [];
+		this.entry = '';
+		this.init();
+	}
+
+	_createClass(_class, [{
+		key: 'init',
+		value: function init() {
+			var i = void 0,
+			    j = void 0,
+			    temp = void 0,
+			    chunk = 8,
+			    row = 0;
+			var xOffset = (this.game.ctx.canvas.width - 46 * 8) / 2;
+			var yOffset = (this.game.ctx.canvas.height - 46 * 4) / 2;
+
+			for (i = 0, j = this.characters.length; i < j; i += chunk) {
+				temp = this.characters.slice(i, i + chunk);
+
+				for (var k = 0; k < temp.length; k++) {
+					this.buttons.push({
+						x1: k * 46 + xOffset,
+						y1: row * 46 + yOffset * 1.5,
+						width: 46,
+						height: 46,
+						pressed: false,
+						fillOpacity: 0,
+						label: temp[k]
+					});
+				}
+				row += 1;
+			}
+		}
+	}, {
+		key: 'update',
+		value: function update() {
+			if (this.game.click) {
+				var click = this.game.click;
+				var scale = this.game.scale;
+
+				for (var i = 0; i < this.buttons.length; i++) {
+					var btn = this.buttons[i];
+
+					if (click.x / scale >= btn.x1 && click.x / scale <= btn.x1 + btn.width && click.y / scale >= btn.y1 && click.y / scale <= btn.y1 + btn.height) {
+						btn.pressed = true;
+						this.entry += btn.label;
+					}
+				}
+			}
+		}
+	}, {
+		key: 'draw',
+		value: function draw(ctx) {
+
+			ctx.save();
+			ctx.translate(0, ctx.canvas.height);
+			ctx.scale(1, -1);
+
+			ctx.fillStyle = "#fff";
+			ctx.strokeStyle = "#fff";
+			ctx.lineWidth = 1;
+			ctx.font = "24px Arial";
+			ctx.textAlign = 'center';
+			ctx.fillText(this.entry, ctx.canvas.width / 2, 30);
+			for (var i = 0; i < this.buttons.length; i++) {
+				var btn = this.buttons[i];
+				ctx.beginPath();
+				ctx.rect(btn.x1, btn.y1, btn.width, btn.height);
+				ctx.stroke();
+				ctx.font = "16px Arial";
+				ctx.fillText(btn.label, btn.x1 + btn.width / 2, btn.y1 + btn.height / 2);
+			}
+			ctx.restore();
+		}
+	}]);
+
+	return _class;
+}();
+
+exports.default = _class;
+
+},{}],19:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var _class = function () {
+	function _class(game) {
 		var _this = this;
 
 		_classCallCheck(this, _class);
@@ -2118,7 +2220,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 'use strict';
 
 var _BalisticDefence = require('./game/BalisticDefence');
@@ -2141,7 +2243,7 @@ game.init(ctx);
 
 console.log(game);
 
-},{"./game/BalisticDefence":2}],20:[function(require,module,exports){
+},{"./game/BalisticDefence":2}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2272,7 +2374,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2332,7 +2434,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2496,7 +2598,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{"./GameTimer":24}],23:[function(require,module,exports){
+},{"./GameTimer":25}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2557,7 +2659,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2599,7 +2701,7 @@ var _class = function () {
 
 exports.default = _class;
 
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2631,4 +2733,4 @@ exports.default = {
 	}
 };
 
-},{}]},{},[19]);
+},{}]},{},[20]);
