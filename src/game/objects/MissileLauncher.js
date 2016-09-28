@@ -1,6 +1,8 @@
 import Entity from '../../lib/GameEntity';
 
 import EnemyMissile from '../entities/EnemyMissile';
+import EnemySmartMissile from '../entities/EnemySmartMissile';
+
 import Explosion from '../entities/Explosion';
 
 export default class extends Entity {
@@ -24,7 +26,7 @@ export default class extends Entity {
     for (let i = 0; i < this.game.entities.length; i++) {
       let entity = this.game.entities[i];
 
-      if(entity instanceof EnemyMissile && this.isHit(entity)) {
+      if((entity instanceof EnemyMissile || entity instanceof EnemySmartMissile) && this.isHit(entity)) {
         if(entity.hitTarget === false) {
           entity.hitTarget = true;
           entity.explode(entity.x, entity.y);

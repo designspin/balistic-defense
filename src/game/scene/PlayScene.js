@@ -14,6 +14,7 @@ export default class {
 		this.timeBetweenRelease = null;
 		this.maxMissileRelease = null;
 		this.missilesToRelease = null;
+		this.chanceOfSmartMissile = null;
 		this.launchSpeed = null;
 		this.onTarget = {list: [true, false], weight: [0.9,0.1]};
 		this.splitLaunch = {list: [true, false], weight: [0.2, 0.8]};
@@ -42,28 +43,31 @@ export default class {
 
 	setupLevel(wave) {
 		
-		//this.maxMissilesInPlay  = [8  ,8  ,8  ,8  ,10  ,10  ,10  ,10  ,12 ,12 ,12 ,12 ,14  ,14  ,14  ,14  ,16  ,16  ,16  ,16][wave-1];
 		this.maxMissilesInPlay = (function() {
 			return Math.min((6 + (Math.ceil(wave / 4)) * 2), 20); 
 		})(wave);
 		
-		//this.timeBetweenRelease = [3  ,3  ,3  ,3  ,2.5 ,2.5 ,2.5 ,2.5 ,2  ,2  ,2  ,2  ,1.5 ,1.5 ,1.5 ,1.5 ,1   ,1   ,1   ,1 ][wave-1];
 		this.timeBetweenRelease = (function() {
 			return Math.max((3.5 - ((Math.ceil(wave / 4)) * 0.5)), 1);
 		})(wave);
 
-		//this.maxMissileRelease  = [4  ,4  ,4  ,4  ,6   ,6   ,6   ,6   ,8  ,8  ,8  ,8  ,8   ,8   ,8   ,8   ,8   ,8   ,8   ,8 ][wave-1];
 		this.maxMissileRelease = (function() {
 			return Math.min((2 + ((Math.ceil(wave / 4)) * 2)), 12);
 		})(wave);
 		
-		//this.missilesToRelease  = [18 ,18 ,18 ,18 ,22  ,22  ,22  ,22  ,24 ,24 ,24 ,24 ,26  ,26  ,26  ,26  ,28  ,28  ,30  ,30][wave-1];
 		this.missilesToRelease = (function(){
 			return Math.min(16 + (Math.ceil(wave / 2) * 2), 30);
 		})(wave);
-		//this.launchSpeed		= [20 ,25 ,30 ,35 ,40  ,45  ,50  ,55  ,60 ,65 ,70 ,75 ,80  ,85  ,90  ,95  ,100 ,105 ,110 ,120][wave-1];
+		
 		this.launchSpeed = (function(){
-			return Math.min((wave * 10) + 20, 150);
+			return Math.min((wave * 5) + 20, 100);
+		})(wave);
+
+		this.chanceOfSmartMissile = (function(){
+			var weightOfTrue = Math.min((wave - 1) / 30, 0.7);
+  		var weightOfFalse = (1 - weightOfTrue);
+
+			return { list: [true, false], weight: [weightOfTrue, weightOfFalse]};
 		})(wave);
 	}
 
@@ -93,6 +97,7 @@ export default class {
 		this.timer += this.game.clockTick;
 		let launchStart = null;
 		let launchTarget = null;
+		const chanceOfSmartMissileAttack = this.getRandomItem(this.chanceOfSmartMissile.list, this.chanceOfSmartMissile.weight);
 
 		//Launch a player missile on click or touch
 		if(this.game.click) {
@@ -105,10 +110,11 @@ export default class {
 			let targetlist = [];
 			let missilelist = [];
 			const splitLaunch = this.getRandomItem(this.splitLaunch.list, this.splitLaunch.weight);
+			const chanceOfSmartMissileAttack = this.getRandomItem(this.chanceOfSmartMissile.list, this.chanceOfSmartMissile.weight);
 
 			//Gather list of targets
 			for(let i = 0; i < this.game.entities.length; i++) {
-				if(this.game.entities[i] instanceof City || this.game.entities[i] instanceof MissileLauncher) {
+				if(this.game.entities[i] instanceof City || (this.game.entities[i] instanceof MissileLauncher && this.game.entities[i].missiles > 0)) {
 					targetlist.push(this.game.entities[i]);
 				}
 				if(this.game.entities[i] instanceof EnemyMissile) {
@@ -121,7 +127,7 @@ export default class {
 			this.timer = 0;
 			
 			
-			if(missilelist.length && splitLaunch) {
+			if(missilelist.length && splitLaunch && !chanceOfSmartMissileAttack) {
 				
 				let filteredMissileList = missilelist.filter((object) => {
 						return object.y > this.game.ctx.canvas.height / 2;
@@ -145,22 +151,53 @@ export default class {
 				}
 
 				if(this.getRandomItem(this.onTarget.list, this.onTarget.weight)) {
-					const selection = targetlist[Math.floor(Math.random() * targetlist.length-1) + 1];
-					launchTarget = {x: selection.x, y: selection.y};
+					let selectionIndex = Math.floor(Math.random() * targetlist.length-1) + 1;
+
+					const selection = targetlist[selectionIndex];
+
+					if(selection != undefined) {
+						launchTarget = {x: selection.x, y: selection.y};
+						targetlist.splice(selectionIndex, 1);
+					} else {
+						launchTarget = {x: Math.floor(Math.random() * this.game.ctx.canvas.width) +1, y: 10};
+					}
+					
 				} else {
 					launchTarget = {x: Math.floor(Math.random() * this.game.ctx.canvas.width) +1, y: 10};
 				}
 
 
 				this.game.missilesInPlay += 1;
-				var enemyMissile = new EnemySmartMissile(this.game, launchTarget.x, launchTarget.y, launchStart.x, launchStart.y, this.launchSpeed);
-      			this.game.addEntity(enemyMissile);
-      			
-      			if (!splitLaunch) {
-      				launchStart = false;
-      			}
+				
+				
+				let enemyMissile = new EnemyMissile(this.game, launchTarget.x, launchTarget.y, launchStart.x, launchStart.y, this.launchSpeed);
+				this.game.addEntity(enemyMissile);
+				
+				
+  			if (!splitLaunch) {
+  				launchStart = false;
+  			}
+			}
+
+			if(chanceOfSmartMissileAttack) {
+				const selection = targetlist[Math.floor(Math.random() * targetlist.length-1) + 1];
+
+				if(selection != undefined) {
+					const launchTarget = {x: selection.x, y: selection.y};
+				} else {
+					const launchTarget = {x: Math.floor(Math.random() * this.game.ctx.canvas.width) +1, y: 10};
+				}
+				const launchStart = {x: Math.floor(Math.random() * this.game.ctx.canvas.width) +1, y: this.game.ctx.canvas.height};
+
+				this.game.missilesInPlay += 1;
+				this.missilesToRelease -= 1;
+				let enemyMissile = new EnemySmartMissile(this.game, launchTarget.x, launchTarget.y, launchStart.x, launchStart.y, this.launchSpeed);
+				this.game.addEntity(enemyMissile);
 			}
 		}
+
+		// Smart missile Attacj
+		
 
 		//Run out of missiles
 		if(this.game.launchpads[0].missiles < 1 && this.game.launchpads[1].missiles < 1 && this.game.launchpads[2].missiles < 1) {

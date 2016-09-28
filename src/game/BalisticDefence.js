@@ -13,6 +13,8 @@ import LevelOverScene from './scene/LevelOverScene';
 import GameOverScene from './scene/GameOverScene';
 import ScoreEntryScene from './scene/ScoreEntryScene';
 
+import ScoreIndicator from './entities/ScoreIndicator';
+
 import { Events } from './objects/constants';
 
 class BalisticDefence extends GameEngine {
@@ -38,8 +40,12 @@ class BalisticDefence extends GameEngine {
 			this.onCityDestroyed(city);
 		});
 
-		this.subscribe(Events.PLAYER_KILLED_ENEMY_MISSILE, () => {
-			this.onPlayerKilledEnemyMissile();
+		this.subscribe(Events.PLAYER_KILLED_ENEMY_MISSILE, (missile) => {
+			this.onPlayerKilledEnemyMissile(missile);
+		});
+
+		this.subscribe(Events.PLAYER_KILLED_ENEMY_SMART_MISSILE, (missile) => {
+			this.onPlayerKilledEnemySmartMissile(missile);
 		});
 
 	}
@@ -142,8 +148,16 @@ class BalisticDefence extends GameEngine {
 		}
 	}
 
-	onPlayerKilledEnemyMissile() {
+	onPlayerKilledEnemyMissile(missile) {
 		this.score.add(100);
+		let score = new ScoreIndicator(this, missile.x, missile.y, 100);
+		this.addEntity(score);
+	}
+
+	onPlayerKilledEnemySmartMissile(missile) {
+		this.score.add(1000);
+		let score = new ScoreIndicator(this, missile.x, missile.y, 1000);
+		this.addEntity(score);
 	}
 	////////////////////////////
 	// Update                 //

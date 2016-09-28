@@ -35,7 +35,6 @@ export default class extends Entity {
 
 		this.angle = Math.atan2(this.targetX - this.x, this.targetY - this.y);
 		this.distanceToTravel = this.getDistance(this.x, this.y, this.targetX, this.targetY);
-		console.log(this.distanceToTravel);
 		this.normalised = { x: (this.x - this.targetX) / this.distanceToTravel, y: (this.y - this.targetY) / this.distanceToTravel };
 		this.lookAhead = { x: this.x - this.normalised.x * (this.speed / 2) , y: this.y - this.normalised.y * (this.speed / 2) };
 		this.lookAhead2 = { x: this.x - this.normalised.x * (this.speed / 2) / 2, y: this.y - this.normalised.y * (this.speed / 2) / 2 };
