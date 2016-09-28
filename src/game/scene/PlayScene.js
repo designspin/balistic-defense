@@ -41,10 +41,23 @@ export default class {
   	}
 
 	setupLevel(wave) {
-		this.maxMissilesInPlay  = [1/*8*/  ,8  ,8  ,8  ,10  ,10  ,10  ,10  ,12 ,12 ,12 ,12 ,14  ,14  ,14  ,14  ,16  ,16  ,16  ,16][wave-1];
-		this.timeBetweenRelease = [3  ,3  ,3  ,3  ,2.5 ,2.5 ,2.5 ,2.5 ,2  ,2  ,2  ,2  ,1.5 ,1.5 ,1.5 ,1.5 ,1   ,1   ,1   ,1 ][wave-1];
-		this.maxMissileRelease  = [1/*4*/  ,4  ,4  ,4  ,6   ,6   ,6   ,6   ,8  ,8  ,8  ,8  ,8   ,8   ,8   ,8   ,8   ,8   ,8   ,8 ][wave-1];
-		this.missilesToRelease  = [1/*18*/ ,18 ,18 ,18 ,22  ,22  ,22  ,22  ,24 ,24 ,24 ,24 ,26  ,26  ,26  ,26  ,28  ,28  ,30  ,30][wave-1];
+		
+		//this.maxMissilesInPlay  = [8  ,8  ,8  ,8  ,10  ,10  ,10  ,10  ,12 ,12 ,12 ,12 ,14  ,14  ,14  ,14  ,16  ,16  ,16  ,16][wave-1];
+		this.maxMissilesInPlay = (function() {
+			return Math.min((6 + (Math.ceil(wave / 4)) * 2), 20); 
+		})(wave);
+		
+		//this.timeBetweenRelease = [3  ,3  ,3  ,3  ,2.5 ,2.5 ,2.5 ,2.5 ,2  ,2  ,2  ,2  ,1.5 ,1.5 ,1.5 ,1.5 ,1   ,1   ,1   ,1 ][wave-1];
+		this.timeBetweenRelease = (function() {
+			return Math.max((3.5 - ((Math.ceil(wave / 4)) * 0.5)), 1);
+		})(wave);
+
+		//this.maxMissileRelease  = [4  ,4  ,4  ,4  ,6   ,6   ,6   ,6   ,8  ,8  ,8  ,8  ,8   ,8   ,8   ,8   ,8   ,8   ,8   ,8 ][wave-1];
+		this.maxMissileRelease = (function() {
+			return Math.min((2 + ((Math.ceil(wave / 4)) * 2)), 12);
+		})(wave);
+		
+		this.missilesToRelease  = [18 ,18 ,18 ,18 ,22  ,22  ,22  ,22  ,24 ,24 ,24 ,24 ,26  ,26  ,26  ,26  ,28  ,28  ,30  ,30][wave-1];
 		this.launchSpeed		= [20 ,25 ,30 ,35 ,40  ,45  ,50  ,55  ,60 ,65 ,70 ,75 ,80  ,85  ,90  ,95  ,100 ,105 ,110 ,120][wave-1];
 	}
 
@@ -134,7 +147,7 @@ export default class {
 
 
 				this.game.missilesInPlay += 1;
-				var enemyMissile = new EnemySmartMissile(this.game, launchTarget.x, launchTarget.y, launchStart.x, launchStart.y, this.launchSpeed);
+				var enemyMissile = new EnemyMissile(this.game, launchTarget.x, launchTarget.y, launchStart.x, launchStart.y, this.launchSpeed);
       			this.game.addEntity(enemyMissile);
       			
       			if (!splitLaunch) {

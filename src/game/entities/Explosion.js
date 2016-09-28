@@ -50,6 +50,10 @@ export default class extends Entity {
 
 		if(this.radius < 1) {
 			this.removeFromWorld = true;
+
+			if(this.createdBy instanceof PlayerMissile) {
+				this.createdBy.targetGraphic.removeFromWorld = true;
+			}
 		}
 	}
 

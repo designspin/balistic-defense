@@ -31,7 +31,7 @@ export default class extends Entity {
 
 		if(this.getDistance(this.x, this.y, this.startX, this.startY) >= this.distanceToTravel) {
 			this.removeFromWorld = true;
-			this.targetGraphic.removeFromWorld = true;
+			//this.targetGraphic.removeFromWorld = true;
 			let explosion = new Explosion(this.game, this.targetX, this.targetY, this);
 			this.game.addEntity(explosion);
 		}

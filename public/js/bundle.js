@@ -306,7 +306,7 @@ var BalisticDefence = function (_GameEngine) {
 	function BalisticDefence() {
 		_classCallCheck(this, BalisticDefence);
 
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(BalisticDefence).call(this));
+		var _this = _possibleConstructorReturn(this, (BalisticDefence.__proto__ || Object.getPrototypeOf(BalisticDefence)).call(this));
 
 		_this.ctx = null;
 		_this.scene = null;
@@ -338,7 +338,7 @@ var BalisticDefence = function (_GameEngine) {
 	_createClass(BalisticDefence, [{
 		key: 'init',
 		value: function init(ctx) {
-			_get(Object.getPrototypeOf(BalisticDefence.prototype), 'init', this).call(this, ctx);
+			_get(BalisticDefence.prototype.__proto__ || Object.getPrototypeOf(BalisticDefence.prototype), 'init', this).call(this, ctx);
 			this.score = new _ScoreBoard2.default(ctx, 'ballistic-highscore-table', [{ name: 'JLF', score: 50000 }, { name: 'JLF', score: 40000 }, { name: 'JLF', score: 30000 }, { name: 'JLF', score: 20000 }, { name: 'JLF', score: 10000 }, { name: 'JLF', score: 5000 }, { name: 'JLF', score: 1000 }, { name: 'JLF', score: 500 }]);
 
 			this.setUpCities();
@@ -349,7 +349,7 @@ var BalisticDefence = function (_GameEngine) {
 	}, {
 		key: 'start',
 		value: function start() {
-			_get(Object.getPrototypeOf(BalisticDefence.prototype), 'start', this).call(this);
+			_get(BalisticDefence.prototype.__proto__ || Object.getPrototypeOf(BalisticDefence.prototype), 'start', this).call(this);
 		}
 	}, {
 		key: 'reset',
@@ -452,7 +452,7 @@ var BalisticDefence = function (_GameEngine) {
 		key: 'update',
 		value: function update() {
 			this.updateScene();
-			_get(Object.getPrototypeOf(BalisticDefence.prototype), 'update', this).call(this);
+			_get(BalisticDefence.prototype.__proto__ || Object.getPrototypeOf(BalisticDefence.prototype), 'update', this).call(this);
 		}
 
 		//Update function for title screen
@@ -472,7 +472,7 @@ var BalisticDefence = function (_GameEngine) {
 		value: function draw() {
 			var _this2 = this;
 
-			_get(Object.getPrototypeOf(BalisticDefence.prototype), 'draw', this).call(this, function (game) {
+			_get(BalisticDefence.prototype.__proto__ || Object.getPrototypeOf(BalisticDefence.prototype), 'draw', this).call(this, function (game) {
 				// this.ctx.drawImage(this.background, 0, 0);
 				game.drawScene(_this2.ctx);
 			});
@@ -606,7 +606,7 @@ var _class = function (_Entity) {
 	function _class(game, x, y, position) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
+		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y));
 
 		_this.sprite = _this.game.ASSET_MANAGER.getAsset('images/City.png');
 		//this.radius = 16;
@@ -618,7 +618,7 @@ var _class = function (_Entity) {
 	_createClass(_class, [{
 		key: 'draw',
 		value: function draw(ctx) {
-			_get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
 			ctx.save();
 			ctx.translate(-this.sprite.width / 2, -this.sprite.height / 2);
 			ctx.drawImage(this.sprite, this.x, this.y);
@@ -704,7 +704,7 @@ var _class = function (_Entity) {
 	function _class(game, x, y, startX, startY, speed) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, startX, startY));
+		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, startX, startY));
 
 		_this.hitTarget = false;
 		_this.radius = 2;
@@ -722,7 +722,7 @@ var _class = function (_Entity) {
 	_createClass(_class, [{
 		key: 'update',
 		value: function update() {
-			_get(Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
+			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
 
 			if (this.game.speedMultiplier) {
 				this.speed = 150;
@@ -750,7 +750,7 @@ var _class = function (_Entity) {
 	}, {
 		key: 'draw',
 		value: function draw(ctx) {
-			_get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
 			ctx.beginPath();
 			var gradient = ctx.createLinearGradient(this.startX, this.startY, this.x, this.y);
 			gradient.addColorStop(0, "rgba(255,255,255,0.1)");
@@ -827,11 +827,11 @@ var _class = function (_Entity) {
 	function _class(game, x, y, startX, startY, speed) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, startX, startY));
+		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, startX, startY));
 
 		_this.hitTarget = false;
 		_this.radius = 4;
-		_this.speed = speed;
+		_this.speed = speed * 3;
 		_this.targetX = x;
 		_this.targetY = y;
 		_this.angle = Math.atan2(x - startX, y - startY);
@@ -848,7 +848,7 @@ var _class = function (_Entity) {
 	_createClass(_class, [{
 		key: 'update',
 		value: function update() {
-			_get(Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
+			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
 
 			if (this.game.speedMultiplier) {
 				this.speed = 150;
@@ -870,7 +870,7 @@ var _class = function (_Entity) {
 	}, {
 		key: 'draw',
 		value: function draw(ctx) {
-			_get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
 
 			ctx.beginPath();
 			ctx.fillStyle = '#FFA500';
@@ -904,8 +904,8 @@ var _class = function (_Entity) {
 				var length = Math.sqrt(avoidance.x * avoidance.x + avoidance.y * avoidance.y);
 				avoidance.x /= length;
 				avoidance.y /= length;
-				avoidance.x * 10000;
-				avoidance.y * 10000;
+				avoidance.x * 0.5;
+				avoidance.y * 0.5;
 			} else {
 				avoidance.x = 0;
 				avoidance.y = 0;
@@ -998,7 +998,7 @@ var _class = function (_Entity) {
 	function _class(game, x, y, createdBy) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
+		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y));
 
 		_this.createdBy = createdBy;
 		_this.imploding = false;
@@ -1011,7 +1011,7 @@ var _class = function (_Entity) {
 	_createClass(_class, [{
 		key: 'update',
 		value: function update() {
-			_get(Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
+			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
 
 			if (this.game.speedMultiplier) {
 				this.speed = 150;
@@ -1047,6 +1047,10 @@ var _class = function (_Entity) {
 
 			if (this.radius < 1) {
 				this.removeFromWorld = true;
+
+				if (this.createdBy instanceof _PlayerMissile2.default) {
+					this.createdBy.targetGraphic.removeFromWorld = true;
+				}
 			}
 		}
 	}, {
@@ -1109,16 +1113,16 @@ var _class = function (_Entity) {
 	function _class(game, x, y) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
+		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y));
 
-		_this.radius = 30;
+		_this.radius = 20;
 		return _this;
 	}
 
 	_createClass(_class, [{
 		key: 'draw',
 		value: function draw(ctx) {
-			_get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
 			ctx.strokeStyle = '#FFFFFF';
 			ctx.beginPath();
 			ctx.moveTo(this.x - 4, this.y - 2);
@@ -1179,7 +1183,7 @@ var _class = function (_Entity) {
 	function _class(game, x, y, startX, startY) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, startX, startY));
+		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, startX, startY));
 
 		_this.speed = 200;
 		_this.targetX = x;
@@ -1197,7 +1201,7 @@ var _class = function (_Entity) {
 	_createClass(_class, [{
 		key: 'update',
 		value: function update() {
-			_get(Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
+			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
 
 			var particle = new _SmokeTrail2.default(this.game, this.x, this.y, this.angle);
 			this.game.addEntity(particle);
@@ -1207,7 +1211,7 @@ var _class = function (_Entity) {
 
 			if (this.getDistance(this.x, this.y, this.startX, this.startY) >= this.distanceToTravel) {
 				this.removeFromWorld = true;
-				this.targetGraphic.removeFromWorld = true;
+				//this.targetGraphic.removeFromWorld = true;
 				var explosion = new _Explosion2.default(this.game, this.targetX, this.targetY, this);
 				this.game.addEntity(explosion);
 			}
@@ -1217,7 +1221,7 @@ var _class = function (_Entity) {
 	}, {
 		key: 'draw',
 		value: function draw(ctx) {
-			_get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
 			ctx.fillStyle = "#FFFFFF";
 			ctx.beginPath();
 			ctx.fillRect(this.x - 1, this.y - 1, 3, 3);
@@ -1268,7 +1272,7 @@ var _class = function (_Entity) {
 	function _class(game, x, y, angle) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
+		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y));
 
 		_this.updateCount = 0;
 		_this.radius = 5;
@@ -1281,7 +1285,7 @@ var _class = function (_Entity) {
 	_createClass(_class, [{
 		key: "update",
 		value: function update() {
-			_get(Object.getPrototypeOf(_class.prototype), "update", this).call(this);
+			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), "update", this).call(this);
 
 			if (this.game.speedMultiplier) {
 				this.speed = 10;
@@ -1301,7 +1305,7 @@ var _class = function (_Entity) {
 	}, {
 		key: "draw",
 		value: function draw(ctx) {
-			_get(Object.getPrototypeOf(_class.prototype), "draw", this).call(this, ctx);
+			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), "draw", this).call(this, ctx);
 
 			if (this.updateCount < 3) {
 				ctx.fillStyle = "rgba(255, 255, 0," + 0.3 + ")";
@@ -1394,7 +1398,7 @@ var _class = function (_Entity) {
   function _class(game, x, y) {
     _classCallCheck(this, _class);
 
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
+    var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y));
 
     _this.hitTriangle = { p1: { x: x, y: y + 5 }, p2: { x: x - 12, y: y - 38 }, p3: { x: x + 12, y: y - 38 } };
     _this.missiles = 10;
@@ -1414,7 +1418,7 @@ var _class = function (_Entity) {
   }, {
     key: 'update',
     value: function update() {
-      _get(Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
+      _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
       for (var i = 0; i < this.game.entities.length; i++) {
         var entity = this.game.entities[i];
 
@@ -1446,7 +1450,7 @@ var _class = function (_Entity) {
   }, {
     key: 'draw',
     value: function draw(ctx) {
-      _get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+      _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
       this.drawMissileIndicators(ctx);
     }
   }, {
@@ -2089,10 +2093,23 @@ var _class = function () {
 	_createClass(_class, [{
 		key: 'setupLevel',
 		value: function setupLevel(wave) {
-			this.maxMissilesInPlay = [1 /*8*/, 8, 8, 8, 10, 10, 10, 10, 12, 12, 12, 12, 14, 14, 14, 14, 16, 16, 16, 16][wave - 1];
-			this.timeBetweenRelease = [3, 3, 3, 3, 2.5, 2.5, 2.5, 2.5, 2, 2, 2, 2, 1.5, 1.5, 1.5, 1.5, 1, 1, 1, 1][wave - 1];
-			this.maxMissileRelease = [1 /*4*/, 4, 4, 4, 6, 6, 6, 6, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8][wave - 1];
-			this.missilesToRelease = [1 /*18*/, 18, 18, 18, 22, 22, 22, 22, 24, 24, 24, 24, 26, 26, 26, 26, 28, 28, 30, 30][wave - 1];
+
+			//this.maxMissilesInPlay  = [8  ,8  ,8  ,8  ,10  ,10  ,10  ,10  ,12 ,12 ,12 ,12 ,14  ,14  ,14  ,14  ,16  ,16  ,16  ,16][wave-1];
+			this.maxMissilesInPlay = function () {
+				return Math.min(6 + Math.ceil(wave / 4) * 2, 20);
+			}(wave);
+
+			//this.timeBetweenRelease = [3  ,3  ,3  ,3  ,2.5 ,2.5 ,2.5 ,2.5 ,2  ,2  ,2  ,2  ,1.5 ,1.5 ,1.5 ,1.5 ,1   ,1   ,1   ,1 ][wave-1];
+			this.timeBetweenRelease = function () {
+				return Math.max(3.5 - Math.ceil(wave / 4) * 0.5, 1);
+			}(wave);
+
+			//this.maxMissileRelease  = [4  ,4  ,4  ,4  ,6   ,6   ,6   ,6   ,8  ,8  ,8  ,8  ,8   ,8   ,8   ,8   ,8   ,8   ,8   ,8 ][wave-1];
+			this.maxMissileRelease = function () {
+				return Math.min(2 + Math.ceil(wave / 4) * 2, 12);
+			}(wave);
+
+			this.missilesToRelease = [18, 18, 18, 18, 22, 22, 22, 22, 24, 24, 24, 24, 26, 26, 26, 26, 28, 28, 30, 30][wave - 1];
 			this.launchSpeed = [20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 120][wave - 1];
 		}
 	}, {
@@ -2183,7 +2200,7 @@ var _class = function () {
 					}
 
 					this.game.missilesInPlay += 1;
-					var enemyMissile = new _EnemySmartMissile2.default(this.game, launchTarget.x, launchTarget.y, launchStart.x, launchStart.y, this.launchSpeed);
+					var enemyMissile = new _EnemyMissile2.default(this.game, launchTarget.x, launchTarget.y, launchStart.x, launchStart.y, this.launchSpeed);
 					this.game.addEntity(enemyMissile);
 
 					if (!splitLaunch) {

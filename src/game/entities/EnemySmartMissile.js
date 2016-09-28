@@ -8,7 +8,7 @@ export default class extends Entity {
 
 		this.hitTarget = false;
 		this.radius = 4;
-		this.speed = speed;
+		this.speed = speed * 3;
 		this.targetX = x;
 		this.targetY = y;
 		this.angle = Math.atan2(x - startX, y - startY);
@@ -37,9 +37,9 @@ export default class extends Entity {
 		let avoidance = this.collisionAvoidance();
 
 		if (this.hitTarget === false) {
-	    this.x += (this.speed * this.game.clockTick) * (Math.sin(this.angle) + avoidance.x);
-	    this.y += (this.speed * this.game.clockTick) * (Math.cos(this.angle) + avoidance.y);
-	  }
+		    this.x += (this.speed * this.game.clockTick) * (Math.sin(this.angle) + avoidance.x);
+		    this.y += (this.speed * this.game.clockTick) * (Math.cos(this.angle) + avoidance.y);
+	  	}
 		
 	}
 
@@ -76,8 +76,8 @@ export default class extends Entity {
 			let length = Math.sqrt(avoidance.x * avoidance.x + avoidance.y * avoidance.y);
 			avoidance.x /= length;
 			avoidance.y /= length;
-			avoidance.x * 10000;
-			avoidance.y * 10000;
+			avoidance.x * 0.5;
+			avoidance.y * 0.5;
 		} else {
 			avoidance.x = 0;
 			avoidance.y = 0;
