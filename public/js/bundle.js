@@ -306,7 +306,7 @@ var BalisticDefence = function (_GameEngine) {
 	function BalisticDefence() {
 		_classCallCheck(this, BalisticDefence);
 
-		var _this = _possibleConstructorReturn(this, (BalisticDefence.__proto__ || Object.getPrototypeOf(BalisticDefence)).call(this));
+		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(BalisticDefence).call(this));
 
 		_this.ctx = null;
 		_this.scene = null;
@@ -338,7 +338,7 @@ var BalisticDefence = function (_GameEngine) {
 	_createClass(BalisticDefence, [{
 		key: 'init',
 		value: function init(ctx) {
-			_get(BalisticDefence.prototype.__proto__ || Object.getPrototypeOf(BalisticDefence.prototype), 'init', this).call(this, ctx);
+			_get(Object.getPrototypeOf(BalisticDefence.prototype), 'init', this).call(this, ctx);
 			this.score = new _ScoreBoard2.default(ctx, 'ballistic-highscore-table', [{ name: 'JLF', score: 50000 }, { name: 'JLF', score: 40000 }, { name: 'JLF', score: 30000 }, { name: 'JLF', score: 20000 }, { name: 'JLF', score: 10000 }, { name: 'JLF', score: 5000 }, { name: 'JLF', score: 1000 }, { name: 'JLF', score: 500 }]);
 
 			this.setUpCities();
@@ -349,7 +349,7 @@ var BalisticDefence = function (_GameEngine) {
 	}, {
 		key: 'start',
 		value: function start() {
-			_get(BalisticDefence.prototype.__proto__ || Object.getPrototypeOf(BalisticDefence.prototype), 'start', this).call(this);
+			_get(Object.getPrototypeOf(BalisticDefence.prototype), 'start', this).call(this);
 		}
 	}, {
 		key: 'reset',
@@ -452,7 +452,7 @@ var BalisticDefence = function (_GameEngine) {
 		key: 'update',
 		value: function update() {
 			this.updateScene();
-			_get(BalisticDefence.prototype.__proto__ || Object.getPrototypeOf(BalisticDefence.prototype), 'update', this).call(this);
+			_get(Object.getPrototypeOf(BalisticDefence.prototype), 'update', this).call(this);
 		}
 
 		//Update function for title screen
@@ -472,7 +472,7 @@ var BalisticDefence = function (_GameEngine) {
 		value: function draw() {
 			var _this2 = this;
 
-			_get(BalisticDefence.prototype.__proto__ || Object.getPrototypeOf(BalisticDefence.prototype), 'draw', this).call(this, function (game) {
+			_get(Object.getPrototypeOf(BalisticDefence.prototype), 'draw', this).call(this, function (game) {
 				// this.ctx.drawImage(this.background, 0, 0);
 				game.drawScene(_this2.ctx);
 			});
@@ -590,6 +590,10 @@ var _EnemyMissile = require('./EnemyMissile');
 
 var _EnemyMissile2 = _interopRequireDefault(_EnemyMissile);
 
+var _EnemySmartMissile = require('./EnemySmartMissile');
+
+var _EnemySmartMissile2 = _interopRequireDefault(_EnemySmartMissile);
+
 var _constants = require('../objects/constants');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -606,7 +610,7 @@ var _class = function (_Entity) {
 	function _class(game, x, y, position) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y));
+		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
 
 		_this.sprite = _this.game.ASSET_MANAGER.getAsset('images/City.png');
 		//this.radius = 16;
@@ -618,7 +622,7 @@ var _class = function (_Entity) {
 	_createClass(_class, [{
 		key: 'draw',
 		value: function draw(ctx) {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+			_get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
 			ctx.save();
 			ctx.translate(-this.sprite.width / 2, -this.sprite.height / 2);
 			ctx.drawImage(this.sprite, this.x, this.y);
@@ -630,7 +634,7 @@ var _class = function (_Entity) {
 			for (var i = 0; i < this.game.entities.length; i++) {
 				var entity = this.game.entities[i];
 
-				if (entity instanceof _EnemyMissile2.default && this.isHit(entity)) {
+				if ((entity instanceof _EnemyMissile2.default || entity instanceof _EnemySmartMissile2.default) && this.isHit(entity)) {
 					if (!this.removeFromWorld) {
 						this.game.publish(_constants.Events.CITY_DESTROYED, this);
 						this.removeFromWorld = true;
@@ -671,7 +675,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":25,"../objects/constants":13,"./EnemyMissile":4,"./Explosion":6,"./SmokeTrail":9}],4:[function(require,module,exports){
+},{"../../lib/GameEntity":25,"../objects/constants":13,"./EnemyMissile":4,"./EnemySmartMissile":5,"./Explosion":6,"./SmokeTrail":9}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -704,7 +708,7 @@ var _class = function (_Entity) {
 	function _class(game, x, y, startX, startY, speed) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, startX, startY));
+		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, startX, startY));
 
 		_this.hitTarget = false;
 		_this.radius = 2;
@@ -722,7 +726,7 @@ var _class = function (_Entity) {
 	_createClass(_class, [{
 		key: 'update',
 		value: function update() {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
+			_get(Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
 
 			if (this.game.speedMultiplier) {
 				this.speed = 150;
@@ -750,7 +754,7 @@ var _class = function (_Entity) {
 	}, {
 		key: 'draw',
 		value: function draw(ctx) {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+			_get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
 			ctx.beginPath();
 			var gradient = ctx.createLinearGradient(this.startX, this.startY, this.x, this.y);
 			gradient.addColorStop(0, "rgba(255,255,255,0.1)");
@@ -813,6 +817,10 @@ var _Explosion = require('./Explosion');
 
 var _Explosion2 = _interopRequireDefault(_Explosion);
 
+var _SmokeTrail = require('./SmokeTrail');
+
+var _SmokeTrail2 = _interopRequireDefault(_SmokeTrail);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -827,11 +835,11 @@ var _class = function (_Entity) {
 	function _class(game, x, y, startX, startY, speed) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, startX, startY));
+		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, startX, startY));
 
 		_this.hitTarget = false;
 		_this.radius = 4;
-		_this.speed = speed * 3;
+		_this.speed = speed;
 		_this.targetX = x;
 		_this.targetY = y;
 		_this.angle = Math.atan2(x - startX, y - startY);
@@ -848,14 +856,19 @@ var _class = function (_Entity) {
 	_createClass(_class, [{
 		key: 'update',
 		value: function update() {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
+			_get(Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
 
 			if (this.game.speedMultiplier) {
 				this.speed = 150;
 			}
 
+			var particle = new _SmokeTrail2.default(this.game, this.x - 10 * Math.sin(this.angle), this.y - 8 * Math.cos(this.angle), this.angle);
+			particle.radius = 3;
+			this.game.addEntity(particle);
+
 			this.angle = Math.atan2(this.targetX - this.x, this.targetY - this.y);
 			this.distanceToTravel = this.getDistance(this.x, this.y, this.targetX, this.targetY);
+			console.log(this.distanceToTravel);
 			this.normalised = { x: (this.x - this.targetX) / this.distanceToTravel, y: (this.y - this.targetY) / this.distanceToTravel };
 			this.lookAhead = { x: this.x - this.normalised.x * (this.speed / 2), y: this.y - this.normalised.y * (this.speed / 2) };
 			this.lookAhead2 = { x: this.x - this.normalised.x * (this.speed / 2) / 2, y: this.y - this.normalised.y * (this.speed / 2) / 2 };
@@ -866,24 +879,63 @@ var _class = function (_Entity) {
 				this.x += this.speed * this.game.clockTick * (Math.sin(this.angle) + avoidance.x);
 				this.y += this.speed * this.game.clockTick * (Math.cos(this.angle) + avoidance.y);
 			}
+			if (this.distanceToTravel < 1 && this.hitTarget === false) {
+				this.hitTarget = true;
+				this.removeFromWorld = true;
+				this.explode(this.targetX, this.targetY);
+			}
+			if (this.hitTarget == true) {
+				this.removeFromWorld = true;
+			}
+		}
+	}, {
+		key: 'drawTriangle',
+		value: function drawTriangle(ctx) {
+			var height = 8;
+			var width = 4;
+
+			var centerX = this.x;
+			var centerY = this.y;
+
+			var x1 = centerX;
+			var y1 = centerY - height / 2;
+			var x2 = centerX + width / 2;
+			var y2 = centerY + height / 2;
+			var x3 = centerX - width / 2;
+			var y3 = y2;
+
+			var x1r = (x1 - centerX) * -Math.cos(this.angle) - (y1 - centerY) * Math.sin(this.angle) + centerX;
+			var y1r = (x1 - centerX) * Math.sin(this.angle) + (y1 - centerY) * -Math.cos(this.angle) + centerY;
+
+			var x2r = (x2 - centerX) * -Math.cos(this.angle) - (y2 - centerY) * Math.sin(this.angle) + centerX;
+			var y2r = (x2 - centerX) * Math.sin(this.angle) + (y2 - centerY) * -Math.cos(this.angle) + centerY;
+
+			var x3r = (x3 - centerX) * -Math.cos(this.angle) - (y3 - centerY) * Math.sin(this.angle) + centerX;
+			var y3r = (x3 - centerX) * Math.sin(this.angle) + (y3 - centerY) * -Math.cos(this.angle) + centerY;
+
+			ctx.moveTo(x1r, y1r);
+			ctx.lineTo(x2r, y2r);
+			ctx.lineTo(x3r, y3r);
+			ctx.lineTo(x1r, y1r);
 		}
 	}, {
 		key: 'draw',
 		value: function draw(ctx) {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
-
+			_get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+			ctx.save();
 			ctx.beginPath();
-			ctx.fillStyle = '#FFA500';
-			ctx.rect(this.x - 1, this.y - 1, 2, 2);
+			ctx.fillStyle = '#000000';
+			this.drawTriangle(ctx);
 			ctx.fill();
-			ctx.beginPath();
-			ctx.fillStyle = '#ff0000';
-			ctx.rect(this.lookAhead.x - 1, this.lookAhead.y - 1, 2, 2);
-			ctx.fill();
-			ctx.beginPath();
-			ctx.fillStyle = '#00ff00';
-			ctx.rect(this.lookAhead2.x - 1, this.lookAhead2.y - 1, 2, 2);
-			ctx.fill();
+			ctx.restore();
+		}
+	}, {
+		key: 'explode',
+		value: function explode(x, y, instance) {
+			this.game.audioplayer.play('explosion');
+			this.game.missilesInPlay -= 1;
+			var explosion = new _Explosion2.default(this.game, x, y, instance ? instance : this);
+			this.game.addEntity(explosion);
 		}
 	}, {
 		key: 'lineIntersectsCircle',
@@ -904,8 +956,8 @@ var _class = function (_Entity) {
 				var length = Math.sqrt(avoidance.x * avoidance.x + avoidance.y * avoidance.y);
 				avoidance.x /= length;
 				avoidance.y /= length;
-				avoidance.x * 0.5;
-				avoidance.y * 0.5;
+				avoidance.x / 0.005;
+				avoidance.y / 0.005;
 			} else {
 				avoidance.x = 0;
 				avoidance.y = 0;
@@ -959,7 +1011,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":25,"./Explosion":6,"./MissileTarget":7}],6:[function(require,module,exports){
+},{"../../lib/GameEntity":25,"./Explosion":6,"./MissileTarget":7,"./SmokeTrail":9}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -977,6 +1029,10 @@ var _GameEntity2 = _interopRequireDefault(_GameEntity);
 var _EnemyMissile = require('./EnemyMissile');
 
 var _EnemyMissile2 = _interopRequireDefault(_EnemyMissile);
+
+var _EnemySmartMissile = require('./EnemySmartMissile');
+
+var _EnemySmartMissile2 = _interopRequireDefault(_EnemySmartMissile);
 
 var _PlayerMissile = require('./PlayerMissile');
 
@@ -998,7 +1054,7 @@ var _class = function (_Entity) {
 	function _class(game, x, y, createdBy) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y));
+		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
 
 		_this.createdBy = createdBy;
 		_this.imploding = false;
@@ -1011,7 +1067,7 @@ var _class = function (_Entity) {
 	_createClass(_class, [{
 		key: 'update',
 		value: function update() {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
+			_get(Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
 
 			if (this.game.speedMultiplier) {
 				this.speed = 150;
@@ -1030,7 +1086,7 @@ var _class = function (_Entity) {
 			for (var i = 0; i < this.game.entities.length; i++) {
 				var entity = this.game.entities[i];
 
-				if (entity instanceof _EnemyMissile2.default && entity.hitTarget === false && this.isCaughtInExplosion(entity)) {
+				if ((entity instanceof _EnemyMissile2.default || entity instanceof _EnemySmartMissile2.default) && entity.hitTarget === false && this.isCaughtInExplosion(entity)) {
 
 					if (this.createdBy instanceof _PlayerMissile2.default) {
 						this.game.publish(_constants.Events.PLAYER_KILLED_ENEMY_MISSILE);
@@ -1084,7 +1140,7 @@ var _class = function (_Entity) {
 
 exports.default = _class;
 
-},{"../../lib/GameEntity":25,"../objects/constants":13,"./EnemyMissile":4,"./PlayerMissile":8}],7:[function(require,module,exports){
+},{"../../lib/GameEntity":25,"../objects/constants":13,"./EnemyMissile":4,"./EnemySmartMissile":5,"./PlayerMissile":8}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1113,16 +1169,16 @@ var _class = function (_Entity) {
 	function _class(game, x, y) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y));
+		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
 
-		_this.radius = 20;
+		_this.radius = 30;
 		return _this;
 	}
 
 	_createClass(_class, [{
 		key: 'draw',
 		value: function draw(ctx) {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+			_get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
 			ctx.strokeStyle = '#FFFFFF';
 			ctx.beginPath();
 			ctx.moveTo(this.x - 4, this.y - 2);
@@ -1183,7 +1239,7 @@ var _class = function (_Entity) {
 	function _class(game, x, y, startX, startY) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, startX, startY));
+		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, startX, startY));
 
 		_this.speed = 200;
 		_this.targetX = x;
@@ -1201,7 +1257,7 @@ var _class = function (_Entity) {
 	_createClass(_class, [{
 		key: 'update',
 		value: function update() {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
+			_get(Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
 
 			var particle = new _SmokeTrail2.default(this.game, this.x, this.y, this.angle);
 			this.game.addEntity(particle);
@@ -1221,7 +1277,7 @@ var _class = function (_Entity) {
 	}, {
 		key: 'draw',
 		value: function draw(ctx) {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+			_get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
 			ctx.fillStyle = "#FFFFFF";
 			ctx.beginPath();
 			ctx.fillRect(this.x - 1, this.y - 1, 3, 3);
@@ -1272,7 +1328,7 @@ var _class = function (_Entity) {
 	function _class(game, x, y, angle) {
 		_classCallCheck(this, _class);
 
-		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y));
+		var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
 
 		_this.updateCount = 0;
 		_this.radius = 5;
@@ -1285,14 +1341,17 @@ var _class = function (_Entity) {
 	_createClass(_class, [{
 		key: "update",
 		value: function update() {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), "update", this).call(this);
+			_get(Object.getPrototypeOf(_class.prototype), "update", this).call(this);
 
 			if (this.game.speedMultiplier) {
 				this.speed = 10;
 			}
 
+			var yMod = Math.floor(Math.random() * 60) + 1;
+			yMod *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
+
 			this.x += 10 * Math.random() * this.game.clockTick * Math.sin(this.angle);
-			this.y += 40 * Math.random() * this.game.clockTick * Math.cos(this.angle);
+			this.y += yMod * Math.random() * this.game.clockTick * Math.cos(this.angle);
 
 			this.radius = this.radius - this.speed * this.game.clockTick;
 
@@ -1305,7 +1364,7 @@ var _class = function (_Entity) {
 	}, {
 		key: "draw",
 		value: function draw(ctx) {
-			_get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), "draw", this).call(this, ctx);
+			_get(Object.getPrototypeOf(_class.prototype), "draw", this).call(this, ctx);
 
 			if (this.updateCount < 3) {
 				ctx.fillStyle = "rgba(255, 255, 0," + 0.3 + ")";
@@ -1398,7 +1457,7 @@ var _class = function (_Entity) {
   function _class(game, x, y) {
     _classCallCheck(this, _class);
 
-    var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, game, x, y));
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(_class).call(this, game, x, y));
 
     _this.hitTriangle = { p1: { x: x, y: y + 5 }, p2: { x: x - 12, y: y - 38 }, p3: { x: x + 12, y: y - 38 } };
     _this.missiles = 10;
@@ -1418,7 +1477,7 @@ var _class = function (_Entity) {
   }, {
     key: 'update',
     value: function update() {
-      _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
+      _get(Object.getPrototypeOf(_class.prototype), 'update', this).call(this);
       for (var i = 0; i < this.game.entities.length; i++) {
         var entity = this.game.entities[i];
 
@@ -1450,7 +1509,7 @@ var _class = function (_Entity) {
   }, {
     key: 'draw',
     value: function draw(ctx) {
-      _get(_class.prototype.__proto__ || Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
+      _get(Object.getPrototypeOf(_class.prototype), 'draw', this).call(this, ctx);
       this.drawMissileIndicators(ctx);
     }
   }, {
@@ -2067,7 +2126,7 @@ var _class = function () {
 		this.missilesToRelease = null;
 		this.launchSpeed = null;
 		this.onTarget = { list: [true, false], weight: [0.9, 0.1] };
-		this.splitLaunch = { list: [true, false], weight: [0.4, 0.6] };
+		this.splitLaunch = { list: [true, false], weight: [0.2, 0.8] };
 
 		this.setupLevel(this.wave);
 
@@ -2109,8 +2168,14 @@ var _class = function () {
 				return Math.min(2 + Math.ceil(wave / 4) * 2, 12);
 			}(wave);
 
-			this.missilesToRelease = [18, 18, 18, 18, 22, 22, 22, 22, 24, 24, 24, 24, 26, 26, 26, 26, 28, 28, 30, 30][wave - 1];
-			this.launchSpeed = [20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 120][wave - 1];
+			//this.missilesToRelease  = [18 ,18 ,18 ,18 ,22  ,22  ,22  ,22  ,24 ,24 ,24 ,24 ,26  ,26  ,26  ,26  ,28  ,28  ,30  ,30][wave-1];
+			this.missilesToRelease = function () {
+				return Math.min(16 + Math.ceil(wave / 2) * 2, 30);
+			}(wave);
+			//this.launchSpeed		= [20 ,25 ,30 ,35 ,40  ,45  ,50  ,55  ,60 ,65 ,70 ,75 ,80  ,85  ,90  ,95  ,100 ,105 ,110 ,120][wave-1];
+			this.launchSpeed = function () {
+				return Math.min(wave * 10 + 20, 150);
+			}(wave);
 		}
 	}, {
 		key: 'rand',
@@ -2139,6 +2204,8 @@ var _class = function () {
 	}, {
 		key: 'update',
 		value: function update() {
+			var _this = this;
+
 			this.timer += this.game.clockTick;
 			var launchStart = null;
 			var launchTarget = null;
@@ -2172,7 +2239,7 @@ var _class = function () {
 				if (missilelist.length && splitLaunch) {
 
 					var filteredMissileList = missilelist.filter(function (object) {
-						return object.y > 160;
+						return object.y > _this.game.ctx.canvas.height / 2;
 					});
 
 					var selection = filteredMissileList[Math.floor(Math.random() * filteredMissileList.length - 1) + 1];
@@ -2200,7 +2267,7 @@ var _class = function () {
 					}
 
 					this.game.missilesInPlay += 1;
-					var enemyMissile = new _EnemyMissile2.default(this.game, launchTarget.x, launchTarget.y, launchStart.x, launchStart.y, this.launchSpeed);
+					var enemyMissile = new _EnemySmartMissile2.default(this.game, launchTarget.x, launchTarget.y, launchStart.x, launchStart.y, this.launchSpeed);
 					this.game.addEntity(enemyMissile);
 
 					if (!splitLaunch) {

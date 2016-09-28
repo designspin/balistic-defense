@@ -1,5 +1,6 @@
 import Entity from '../../lib/GameEntity';
 import EnemyMissile from './EnemyMissile';
+import EnemySmartMissile from './EnemySmartMissile';
 import PlayerMissile from './PlayerMissile';
 import { Events } from '../objects/constants';
 
@@ -33,7 +34,7 @@ export default class extends Entity {
 		for (let i = 0; i < this.game.entities.length; i++) {
 			let entity = this.game.entities[i];
 
-			if(entity instanceof EnemyMissile && entity.hitTarget === false && this.isCaughtInExplosion(entity)) {
+			if((entity instanceof EnemyMissile || entity instanceof EnemySmartMissile) && entity.hitTarget === false && this.isCaughtInExplosion(entity)) {
 
 				if(this.createdBy instanceof PlayerMissile) {
 					this.game.publish(Events.PLAYER_KILLED_ENEMY_MISSILE);

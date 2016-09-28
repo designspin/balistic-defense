@@ -3,7 +3,7 @@ import Entity from '../../lib/GameEntity';
 import SmokeTrail from './SmokeTrail';
 import Explosion from './Explosion';
 import EnemyMissile from './EnemyMissile';
-
+import EnemySmartMissile from './EnemySmartMissile';
 import { Events } from '../objects/constants';
 
 export default class extends Entity {
@@ -27,7 +27,7 @@ export default class extends Entity {
 		for (let i = 0; i < this.game.entities.length; i++) {
 			let entity = this.game.entities[i];
 
-			if(entity instanceof EnemyMissile && this.isHit(entity)) {
+			if((entity instanceof EnemyMissile || entity instanceof EnemySmartMissile) && this.isHit(entity)) {
 				if(!this.removeFromWorld) {
 					this.game.publish(Events.CITY_DESTROYED, this);
 					this.removeFromWorld = true;

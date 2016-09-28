@@ -17,8 +17,11 @@ export default class extends Entity {
 			this.speed = 10;
 		}
 
+		var yMod = Math.floor(Math.random()*60) + 1; 
+		yMod *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+
 		this.x += ((10*Math.random()) * this.game.clockTick) * Math.sin(this.angle);
-	  this.y += ((40*Math.random()) * this.game.clockTick) * Math.cos(this.angle);
+	  this.y += ((yMod*Math.random()) * this.game.clockTick) * Math.cos(this.angle);
 	  
 	  this.radius = this.radius - (this.speed * this.game.clockTick);
 	  

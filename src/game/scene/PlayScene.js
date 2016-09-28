@@ -16,7 +16,7 @@ export default class {
 		this.missilesToRelease = null;
 		this.launchSpeed = null;
 		this.onTarget = {list: [true, false], weight: [0.9,0.1]};
-		this.splitLaunch = {list: [true, false], weight: [0.4, 0.6]};
+		this.splitLaunch = {list: [true, false], weight: [0.2, 0.8]};
 		
 
 		this.setupLevel(this.wave);
@@ -57,8 +57,14 @@ export default class {
 			return Math.min((2 + ((Math.ceil(wave / 4)) * 2)), 12);
 		})(wave);
 		
-		this.missilesToRelease  = [18 ,18 ,18 ,18 ,22  ,22  ,22  ,22  ,24 ,24 ,24 ,24 ,26  ,26  ,26  ,26  ,28  ,28  ,30  ,30][wave-1];
-		this.launchSpeed		= [20 ,25 ,30 ,35 ,40  ,45  ,50  ,55  ,60 ,65 ,70 ,75 ,80  ,85  ,90  ,95  ,100 ,105 ,110 ,120][wave-1];
+		//this.missilesToRelease  = [18 ,18 ,18 ,18 ,22  ,22  ,22  ,22  ,24 ,24 ,24 ,24 ,26  ,26  ,26  ,26  ,28  ,28  ,30  ,30][wave-1];
+		this.missilesToRelease = (function(){
+			return Math.min(16 + (Math.ceil(wave / 2) * 2), 30);
+		})(wave);
+		//this.launchSpeed		= [20 ,25 ,30 ,35 ,40  ,45  ,50  ,55  ,60 ,65 ,70 ,75 ,80  ,85  ,90  ,95  ,100 ,105 ,110 ,120][wave-1];
+		this.launchSpeed = (function(){
+			return Math.min((wave * 10) + 20, 150);
+		})(wave);
 	}
 
 	rand(min, max) {
@@ -118,7 +124,7 @@ export default class {
 			if(missilelist.length && splitLaunch) {
 				
 				let filteredMissileList = missilelist.filter((object) => {
-						return object.y > 160;
+						return object.y > this.game.ctx.canvas.height / 2;
 				});
 
 				const selection = filteredMissileList[Math.floor(Math.random() * filteredMissileList.length-1) + 1];
@@ -147,7 +153,7 @@ export default class {
 
 
 				this.game.missilesInPlay += 1;
-				var enemyMissile = new EnemyMissile(this.game, launchTarget.x, launchTarget.y, launchStart.x, launchStart.y, this.launchSpeed);
+				var enemyMissile = new EnemySmartMissile(this.game, launchTarget.x, launchTarget.y, launchStart.x, launchStart.y, this.launchSpeed);
       			this.game.addEntity(enemyMissile);
       			
       			if (!splitLaunch) {
